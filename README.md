@@ -23,11 +23,27 @@ npm run dev
 ### Backend
 ```bash
 cd backend
+cp .env.example .env      # then fill it in
 ./mvnw spring-boot:run
 ```
-Set `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD`
-(Neon Postgres), `JWT_SECRET`, `CLOUDINARY_URL`, and mail credentials as
-environment variables — see `backend/src/main/resources/application.properties`.
+A Maven wrapper is included, so no local Maven install is needed. Copy
+`backend/.env.example` to `backend/.env` and set at minimum the database, SMTP, and
+`JWT_SECRET` values — see **[docs/auth-api.md](docs/auth-api.md)** for the full walkthrough,
+including Brevo setup and deployment.
+
+### Authentication
+Email + password with one-time-code email verification and JWT sessions.
+Endpoints, error format, design decisions and known gaps:
+**[docs/auth-api.md](docs/auth-api.md)**.
+
+```bash
+cd backend && ./mvnw test    # 12 integration tests, no external services needed
+```
+
+## Deployment
+`backend/Dockerfile` builds a stateless image that honours `PORT` and `DATABASE_URL`, so it
+runs unchanged on Render, Railway, Fly.io or a plain VM. Health check:
+`GET /actuator/health`.
 
 ## Team
 

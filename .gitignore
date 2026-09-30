@@ -1,19 +1,24 @@
-# Node / frontend
-node_modules/
-dist/
-.vite/
-frontend/.env
-
-# Java / backend
+# Build artefacts
 target/
-*.class
-backend/.env
-backend/src/main/resources/application-local.yml
+build/
+dist/
+node_modules/
 
-# IDE
+# Secrets - only .env.example is committed
+.env
+.env.local
+.env.*.local
+backend/src/main/resources/application-local.yml
+backend/src/main/resources/application-local.properties
+
+# IDE / Eclipse
 .idea/
 .vscode/
 *.iml
+.classpath
+.project
+.settings/
+.metadata/
 
 # OS
 .DS_Store
