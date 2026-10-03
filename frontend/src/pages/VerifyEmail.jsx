@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import Alert from '../components/common/Alert'
 import { useAuth } from '../context/AuthContext'
 import { errorMessage } from '../services/api'
+import { ROUTES } from '../config/siteLinks'
 
 const RESEND_COOLDOWN_SECONDS = 60
 
@@ -11,7 +12,6 @@ export default function VerifyEmail() {
   const navigate = useNavigate()
   const { verifyEmail, verifyLoginOtp, resendVerification, requestLoginOtp } = useAuth()
 
-  // Passed through router state so the address is not left in history or a referrer.
   const { email = '', intent = 'verify', notice } = location.state ?? {}
 
   const [code, setCode] = useState('')
@@ -21,7 +21,7 @@ export default function VerifyEmail() {
   const [cooldown, setCooldown] = useState(0)
 
   useEffect(() => {
-    if (!email) navigate('/login', { replace: true })
+    if (!email) navigate(ROUTES.LOGIN, { replace: true })
   }, [email, navigate])
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export default function VerifyEmail() {
       } else {
         await verifyEmail(payload)
       }
-      navigate('/')
+      navigate(ROUTES.HOME)
     } catch (err) {
       setError(errorMessage(err))
       setCode('')
@@ -69,21 +69,22 @@ export default function VerifyEmail() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-900 text-slate-100 flex items-center justify-center px-4">
-      <div className="w-full max-w-sm">
-        <h1 className="text-2xl font-bold text-center mb-2">
-          {intent === 'login' ? 'Enter your sign-in code' : 'Check your email'}
-        </h1>
-        <p className="text-sm text-slate-400 text-center mb-8">
-          {intent === 'login' ? (
-            <>We sent a 6-digit code to <span className="text-slate-200">{email}</span>.</>
-          ) : (
-            <>
-              We sent a 6-digit code to <span className="text-slate-200">{email}</span>. Enter it to finish
-              setting up your account.
-            </>
-          )}
-        </p>
+    <main className="min-h-screen bg-canvas bg-dots text-ink flex items-center justify-center px-4 font-sans">
+      <div className="w-full max-w-sm card p-8 space-y-6 shadow-e2">
+        <div>
+          <h1 className="text-h2 font-display text-center mb-1.5">
+            {intent === 'login' ? 'Enter your sign-in code' : 'Check your email'}
+          </h1>
+          <p className="text-caption text-ink-muted text-center">
+            {intent === 'login' ? (
+              <>We sent a 6-digit code to <span className="font-semibold text-ink">{email}</span>.</>
+            ) : (
+              <>
+                We sent a 6-digit code to <span className="font-semibold text-ink">{email}</span>. Enter it to finish setting up your account.
+              </>
+            )}
+          </p>
+        </div>
 
         <form onSubmit={submit} className="space-y-4">
           <input
@@ -97,34 +98,34 @@ export default function VerifyEmail() {
             onChange={(event) => setCode(event.target.value.replace(/\D/g, ''))}
             placeholder="000000"
             aria-label="6-digit code"
-            className="w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-3 text-center font-mono text-2xl tracking-[0.5em] outline-none focus:border-indigo-500"
+            className="w-full rounded-md bg-surface border border-line px-3 py-3 text-center font-mono text-2xl tracking-[0.5em] tabular-nums text-ink focus-ring"
           />
 
           {error && <Alert tone="error">{error}</Alert>}
-          {info && !error && <Alert tone="success">{info}</Alert>}
+          {info && !error && <Alert tone="info">{info}</Alert>}
 
           <button
             type="submit"
             disabled={busy || code.length !== 6}
-            className="w-full rounded-lg bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 py-2.5 font-medium transition"
+            className="w-full btn-primary focus-ring font-medium py-2.5 disabled:opacity-50"
           >
             {busy ? 'Checking...' : 'Continue'}
           </button>
         </form>
 
-        <div className="mt-6 text-center">
+        <div className="text-center">
           <button
             type="button"
             onClick={resend}
             disabled={busy || cooldown > 0}
-            className="text-sm text-indigo-400 hover:text-indigo-300 disabled:text-slate-600 disabled:cursor-not-allowed"
+            className="text-caption text-accent hover:text-accent-hover disabled:text-ink-faint disabled:cursor-not-allowed focus-ring rounded px-1"
           >
             {cooldown > 0 ? `Resend available in ${cooldown}s` : "Didn't get it? Send a new code"}
           </button>
         </div>
 
-        <p className="mt-8 text-center text-xs text-slate-500">
-          <button type="button" onClick={() => navigate('/login')} className="hover:text-slate-300">
+        <p className="pt-2 text-center text-caption text-ink-faint border-t border-line">
+          <button type="button" onClick={() => navigate(ROUTES.LOGIN)} className="hover:text-ink focus-ring rounded px-1">
             Use a different account
           </button>
         </p>

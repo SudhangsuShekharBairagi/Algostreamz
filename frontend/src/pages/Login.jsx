@@ -3,9 +3,11 @@ import { Link, useNavigate } from 'react-router-dom'
 import Alert from '../components/common/Alert'
 import { useAuth } from '../context/AuthContext'
 import { errorMessage, fieldErrors } from '../services/api'
+import { SITE_NAME } from '../config'
+import { ROUTES } from '../config/siteLinks'
 
 const MODES = {
-  signin: { title: 'Sign in', cta: 'Sign in', switchTo: 'signup', switchLabel: 'Need an account? Sign up' },
+  signin: { title: 'Sign in to ' + SITE_NAME, cta: 'Sign in', switchTo: 'signup', switchLabel: 'Need an account? Sign up' },
   signup: { title: 'Create your account', cta: 'Create account', switchTo: 'signin', switchLabel: 'Already have an account? Sign in' },
 }
 
@@ -29,10 +31,10 @@ export default function Login() {
     try {
       if (mode === 'signup') {
         const message = await register({ email: form.email, password: form.password })
-        navigate('/verify-email', { state: { email: form.email, notice: message } })
+        navigate(ROUTES.VERIFY_EMAIL, { state: { email: form.email, notice: message } })
       } else {
         await login({ email: form.email, password: form.password })
-        navigate('/')
+        navigate(ROUTES.HOME)
       }
     } catch (err) {
       setError(errorMessage(err))
@@ -51,7 +53,7 @@ export default function Login() {
     setError(null)
     try {
       const message = await requestLoginOtp(form.email)
-      navigate('/verify-email', { state: { email: form.email, intent: 'login', notice: message } })
+      navigate(ROUTES.VERIFY_EMAIL, { state: { email: form.email, intent: 'login', notice: message } })
     } catch (err) {
       setError(errorMessage(err))
     } finally {
@@ -60,12 +62,14 @@ export default function Login() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-900 text-slate-100 flex items-center justify-center px-4">
-      <div className="w-full max-w-sm">
-        <h1 className="text-2xl font-bold text-center mb-2">{copy.title}</h1>
-        <p className="text-sm text-slate-400 text-center mb-8">
-          Track your progress through every visualised algorithm.
-        </p>
+    <main className="min-h-screen bg-canvas bg-dots text-ink flex items-center justify-center px-4 font-sans">
+      <div className="w-full max-w-sm card p-8 space-y-6 shadow-e2">
+        <div>
+          <h1 className="text-h2 font-display text-center mb-1.5">{copy.title}</h1>
+          <p className="text-caption text-ink-muted text-center">
+            Track your progress through every visualised algorithm.
+          </p>
+        </div>
 
         <form onSubmit={submit} className="space-y-4">
           <Field
@@ -95,7 +99,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={busy}
-            className="w-full rounded-lg bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 py-2.5 font-medium transition"
+            className="w-full btn-primary focus-ring font-medium py-2.5 disabled:opacity-50"
           >
             {busy ? 'Working...' : copy.cta}
           </button>
@@ -106,7 +110,7 @@ export default function Login() {
             type="button"
             onClick={sendCodeInstead}
             disabled={busy}
-            className="mt-4 w-full text-sm text-slate-400 hover:text-slate-200 disabled:opacity-50"
+            className="w-full text-caption text-ink-muted hover:text-ink focus-ring rounded py-1 disabled:opacity-50"
           >
             Email me a sign-in code instead
           </button>
@@ -119,13 +123,13 @@ export default function Login() {
             setError(null)
             setFields(null)
           }}
-          className="mt-6 w-full text-sm text-indigo-400 hover:text-indigo-300"
+          className="w-full text-caption text-accent hover:text-accent-hover font-medium focus-ring rounded py-1"
         >
           {copy.switchLabel}
         </button>
 
-        <p className="mt-8 text-center text-xs text-slate-500">
-          <Link to="/" className="hover:text-slate-300">
+        <p className="pt-2 text-center text-caption text-ink-faint border-t border-line">
+          <Link to={ROUTES.HOME} className="hover:text-ink focus-ring rounded px-1">
             Back to home
           </Link>
         </p>
@@ -137,21 +141,21 @@ export default function Login() {
 function Field({ id, label, hint, error, ...inputProps }) {
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium mb-1.5">
+      <label htmlFor={id} className="block text-caption font-medium mb-1 text-ink">
         {label}
       </label>
       <input
         id={id}
         aria-describedby={error ? `${id}-error` : undefined}
-        className="w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 outline-none focus:border-indigo-500"
+        className="w-full rounded-md bg-surface border border-line px-3 py-2 text-body text-ink placeholder:text-ink-faint focus-ring"
         {...inputProps}
       />
       {error ? (
-        <p id={`${id}-error`} className="mt-1 text-xs text-red-400">
+        <p id={`${id}-error`} className="mt-1 text-caption text-rose-600">
           {error}
         </p>
       ) : (
-        hint && <p className="mt-1 text-xs text-slate-500">{hint}</p>
+        hint && <p className="mt-1 text-caption text-ink-faint">{hint}</p>
       )}
     </div>
   )

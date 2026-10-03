@@ -2,33 +2,33 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import Home from './pages/Home.jsx'
 import Login from './pages/Login.jsx'
 import VerifyEmail from './pages/VerifyEmail.jsx'
+import DesignSystemPage from './pages/DesignSystemPage.jsx'
 import { useAuth } from './context/AuthContext'
+import { ROUTES } from './config/siteLinks'
 
 /** Bounces signed-out visitors to /login, remembering where they were headed. */
 function RequireAuth({ children }) {
   const { isAuthenticated, initialising } = useAuth()
-  // Hold the render until the stored token has been checked, so a reload does not
-  // bounce an authenticated user to the login screen.
   if (initialising) return null
-  return isAuthenticated ? children : <Navigate to="/login" replace />
+  return isAuthenticated ? children : <Navigate to={ROUTES.LOGIN} replace />
 }
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/verify-email" element={<VerifyEmail />} />
+      <Route path={ROUTES.HOME} element={<Home />} />
+      <Route path={ROUTES.LOGIN} element={<Login />} />
+      <Route path={ROUTES.VERIFY_EMAIL} element={<VerifyEmail />} />
+      <Route path={ROUTES.DESIGN_SYSTEM} element={<DesignSystemPage />} />
       <Route
-        path="/progress"
+        path={ROUTES.PROGRESS}
         element={
           <RequireAuth>
             <Home />
           </RequireAuth>
         }
       />
-      {/* TODO: add routes for Explorer, Compare pages */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
     </Routes>
   )
 }

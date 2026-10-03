@@ -1,0 +1,47 @@
+:root {
+  /* Color Tokens (space-separated RGB triplets for Tailwind opacity support) */
+  --canvas: 248 250 252;        /* #F8FAFC */
+  --zen-canvas: 251 250 247;    /* #FBFAF7 */
+  --surface: 255 255 255;       /* #FFFFFF */
+  --sunken: 241 245 249;        /* #F1F5F9 */
+
+  --line: 226 232 240;          /* #E2E8F0 */
+  --line-strong: 203 213 225;   /* #CBD5E1 */
+
+  --ink: 15 23 42;              /* #0F172A */
+  --ink-muted: 71 85 105;       /* #475569 */
+  --ink-faint: 100 116 139;     /* #64748B - lowest allowed text color (4.5:1 contrast against surface) */
+
+  --accent: 79 70 229;          /* #4F46E5 */
+  --accent-hover: 67 56 202;    /* #4338CA */
+  --accent-strong: 55 48 163;   /* #3730A3 */
+  --accent-soft: 238 242 255;   /* #EEF2FF */
+
+  /* Visualizer State Colors */
+  --state-compare: 251 191 36;       /* #FBBF24 */
+  --state-compare-text: 69 26 3;    /* #451A03 */
+  --state-compare-ring: 253 230 138;/* #FDE68A */
+
+  --state-swap: 225 29 72;          /* #E11D48 */
+  --state-swap-text: 255 255 255;  /* #FFFFFF */
+  --state-swap-ring: 254 205 211;   /* #FECDD3 */
+
+  --state-sorted: 5 150 105;        /* #059669 */
+  --state-sorted-text: 255 255 255;/* #FFFFFF */
+  --state-sorted-ring: 167 243 208; /* #A7F3D0 */
+
+  --state-pivot: 124 58 237;        /* #7C3AED */
+  --state-pivot-text: 255 255 255; /* #FFFFFF */
+  --state-pivot-ring: 221 214 254;  /* #DDD6FE */
+
+  /* Motion Tokens */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 320ms;
+}
+
+/* Future dark mode slot: override variables here if theme switching is enabled */
+[data-theme='dark'] {
+  /* Editorial light theme is active by default. Dark theme variable overrides can be added here. */
+}
