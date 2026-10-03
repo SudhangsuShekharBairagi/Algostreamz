@@ -213,7 +213,7 @@ export default function Navbar({ onToggleMobileSidebar, zenSlot, isZen = false }
 
           {/* GitHub Repository Link */}
           <a
-            href={GITHUB_URL}
+            href={"https://github.com/SudhangsuShekharBairagi/Algostreamz"}
             target="_blank"
             rel="noopener noreferrer"
             title={`View ${SITE_NAME} on GitHub`}
