@@ -6,159 +6,49 @@ import {
   Check,
   ShieldCheck,
   RotateCcw,
-  Sparkles,
-  Sliders,
-  Layers,
-  BarChart2,
   X,
 } from 'lucide-react'
-import { LABELS } from '../config/siteLinks'
+import { ALGORITHMS } from '../data/algorithmsData'
 
-// Comprehensive fallback dataset until metadata module is wired
-const ALGORITHM_DATASET = [
-  {
-    id: 'bubble-sort',
-    name: 'Bubble Sort',
-    category: 'Sorting',
-    tagline: 'Repeatedly steps through list, swapping adjacent elements out of order.',
-    best: 'O(N)',
-    avg: 'O(N²)',
-    worst: 'O(N²)',
-    space: 'O(1)',
-    stable: true,
-    inPlace: true,
-    href: '/visualizer/bubble-sort',
-  },
-  {
-    id: 'selection-sort',
-    name: 'Selection Sort',
-    category: 'Sorting',
-    tagline: 'Finds minimum element from unsorted portion and moves it to start.',
-    best: 'O(N²)',
-    avg: 'O(N²)',
-    worst: 'O(N²)',
-    space: 'O(1)',
-    stable: false,
-    inPlace: true,
-    href: '/visualizer/selection-sort',
-  },
-  {
-    id: 'insertion-sort',
-    name: 'Insertion Sort',
-    category: 'Sorting',
-    tagline: 'Builds sorted array one element at a time by shifting larger items.',
-    best: 'O(N)',
-    avg: 'O(N²)',
-    worst: 'O(N²)',
-    space: 'O(1)',
-    stable: true,
-    inPlace: true,
-    href: '/visualizer/insertion-sort',
-  },
-  {
-    id: 'merge-sort',
-    name: 'Merge Sort',
-    category: 'Sorting',
-    tagline: 'Divide-and-conquer algorithm that recursively splits and merges sub-lists.',
-    best: 'O(N log N)',
-    avg: 'O(N log N)',
-    worst: 'O(N log N)',
-    space: 'O(N)',
-    stable: true,
-    inPlace: false,
-    href: '/visualizer/merge-sort',
-  },
-  {
-    id: 'quick-sort',
-    name: 'Quick Sort',
-    category: 'Sorting',
-    tagline: 'Picks a pivot and partitions elements into sub-arrays around it.',
-    best: 'O(N log N)',
-    avg: 'O(N log N)',
-    worst: 'O(N²)',
-    space: 'O(log N)',
-    stable: false,
-    inPlace: true,
-    href: '/visualizer/quick-sort',
-  },
-  {
-    id: 'binary-search',
-    name: 'Binary Search',
-    category: 'Searching',
-    tagline: 'Halves sorted search interval iteratively or recursively.',
-    best: 'O(1)',
-    avg: 'O(log N)',
-    worst: 'O(log N)',
-    space: 'O(1)',
-    stable: true,
-    inPlace: true,
-    href: '/visualizer/binary-search',
-  },
-  {
-    id: 'linear-search',
-    name: 'Linear Search',
-    category: 'Searching',
-    tagline: 'Checks each element sequentially until target value is found.',
-    best: 'O(1)',
-    avg: 'O(N)',
-    worst: 'O(N)',
-    space: 'O(1)',
-    stable: true,
-    inPlace: true,
-    href: '/visualizer/linear-search',
-  },
+// Additional catalog fallback algorithms for domain coverage
+const EXTRA_ALGORITHMS = [
   {
     id: 'binary-search-tree',
     name: 'Binary Search Tree',
     category: 'Trees',
-    tagline: 'Node-based structure maintaining left-child smaller, right-child larger invariant.',
-    best: 'O(log N)',
-    avg: 'O(log N)',
-    worst: 'O(N)',
-    space: 'O(N)',
-    stable: true,
-    inPlace: true,
-    href: '/visualizer/binary-search-tree',
+    description: 'Node-based structure maintaining left-child smaller, right-child larger invariant.',
+    complexity: { best: 'O(log n)', average: 'O(log n)', worst: 'O(n)', space: 'O(n)' },
+    properties: { stable: true, inPlace: true, method: 'Tree Search' },
   },
   {
     id: 'bfs',
     name: 'Breadth-First Search',
     category: 'Graphs',
-    tagline: 'Explores graph level-by-level using a FIFO queue structure.',
-    best: 'O(V + E)',
-    avg: 'O(V + E)',
-    worst: 'O(V + E)',
-    space: 'O(V)',
-    stable: true,
-    inPlace: false,
-    href: '/visualizer/bfs',
+    description: 'Explores graph level-by-level using a FIFO queue structure.',
+    complexity: { best: 'O(V + E)', average: 'O(V + E)', worst: 'O(V + E)', space: 'O(V)' },
+    properties: { stable: true, inPlace: false, method: 'Queue Traversal' },
   },
   {
     id: 'dfs',
     name: 'Depth-First Search',
     category: 'Graphs',
-    tagline: 'Traverses graph branches as deep as possible before backtracking.',
-    best: 'O(V + E)',
-    avg: 'O(V + E)',
-    worst: 'O(V + E)',
-    space: 'O(V)',
-    stable: true,
-    inPlace: false,
-    href: '/visualizer/dfs',
+    description: 'Traverses graph branches as deep as possible before backtracking.',
+    complexity: { best: 'O(V + E)', average: 'O(V + E)', worst: 'O(V + E)', space: 'O(V)' },
+    properties: { stable: true, inPlace: false, method: 'Stack Traversal' },
   },
   {
     id: 'dijkstra',
     name: 'Dijkstra Algorithm',
     category: 'Graphs',
-    tagline: 'Calculates shortest paths from single source vertex using priority queue.',
-    best: 'O((V + E) log V)',
-    avg: 'O((V + E) log V)',
-    worst: 'O((V + E) log V)',
-    space: 'O(V)',
-    stable: true,
-    inPlace: false,
-    href: '/visualizer/dijkstra',
+    description: 'Calculates shortest paths from single source vertex using priority queue.',
+    complexity: { best: 'O((V + E) log V)', average: 'O((V + E) log V)', worst: 'O((V + E) log V)', space: 'O(V)' },
+    properties: { stable: true, inPlace: false, method: 'Greedy' },
   },
+]
+
+const ALL_CATALOG_ALGORITHMS = [
+  ...ALGORITHMS,
+  ...EXTRA_ALGORITHMS.filter((extra) => !ALGORITHMS.some((a) => a.id === extra.id)),
 ]
 
 const CATEGORIES = ['All', 'Sorting', 'Searching', 'Trees', 'Graphs']
@@ -168,17 +58,14 @@ export default function AlgorithmsPage() {
   const searchInputRef = useRef(null)
   const [loading, setLoading] = useState(true)
 
-  // Read search & category filters directly from URL query parameters
   const query = searchParams.get('q') || ''
   const selectedCat = searchParams.get('cat') || 'All'
 
-  // Simulate fast initial load for smooth skeleton transition
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 250)
+    const timer = setTimeout(() => setLoading(false), 200)
     return () => clearTimeout(timer)
   }, [])
 
-  // Global '/' keyboard shortcut listener to focus search input
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === '/' && document.activeElement !== searchInputRef.current) {
@@ -190,7 +77,6 @@ export default function AlgorithmsPage() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
-  // Sync state changes back to URL search params
   const updateFilters = (newQuery, newCat) => {
     const params = new URLSearchParams()
     if (newQuery) params.set('q', newQuery)
@@ -198,25 +84,23 @@ export default function AlgorithmsPage() {
     setSearchParams(params, { replace: true })
   }
 
-  // Filter dataset dynamically based on query and category
   const filteredAlgorithms = useMemo(() => {
-    return ALGORITHM_DATASET.filter((algo) => {
+    return ALL_CATALOG_ALGORITHMS.filter((algo) => {
       const matchesCategory = selectedCat === 'All' || algo.category === selectedCat
       const matchesSearch =
         algo.name.toLowerCase().includes(query.toLowerCase()) ||
-        algo.tagline.toLowerCase().includes(query.toLowerCase()) ||
+        algo.description.toLowerCase().includes(query.toLowerCase()) ||
         algo.category.toLowerCase().includes(query.toLowerCase())
 
       return matchesCategory && matchesSearch
     })
   }, [query, selectedCat])
 
-  // Computed summary metrics for header chips
   const metrics = useMemo(() => {
-    const categoriesSet = new Set(ALGORITHM_DATASET.map((a) => a.category))
-    const inPlaceCount = ALGORITHM_DATASET.filter((a) => a.inPlace).length
+    const categoriesSet = new Set(ALL_CATALOG_ALGORITHMS.map((a) => a.category))
+    const inPlaceCount = ALL_CATALOG_ALGORITHMS.filter((a) => a.properties?.inPlace).length
     return {
-      total: ALGORITHM_DATASET.length,
+      total: ALL_CATALOG_ALGORITHMS.length,
       categories: categoriesSet.size,
       inPlace: inPlaceCount,
     }
@@ -258,7 +142,6 @@ export default function AlgorithmsPage() {
       {/* 2. Search & Filter Bar */}
       <section className="space-y-4 bg-surface p-4 card border border-line shadow-e1">
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
-          {/* Search Input Box */}
           <div className="relative flex-1">
             <Search className="w-5 h-5 text-ink-faint absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
@@ -286,7 +169,6 @@ export default function AlgorithmsPage() {
             )}
           </div>
 
-          {/* Segmented Category Pill Tabs */}
           <div className="segmented overflow-x-auto shrink-0">
             {CATEGORIES.map((cat) => (
               <button
@@ -323,7 +205,6 @@ export default function AlgorithmsPage() {
           ))}
         </div>
       ) : filteredAlgorithms.length === 0 ? (
-        /* Empty State */
         <div className="card p-12 text-center space-y-4 max-w-[500px] mx-auto border-dashed">
           <div className="w-12 h-12 rounded-full bg-sunken text-ink-faint flex items-center justify-center mx-auto">
             <Search className="w-6 h-6" />
@@ -343,7 +224,6 @@ export default function AlgorithmsPage() {
           </button>
         </div>
       ) : (
-        /* Algorithm Cards Grid */
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[20px]">
           {filteredAlgorithms.map((algo) => (
             <div
@@ -351,7 +231,6 @@ export default function AlgorithmsPage() {
               className="card p-5 flex flex-col justify-between space-y-5 hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-e2 transition-all duration-200 ease-out-custom group"
             >
               <div className="space-y-3">
-                {/* Header: Title & Category Chip */}
                 <div className="flex items-start justify-between gap-2">
                   <h3 className="text-h3 font-semibold text-ink group-hover:text-accent transition-colors">
                     {algo.name}
@@ -359,20 +238,18 @@ export default function AlgorithmsPage() {
                   <span className="chip text-micro font-mono shrink-0">{algo.category}</span>
                 </div>
 
-                {/* Tagline */}
                 <p className="text-caption text-ink-muted line-clamp-2 leading-relaxed">
-                  {algo.tagline}
+                  {algo.description}
                 </p>
 
-                {/* Micro Badges (Stable / In-Place) */}
                 <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                  {algo.stable && (
+                  {algo.properties?.stable && (
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-emerald-200 bg-emerald-50/60 text-emerald-800 text-[11px] font-medium">
                       <Check className="w-3 h-3 text-emerald-600 stroke-[2.5]" />
                       Stable
                     </span>
                   )}
-                  {algo.inPlace && (
+                  {algo.properties?.inPlace && (
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-accent/20 bg-accent-soft text-accent-strong text-[11px] font-medium">
                       <ShieldCheck className="w-3 h-3 text-accent stroke-[2.5]" />
                       In-Place
@@ -380,27 +257,25 @@ export default function AlgorithmsPage() {
                   )}
                 </div>
 
-                {/* Complexity Matrix Pills */}
                 <div className="grid grid-cols-2 gap-2 pt-2 text-micro font-mono">
-                  <div className={`p-1.5 rounded border ${getComplexityStyle(algo.avg)} flex flex-col`}>
+                  <div className={`p-1.5 rounded border ${getComplexityStyle(algo.complexity.average)} flex flex-col`}>
                     <span className="text-[10px] text-ink-faint uppercase font-sans font-semibold">
                       Avg Time
                     </span>
-                    <span className="font-bold tabular-nums">{algo.avg}</span>
+                    <span className="font-bold tabular-nums">{algo.complexity.average}</span>
                   </div>
-                  <div className={`p-1.5 rounded border ${getComplexityStyle(algo.space)} flex flex-col`}>
+                  <div className={`p-1.5 rounded border ${getComplexityStyle(algo.complexity.space)} flex flex-col`}>
                     <span className="text-[10px] text-ink-faint uppercase font-sans font-semibold">
                       Space
                     </span>
-                    <span className="font-bold tabular-nums">{algo.space}</span>
+                    <span className="font-bold tabular-nums">{algo.complexity.space}</span>
                   </div>
                 </div>
               </div>
 
-              {/* Primary Action Button */}
               <div className="pt-2">
                 <Link
-                  to={algo.href}
+                  to={`/visualizer/${algo.id}`}
                   className="btn-primary w-full flex items-center justify-center gap-2 text-caption font-semibold focus-ring group/btn shadow-e1"
                 >
                   <span>Launch Visualizer</span>
@@ -415,12 +290,6 @@ export default function AlgorithmsPage() {
   )
 }
 
-/**
- * Returns exact semantic color styling based on Big-O notation
- * - O(1) & O(log n): emerald-50 bg, emerald-700 text, emerald-200 border
- * - O(n) & O(n log n): sky-50 bg, sky-700 text, sky-200 border
- * - O(n^2) & worse: amber-50 bg, amber-800 text, amber-200 border
- */
 function getComplexityStyle(notation) {
   if (!notation) return 'bg-sunken text-ink-muted border-line'
   const clean = notation.toLowerCase().replace(/\s+/g, '')

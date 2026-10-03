@@ -4,7 +4,7 @@ import { Sun, Menu, ChevronRight, ArrowRight } from 'lucide-react'
 import { FaGithub } from 'react-icons/fa'
 import ZenToggle from '../common/ZenToggle'
 import Logo from '../common/Logo'
-import { SITE_NAME, GITHUB_URL } from '../../config'
+import { SITE_NAME } from '../../config'
 import { SITE_LINKS, LABELS, ROUTES } from '../../config/siteLinks'
 
 export default function Navbar({ onToggleMobileSidebar, zenSlot, isZen = false }) {
@@ -123,7 +123,7 @@ export default function Navbar({ onToggleMobileSidebar, zenSlot, isZen = false }
           {breadcrumbs && breadcrumbs.length > 0 && (
             <div className="hidden sm:flex items-center gap-1.5 pl-3 border-l border-line text-caption font-medium">
               {breadcrumbs.map((item, index) => (
-                <div key={item.href} className="flex items-center gap-1.5">
+                <div key={`breadcrumb-${item.label}-${index}`} className="flex items-center gap-1.5">
                   {index > 0 && <ChevronRight className="w-3.5 h-3.5 text-ink-faint" />}
                   <span
                     className={

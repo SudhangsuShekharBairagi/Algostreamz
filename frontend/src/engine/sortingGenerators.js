@@ -1,3 +1,5 @@
+import { generateMergeSortSteps, generateQuickSortSteps } from './advancedSorting'
+
 /**
  * Pure JavaScript step generators for Sorting Algorithms.
  *
@@ -411,7 +413,7 @@ export function generateInsertionSortSteps(initialArray = []) {
 /**
  * Dispatcher function to generate steps for any supported sorting algorithm.
  *
- * @param {'bubble-sort' | 'selection-sort' | 'insertion-sort'} algorithmId
+ * @param {'bubble-sort' | 'selection-sort' | 'insertion-sort' | 'merge-sort' | 'quick-sort'} algorithmId
  * @param {number[]} initialArray
  * @returns {Array<import('./stepTypes').Step>}
  */
@@ -423,6 +425,10 @@ export function generateSortingSteps(algorithmId, initialArray) {
       return generateSelectionSortSteps(initialArray)
     case 'insertion-sort':
       return generateInsertionSortSteps(initialArray)
+    case 'merge-sort':
+      return generateMergeSortSteps(initialArray)
+    case 'quick-sort':
+      return generateQuickSortSteps(initialArray)
     default:
       throw new Error(`Unsupported sorting algorithm ID: "${algorithmId}"`)
   }
@@ -432,5 +438,7 @@ export default {
   generateBubbleSortSteps,
   generateSelectionSortSteps,
   generateInsertionSortSteps,
+  generateMergeSortSteps,
+  generateQuickSortSteps,
   generateSortingSteps,
 }

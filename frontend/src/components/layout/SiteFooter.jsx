@@ -43,7 +43,7 @@ export default function SiteFooter() {
             </p>
             <div className="pt-1">
               <a
-                href={GITHUB_URL}
+                href={"https://github.com/SudhangsuShekharBairagi/Algostreamz"}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`${SITE_NAME} GitHub Repository`}
@@ -175,7 +175,7 @@ export default function SiteFooter() {
 
         {/* Bottom Bar */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-caption text-ink-faint pt-2">
-          <p>© {currentYear} {SITE_NAME}. Built as a minor project.</p>
+          <p>© {currentYear} {SITE_NAME}. All rights reserved.</p>
 
           <button
             type="button"

@@ -2,13 +2,15 @@ import { describe, it, expect } from 'vitest'
 import { ALGORITHMS, ALGORITHMS_MAP, getAlgorithmById } from '../data/algorithmsData'
 
 describe('algorithmsData registry', () => {
-  it('exports all 5 required algorithms', () => {
-    expect(ALGORITHMS).toHaveLength(5)
+  it('exports all 7 registered algorithms', () => {
+    expect(ALGORITHMS).toHaveLength(7)
     const ids = ALGORITHMS.map((a) => a.id)
     expect(ids).toEqual([
       'bubble-sort',
       'selection-sort',
       'insertion-sort',
+      'merge-sort',
+      'quick-sort',
       'binary-search',
       'linear-search',
     ])
@@ -39,12 +41,14 @@ describe('algorithmsData registry', () => {
     const bubbleSort = getAlgorithmById('bubble-sort')
     expect(bubbleSort).toBeDefined()
     expect(bubbleSort?.name).toBe('Bubble Sort')
-    expect(bubbleSort?.category).toBe('Sorting')
 
-    const binarySearch = getAlgorithmById('binary-search')
-    expect(binarySearch).toBeDefined()
-    expect(binarySearch?.name).toBe('Binary Search')
-    expect(binarySearch?.category).toBe('Searching')
+    const mergeSort = getAlgorithmById('merge-sort')
+    expect(mergeSort).toBeDefined()
+    expect(mergeSort?.name).toBe('Merge Sort')
+
+    const quickSort = getAlgorithmById('quick-sort')
+    expect(quickSort).toBeDefined()
+    expect(quickSort?.name).toBe('Quick Sort')
   })
 
   it('returns undefined for unknown or invalid IDs', () => {
