@@ -1,12 +1,22 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
-import Home from './pages/Home.jsx'
-import Login from './pages/Login.jsx'
-import VerifyEmail from './pages/VerifyEmail.jsx'
-import DesignSystemPage from './pages/DesignSystemPage.jsx'
+import AppShell from './components/layout/AppShell'
+import LandingPage from './pages/LandingPage'
+import AlgorithmsPage from './pages/AlgorithmsPage'
+import VisualizerPage from './pages/VisualizerPage'
+import PlaygroundPage from './pages/PlaygroundPage'
+import RaceModePage from './pages/RaceModePage'
+import ExperimentPage from './pages/ExperimentPage'
+import ChallengesPage from './pages/ChallengesPage'
+import ProgressPage from './pages/ProgressPage'
+import ContactPage from './pages/ContactPage'
+import DesignSystemPage from './pages/DesignSystemPage'
+import Login from './pages/Login'
+import VerifyEmail from './pages/VerifyEmail'
+import NotFoundPage from './pages/NotFoundPage'
 import { useAuth } from './context/AuthContext'
 import { ROUTES } from './config/siteLinks'
 
-/** Bounces signed-out visitors to /login, remembering where they were headed. */
+/** RequireAuth wrapper to guard protected routes */
 function RequireAuth({ children }) {
   const { isAuthenticated, initialising } = useAuth()
   if (initialising) return null
@@ -16,19 +26,31 @@ function RequireAuth({ children }) {
 function App() {
   return (
     <Routes>
-      <Route path={ROUTES.HOME} element={<Home />} />
+      {/* Standalone Auth Pages */}
       <Route path={ROUTES.LOGIN} element={<Login />} />
       <Route path={ROUTES.VERIFY_EMAIL} element={<VerifyEmail />} />
-      <Route path={ROUTES.DESIGN_SYSTEM} element={<DesignSystemPage />} />
-      <Route
-        path={ROUTES.PROGRESS}
-        element={
-          <RequireAuth>
-            <Home />
-          </RequireAuth>
-        }
-      />
-      <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
+
+      {/* Main Application Layout Shell */}
+      <Route element={<AppShell />}>
+        <Route path={ROUTES.HOME} element={<LandingPage />} />
+        <Route path={ROUTES.ALGORITHMS} element={<AlgorithmsPage />} />
+        <Route path={ROUTES.VISUALIZER} element={<VisualizerPage />} />
+        <Route path={ROUTES.PLAYGROUND} element={<PlaygroundPage />} />
+        <Route path={ROUTES.RACE} element={<RaceModePage />} />
+        <Route path={ROUTES.EXPERIMENT} element={<ExperimentPage />} />
+        <Route path={ROUTES.CHALLENGES} element={<ChallengesPage />} />
+        <Route
+          path={ROUTES.PROGRESS}
+          element={
+            <RequireAuth>
+              <ProgressPage />
+            </RequireAuth>
+          }
+        />
+        <Route path={ROUTES.CONTACT} element={<ContactPage />} />
+        <Route path={ROUTES.DESIGN_SYSTEM} element={<DesignSystemPage />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Route>
     </Routes>
   )
 }

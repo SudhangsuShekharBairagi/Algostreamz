@@ -1,13 +1,19 @@
 /**
- * Global site configurations for Algostreamz.
- * All core brand names and platform meta constants are defined here.
+ * Central Brand Configuration for Algostreamz.
+ * Single source of truth for site name, tagline, email, and repository URLs.
  */
 export const SITE_NAME = 'Algostreamz'
-export const SITE_TAGLINE = 'Interactive Data Structures & Algorithms Visualization Platform'
-export const SITE_DESCRIPTION = 'Master algorithms and data structures through crisp, editorial step-by-step visualizations.'
+export const TAGLINE = 'Watch algorithms think, one step at a time.'
+export const CONTACT_EMAIL = 'hello@algostreamz.com'
+export const GITHUB_URL = 'https://github.com/algostreamz/algostreamz'
+export const SITE_DESCRIPTION = 'Interactive data structures and algorithms visualization platform with editorial step-by-step tracing.'
 
-export default {
-  SITE_NAME,
-  SITE_TAGLINE,
-  SITE_DESCRIPTION,
+export const config = {
+  siteName: SITE_NAME,
+  tagline: TAGLINE,
+  contactEmail: CONTACT_EMAIL,
+  githubUrl: GITHUB_URL,
+  description: SITE_DESCRIPTION,
 }
+
+export default config

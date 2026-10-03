@@ -7,14 +7,20 @@ import '@fontsource-variable/jetbrains-mono'
 
 import App from './App.jsx'
 import { AuthProvider } from './context/AuthContext'
+import { ThemeProvider } from './context/ThemeContext'
+import { ZenProvider } from './context/ZenContext'
 import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
+      <ThemeProvider>
+        <ZenProvider>
+          <AuthProvider>
+            <App />
+          </AuthProvider>
+        </ZenProvider>
+      </ThemeProvider>
     </BrowserRouter>
   </React.StrictMode>,
 )
