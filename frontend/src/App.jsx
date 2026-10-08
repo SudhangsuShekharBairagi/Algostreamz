@@ -1,26 +1,27 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
-import AppShell from './components/layout/AppShell'
-import LandingPage from './pages/LandingPage'
-import AlgorithmsPage from './pages/AlgorithmsPage'
-import VisualizerPage from './pages/VisualizerPage'
-import PlaygroundPage from './pages/PlaygroundPage'
-import RaceModePage from './pages/RaceModePage'
-import ExperimentPage from './pages/ExperimentPage'
-import ChallengesPage from './pages/ChallengesPage'
-import ProgressPage from './pages/ProgressPage'
-import ContactPage from './pages/ContactPage'
-import DesignSystemPage from './pages/DesignSystemPage'
-import Login from './pages/Login'
-import VerifyEmail from './pages/VerifyEmail'
-import NotFoundPage from './pages/NotFoundPage'
-import { useAuth } from './context/AuthContext'
-import { ROUTES } from './config/siteLinks'
+import { Routes, Route, Navigate } from "react-router-dom";
+import AppShell from "./components/layout/AppShell";
+import LandingPage from "./pages/LandingPage";
+import AlgorithmsPage from "./pages/AlgorithmsPage";
+import VisualizerPage from "./pages/VisualizerPage";
+import PlaygroundPage from "./pages/PlaygroundPage";
+import RaceModePage from "./pages/RaceModePage";
+import ExperimentPage from "./pages/ExperimentPage";
+import ChallengesPage from "./pages/ChallengesPage";
+import ProgressPage from "./pages/ProgressPage";
+import ProfilePage from "./pages/ProfilePage";
+import ContactPage from "./pages/ContactPage";
+import DesignSystemPage from "./pages/DesignSystemPage";
+import Login from "./pages/Login";
+import VerifyEmail from "./pages/VerifyEmail";
+import NotFoundPage from "./pages/NotFoundPage";
+import { useAuth } from "./context/AuthContext";
+import { ROUTES } from "./config/siteLinks";
 
 /** RequireAuth wrapper to guard protected routes */
 function RequireAuth({ children }) {
-  const { isAuthenticated, initialising } = useAuth()
-  if (initialising) return null
-  return isAuthenticated ? children : <Navigate to={ROUTES.LOGIN} replace />
+  const { isAuthenticated, initialising } = useAuth();
+  if (initialising) return null;
+  return isAuthenticated ? children : <Navigate to={ROUTES.LOGIN} replace />;
 }
 
 function App() {
@@ -47,12 +48,20 @@ function App() {
             </RequireAuth>
           }
         />
+        <Route
+          path={ROUTES.PROFILE}
+          element={
+            <RequireAuth>
+              <ProfilePage />
+            </RequireAuth>
+          }
+        />
         <Route path={ROUTES.CONTACT} element={<ContactPage />} />
         <Route path={ROUTES.DESIGN_SYSTEM} element={<DesignSystemPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
-  )
+  );
 }
 
-export default App
+export default App;

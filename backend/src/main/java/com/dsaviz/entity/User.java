@@ -20,7 +20,22 @@ public class User {
     @Column(nullable = false)
     private String passwordHash;
 
-    private String avatarUrl; // Cloudinary URL
+    @Column(length = 80)
+    private String displayName;
+
+    @Column(length = 500)
+    private String bio;
+
+    @Column(length = 2048)
+    private String avatarUrl;
+
+    @Column(length = 120)
+    private String college;
+
+    private Integer studyYear;
+
+    @Column(length = 120)
+    private String location;
 
     @Column(nullable = false)
     private boolean emailVerified = false;
@@ -63,12 +78,52 @@ public class User {
         this.passwordHash = passwordHash;
     }
 
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
     public String getAvatarUrl() {
         return avatarUrl;
     }
 
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
+    }
+
+    public String getCollege() {
+        return college;
+    }
+
+    public void setCollege(String college) {
+        this.college = college;
+    }
+
+    public Integer getStudyYear() {
+        return studyYear;
+    }
+
+    public void setStudyYear(Integer studyYear) {
+        this.studyYear = studyYear;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public boolean isEmailVerified() {

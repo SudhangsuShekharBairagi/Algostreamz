@@ -8,16 +8,24 @@ public record UserResponse(
         Long id,
         String email,
         boolean emailVerified,
+        String displayName,
+        String bio,
         String avatarUrl,
-        Instant createdAt
-) {
+        String college,
+        Integer studyYear,
+        String location,
+        Instant createdAt) {
     public static UserResponse from(User user) {
         return new UserResponse(
                 user.getId(),
                 user.getEmail(),
                 user.isEmailVerified(),
+                user.getDisplayName(),
+                user.getBio(),
                 user.getAvatarUrl(),
-                user.getCreatedAt()
-        );
+                user.getCollege(),
+                user.getStudyYear(),
+                user.getLocation(),
+                user.getCreatedAt());
     }
 }

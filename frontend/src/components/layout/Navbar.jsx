@@ -1,106 +1,116 @@
-import { useState, useEffect } from 'react'
-import { Link, useLocation } from 'react-router-dom'
-import { Sun, Menu, ChevronRight, ArrowRight } from 'lucide-react'
-import { FaGithub } from 'react-icons/fa'
-import ZenToggle from '../common/ZenToggle'
-import Logo from '../common/Logo'
-import { SITE_NAME } from '../../config'
-import { SITE_LINKS, LABELS, ROUTES } from '../../config/siteLinks'
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Sun, Menu, ChevronRight, ArrowRight, UserRound } from "lucide-react";
+import { FaGithub } from "react-icons/fa";
+import ZenToggle from "../common/ZenToggle";
+import Logo from "../common/Logo";
+import { SITE_NAME } from "../../config";
+import { SITE_LINKS, LABELS, ROUTES } from "../../config/siteLinks";
+import { useAuth } from "../../context/AuthContext";
 
-export default function Navbar({ onToggleMobileSidebar, zenSlot, isZen = false }) {
-  const location = useLocation()
-  const currentPath = location.pathname
-  const isLandingPage = currentPath === ROUTES.HOME
+export default function Navbar({
+  onToggleMobileSidebar,
+  zenSlot,
+  isZen = false,
+}) {
+  const location = useLocation();
+  const { user } = useAuth();
+  const currentPath = location.pathname;
+  const isLandingPage = currentPath === ROUTES.HOME;
 
-  const [scrolled, setScrolled] = useState(false)
-  const [activeAnchor, setActiveAnchor] = useState('')
+  const [scrolled, setScrolled] = useState(false);
+  const [activeAnchor, setActiveAnchor] = useState("");
 
   // 1. Scroll listener for landing page header transparency
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 16)
-    }
+      setScrolled(window.scrollY > 16);
+    };
 
-    handleScroll()
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // 2. IntersectionObserver to highlight active anchor on Landing Page ('/')
   useEffect(() => {
-    if (!isLandingPage) return undefined
+    if (!isLandingPage) return undefined;
 
-    const sectionIds = SITE_LINKS.anchors.map((a) => a.targetId)
+    const sectionIds = SITE_LINKS.anchors.map((a) => a.targetId);
     const observerCallback = (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          setActiveAnchor(`#${entry.target.id}`)
+          setActiveAnchor(`#${entry.target.id}`);
         }
-      })
-    }
+      });
+    };
 
     const observer = new IntersectionObserver(observerCallback, {
-      rootMargin: '-20% 0px -60% 0px',
+      rootMargin: "-20% 0px -60% 0px",
       threshold: 0,
-    })
+    });
 
     sectionIds.forEach((id) => {
-      const el = document.getElementById(id)
-      if (el) observer.observe(el)
-    })
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
 
-    return () => observer.disconnect()
-  }, [isLandingPage])
+    return () => observer.disconnect();
+  }, [isLandingPage]);
 
   // Helper to format breadcrumb from pathname
   const getBreadcrumbs = () => {
-    if (isLandingPage) return null
+    if (isLandingPage) return null;
 
-    const segments = currentPath.split('/').filter(Boolean)
-    const breadcrumbItems = []
+    const segments = currentPath.split("/").filter(Boolean);
+    const breadcrumbItems = [];
 
-    if (segments[0] === 'visualizer' && segments[1]) {
+    if (segments[0] === "visualizer" && segments[1]) {
       const formattedName = segments[1]
-        .split('-')
+        .split("-")
         .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-        .join(' ')
-      breadcrumbItems.push({ label: 'Visualizer', href: ROUTES.DEFAULT_VISUALIZER })
-      breadcrumbItems.push({ label: formattedName, href: currentPath })
+        .join(" ");
+      breadcrumbItems.push({
+        label: "Visualizer",
+        href: ROUTES.DEFAULT_VISUALIZER,
+      });
+      breadcrumbItems.push({ label: formattedName, href: currentPath });
     } else if (segments[0]) {
-      const formattedName = segments[0].charAt(0).toUpperCase() + segments[0].slice(1)
-      breadcrumbItems.push({ label: formattedName, href: currentPath })
+      const formattedName =
+        segments[0].charAt(0).toUpperCase() + segments[0].slice(1);
+      breadcrumbItems.push({ label: formattedName, href: currentPath });
     }
 
-    return breadcrumbItems
-  }
+    return breadcrumbItems;
+  };
 
-  const breadcrumbs = getBreadcrumbs()
+  const breadcrumbs = getBreadcrumbs();
 
   // Smooth scroll helper for landing anchors
   const handleAnchorClick = (e, href) => {
-    if (isLandingPage && href.startsWith('#')) {
-      e.preventDefault()
-      const targetId = href.replace('#', '')
-      const el = document.getElementById(targetId)
+    if (isLandingPage && href.startsWith("#")) {
+      e.preventDefault();
+      const targetId = href.replace("#", "");
+      const el = document.getElementById(targetId);
       if (el) {
-        el.scrollIntoView({ behavior: 'smooth' })
-        window.history.pushState(null, '', href)
+        el.scrollIntoView({ behavior: "smooth" });
+        window.history.pushState(null, "", href);
       }
     }
-  }
+  };
 
   return (
     <header
-      inert={isZen ? '' : undefined}
+      inert={isZen ? "" : undefined}
       aria-hidden={isZen}
       className={`sticky top-0 z-30 h-14 transition-all duration-300 ease-out-custom ${
         isZen
-          ? '-translate-y-full opacity-0 pointer-events-none'
-          : 'translate-y-0 opacity-100'
+          ? "-translate-y-full opacity-0 pointer-events-none"
+          : "translate-y-0 opacity-100"
       } ${
         isLandingPage && !scrolled
-          ? 'bg-transparent border-transparent'
-          : 'bg-canvas/80 backdrop-blur-md border-b border-line'
+          ? "bg-transparent border-transparent"
+          : "bg-canvas/80 backdrop-blur-md border-b border-line"
       }`}
     >
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between gap-4">
@@ -123,13 +133,18 @@ export default function Navbar({ onToggleMobileSidebar, zenSlot, isZen = false }
           {breadcrumbs && breadcrumbs.length > 0 && (
             <div className="hidden sm:flex items-center gap-1.5 pl-3 border-l border-line text-caption font-medium">
               {breadcrumbs.map((item, index) => (
-                <div key={`breadcrumb-${item.label}-${index}`} className="flex items-center gap-1.5">
-                  {index > 0 && <ChevronRight className="w-3.5 h-3.5 text-ink-faint" />}
+                <div
+                  key={`breadcrumb-${item.label}-${index}`}
+                  className="flex items-center gap-1.5"
+                >
+                  {index > 0 && (
+                    <ChevronRight className="w-3.5 h-3.5 text-ink-faint" />
+                  )}
                   <span
                     className={
                       index === breadcrumbs.length - 1
-                        ? 'text-ink font-semibold'
-                        : 'text-ink-muted hover:text-ink'
+                        ? "text-ink font-semibold"
+                        : "text-ink-muted hover:text-ink"
                     }
                   >
                     {item.label}
@@ -145,7 +160,7 @@ export default function Navbar({ onToggleMobileSidebar, zenSlot, isZen = false }
           {isLandingPage
             ? /* 1. Landing Page Section Anchor Links */
               SITE_LINKS.anchors.map((anchor) => {
-                const isActive = activeAnchor === anchor.href
+                const isActive = activeAnchor === anchor.href;
                 return (
                   <a
                     key={anchor.href}
@@ -153,19 +168,20 @@ export default function Navbar({ onToggleMobileSidebar, zenSlot, isZen = false }
                     onClick={(e) => handleAnchorClick(e, anchor.href)}
                     className={`relative flex items-center h-full text-caption font-medium transition-colors focus-ring px-1 ${
                       isActive
-                        ? 'text-ink font-semibold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-accent'
-                        : 'text-ink-muted hover:text-ink'
+                        ? "text-ink font-semibold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-accent"
+                        : "text-ink-muted hover:text-ink"
                     }`}
                   >
                     {anchor.label}
                   </a>
-                )
+                );
               })
             : /* 2. Primary Application Navigation Links */
               SITE_LINKS.primary.map((link) => {
                 const isActive =
                   currentPath === link.href ||
-                  (link.href.startsWith('/visualizer') && currentPath.startsWith('/visualizer'))
+                  (link.href.startsWith("/visualizer") &&
+                    currentPath.startsWith("/visualizer"));
 
                 return (
                   <Link
@@ -173,18 +189,31 @@ export default function Navbar({ onToggleMobileSidebar, zenSlot, isZen = false }
                     to={link.href}
                     className={`relative flex items-center h-full text-caption font-medium transition-colors focus-ring px-1 ${
                       isActive
-                        ? 'text-ink font-semibold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-accent'
-                        : 'text-ink-muted hover:text-ink'
+                        ? "text-ink font-semibold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-accent"
+                        : "text-ink-muted hover:text-ink"
                     }`}
                   >
                     {link.label}
                   </Link>
-                )
+                );
               })}
         </nav>
 
         {/* Far Right Action Items */}
         <div className="flex items-center gap-2">
+          {user && (
+            <Link
+              to={ROUTES.PROFILE}
+              aria-label={`Open profile for ${user.displayName || user.email}`}
+              title="Profile"
+              className="btn-ghost inline-flex min-h-10 items-center gap-2 border border-line px-2.5 text-caption font-medium text-ink-muted hover:text-ink focus-ring"
+            >
+              <UserRound className="h-4 w-4 text-accent" />
+              <span className="hidden max-w-32 truncate sm:inline">
+                {user.displayName || "Profile"}
+              </span>
+            </Link>
+          )}
           {/* Landing CTA Button */}
           {isLandingPage ? (
             <Link
@@ -225,5 +254,5 @@ export default function Navbar({ onToggleMobileSidebar, zenSlot, isZen = false }
         </div>
       </div>
     </header>
-  )
+  );
 }

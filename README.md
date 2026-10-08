@@ -14,6 +14,7 @@ visualization of data structures and algorithms.
 ## Getting started
 
 ### Frontend
+
 ```bash
 cd frontend
 npm install
@@ -21,38 +22,44 @@ npm run dev
 ```
 
 ### Backend
+
 ```bash
 cd backend
 cp .env.example .env      # then fill it in
 ./mvnw spring-boot:run
 ```
+
 A Maven wrapper is included, so no local Maven install is needed. Copy
 `backend/.env.example` to `backend/.env` and set at minimum the database, SMTP, and
 `JWT_SECRET` values — see **[docs/auth-api.md](docs/auth-api.md)** for the full walkthrough,
 including Brevo setup and deployment.
 
 ### Authentication
+
 Email + password with one-time-code email verification and JWT sessions.
 Endpoints, error format, design decisions and known gaps:
 **[docs/auth-api.md](docs/auth-api.md)**.
+Profile fields, password changes, and account deletion:
+**[docs/profile-api.md](docs/profile-api.md)**.
 
 ```bash
 cd backend && ./mvnw test    # 12 integration tests, no external services needed
 ```
 
 ## Deployment
+
 `backend/Dockerfile` builds a stateless image that honours `PORT` and `DATABASE_URL`, so it
 runs unchanged on Render, Railway, Fly.io or a plain VM. Health check:
 `GET /actuator/health`.
 
 ## Team
 
-| Module                              | Owner   |
-|--------------------------------------|---------|
-| Sorting & searching visualizers      |         |
-| Data structure & graph visualizers   |         |
-| Backend (auth, progress API)         |         |
-| Cloudinary / email / deployment      |         |
+| Module                             | Owner |
+| ---------------------------------- | ----- |
+| Sorting & searching visualizers    |       |
+| Data structure & graph visualizers |       |
+| Backend (auth, progress API)       |       |
+| Cloudinary / email / deployment    |       |
 
 ## Branching
 
