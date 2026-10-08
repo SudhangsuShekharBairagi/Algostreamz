@@ -1,13 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import {
-  Search,
-  ArrowRight,
-  Check,
-  ShieldCheck,
-  RotateCcw,
-  X,
-} from 'lucide-react'
+import { Search, ArrowRight, Check, ShieldCheck, RotateCcw, X } from 'lucide-react'
 import { ALGORITHMS } from '../data/algorithmsData'
 
 // Additional catalog fallback algorithms for domain coverage
@@ -17,7 +10,12 @@ const EXTRA_ALGORITHMS = [
     name: 'Binary Search Tree',
     category: 'Trees',
     description: 'Node-based structure maintaining left-child smaller, right-child larger invariant.',
-    complexity: { best: 'O(log n)', average: 'O(log n)', worst: 'O(n)', space: 'O(n)' },
+    complexity: {
+      best: 'O(log n)',
+      average: 'O(log n)',
+      worst: 'O(n)',
+      space: 'O(n)',
+    },
     properties: { stable: true, inPlace: true, method: 'Tree Search' },
   },
   {
@@ -25,7 +23,12 @@ const EXTRA_ALGORITHMS = [
     name: 'Breadth-First Search',
     category: 'Graphs',
     description: 'Explores graph level-by-level using a FIFO queue structure.',
-    complexity: { best: 'O(V + E)', average: 'O(V + E)', worst: 'O(V + E)', space: 'O(V)' },
+    complexity: {
+      best: 'O(V + E)',
+      average: 'O(V + E)',
+      worst: 'O(V + E)',
+      space: 'O(V)',
+    },
     properties: { stable: true, inPlace: false, method: 'Queue Traversal' },
   },
   {
@@ -33,7 +36,12 @@ const EXTRA_ALGORITHMS = [
     name: 'Depth-First Search',
     category: 'Graphs',
     description: 'Traverses graph branches as deep as possible before backtracking.',
-    complexity: { best: 'O(V + E)', average: 'O(V + E)', worst: 'O(V + E)', space: 'O(V)' },
+    complexity: {
+      best: 'O(V + E)',
+      average: 'O(V + E)',
+      worst: 'O(V + E)',
+      space: 'O(V)',
+    },
     properties: { stable: true, inPlace: false, method: 'Stack Traversal' },
   },
   {
@@ -41,7 +49,12 @@ const EXTRA_ALGORITHMS = [
     name: 'Dijkstra Algorithm',
     category: 'Graphs',
     description: 'Calculates shortest paths from single source vertex using priority queue.',
-    complexity: { best: 'O((V + E) log V)', average: 'O((V + E) log V)', worst: 'O((V + E) log V)', space: 'O(V)' },
+    complexity: {
+      best: 'O((V + E) log V)',
+      average: 'O((V + E) log V)',
+      worst: 'O((V + E) log V)',
+      space: 'O(V)',
+    },
     properties: { stable: true, inPlace: false, method: 'Greedy' },
   },
 ]
@@ -51,7 +64,7 @@ const ALL_CATALOG_ALGORITHMS = [
   ...EXTRA_ALGORITHMS.filter((extra) => !ALGORITHMS.some((a) => a.id === extra.id)),
 ]
 
-const CATEGORIES = ['All', 'Sorting', 'Searching', 'Trees', 'Graphs']
+const CATEGORIES = ['All', 'Sorting', 'Searching', 'Data Structures', 'Trees', 'Graphs']
 
 export default function AlgorithmsPage() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -111,9 +124,7 @@ export default function AlgorithmsPage() {
       {/* 1. Header Section */}
       <section className="space-y-4 max-w-[72ch]">
         <div className="space-y-2">
-          <span className="chip text-accent font-semibold text-micro uppercase tracking-wider">
-            Module Directory
-          </span>
+          <span className="chip text-accent font-semibold text-micro uppercase tracking-wider">Module Directory</span>
           <h1 className="text-display-xl font-display font-semibold text-ink tracking-tight">
             Algorithm Catalog & Workbench
           </h1>
@@ -130,9 +141,7 @@ export default function AlgorithmsPage() {
           <span className="chip font-medium text-ink">
             <strong>{metrics.categories}</strong> Categories
           </span>
-          <span className="chip text-accent font-medium bg-accent-soft border-accent/20">
-            Step-by-step tracing
-          </span>
+          <span className="chip text-accent font-medium bg-accent-soft border-accent/20">Step-by-step tracing</span>
           <span className="chip font-medium text-ink-muted">
             <strong>{metrics.inPlace}</strong> In-Place
           </span>
@@ -175,9 +184,7 @@ export default function AlgorithmsPage() {
                 key={cat}
                 onClick={() => updateFilters(query, cat)}
                 data-selected={selectedCat === cat}
-                className={`segmented-option focus-ring whitespace-nowrap ${
-                  selectedCat === cat ? 'selected' : ''
-                }`}
+                className={`segmented-option focus-ring whitespace-nowrap ${selectedCat === cat ? 'selected' : ''}`}
               >
                 {cat}
               </button>
@@ -212,7 +219,8 @@ export default function AlgorithmsPage() {
           <div className="space-y-1">
             <h2 className="text-h3 font-semibold text-ink">No algorithms match your search</h2>
             <p className="text-caption text-ink-muted">
-              We couldn&apos;t find any algorithms matching &quot;{query}&quot; in the &quot;{selectedCat}&quot; category.
+              We couldn&apos;t find any algorithms matching &quot;{query}&quot; in the &quot;{selectedCat}&quot;
+              category.
             </p>
           </div>
           <button
@@ -238,9 +246,7 @@ export default function AlgorithmsPage() {
                   <span className="chip text-micro font-mono shrink-0">{algo.category}</span>
                 </div>
 
-                <p className="text-caption text-ink-muted line-clamp-2 leading-relaxed">
-                  {algo.description}
-                </p>
+                <p className="text-caption text-ink-muted line-clamp-2 leading-relaxed">{algo.description}</p>
 
                 <div className="flex flex-wrap items-center gap-1.5 pt-1">
                   {algo.properties?.stable && (
@@ -259,15 +265,11 @@ export default function AlgorithmsPage() {
 
                 <div className="grid grid-cols-2 gap-2 pt-2 text-micro font-mono">
                   <div className={`p-1.5 rounded border ${getComplexityStyle(algo.complexity.average)} flex flex-col`}>
-                    <span className="text-[10px] text-ink-faint uppercase font-sans font-semibold">
-                      Avg Time
-                    </span>
+                    <span className="text-[10px] text-ink-faint uppercase font-sans font-semibold">Avg Time</span>
                     <span className="font-bold tabular-nums">{algo.complexity.average}</span>
                   </div>
                   <div className={`p-1.5 rounded border ${getComplexityStyle(algo.complexity.space)} flex flex-col`}>
-                    <span className="text-[10px] text-ink-faint uppercase font-sans font-semibold">
-                      Space
-                    </span>
+                    <span className="text-[10px] text-ink-faint uppercase font-sans font-semibold">Space</span>
                     <span className="font-bold tabular-nums">{algo.complexity.space}</span>
                   </div>
                 </div>

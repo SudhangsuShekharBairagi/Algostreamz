@@ -15,18 +15,13 @@ import ZenCaption from '../components/visualizer/ZenCaption'
 import ZenDock from '../components/visualizer/ZenDock'
 import ZenPseudocodeSheet from '../components/visualizer/ZenPseudocodeSheet'
 import ZenShortcutsOverlay from '../components/visualizer/ZenShortcutsOverlay'
+import StructureVisualizer from '../components/visualizers/structures/StructureVisualizer'
 
 export default function VisualizerPage() {
   const { algorithmId = 'bubble-sort' } = useParams()
   const algorithm = getAlgorithmById(algorithmId)
 
-  const {
-    isZen,
-    toggleZen,
-    exitZen,
-    controlsVisible,
-    announceMessage,
-  } = useZen()
+  const { isZen, toggleZen, exitZen, controlsVisible, announceMessage } = useZen()
 
   // Local Zen toggle states for overlay elements
   const [showPseudocodeSheet, setShowPseudocodeSheet] = useState(false)
@@ -63,6 +58,7 @@ export default function VisualizerPage() {
       if (algorithm.category === 'Searching') {
         return generateSearchingSteps(algorithm.id, dataset, searchTarget)
       }
+      if (algorithm.category === 'Data Structures') return []
       return generateSortingSteps('bubble-sort', dataset)
     } catch {
       return generateSortingSteps('bubble-sort', dataset)
@@ -150,6 +146,10 @@ export default function VisualizerPage() {
     return <Navigate to={ROUTES.ALGORITHMS} replace />
   }
 
+  if (algorithm.category === 'Data Structures') {
+    return <StructureVisualizer key={algorithm.id} algorithm={algorithm} />
+  }
+
   const values = currentStep?.values || dataset
   const highlightedIndices = currentStep?.highlightedIndices || {}
   const activeLine = currentStep?.pseudocodeLine || 1
@@ -166,13 +166,15 @@ export default function VisualizerPage() {
         />
 
         {/* Screen Reader Announcement */}
-        {announceMessage && <div className="sr-only" aria-live="polite">{announceMessage}</div>}
+        {announceMessage && (
+          <div className="sr-only" aria-live="polite">
+            {announceMessage}
+          </div>
+        )}
 
         {/* Header Line */}
         <div className="pt-4 text-center space-y-1">
-          <h1 className="font-display text-lg md:text-xl font-semibold text-ink-muted">
-            {algorithm.name}
-          </h1>
+          <h1 className="font-display text-lg md:text-xl font-semibold text-ink-muted">{algorithm.name}</h1>
           <p className="font-mono text-xs text-ink-faint tabular-nums">
             Step {currentStepIndex + 1} / {steps.length}
           </p>
@@ -180,11 +182,7 @@ export default function VisualizerPage() {
 
         {/* Stage Area */}
         <div className="flex-1 my-8 flex items-center justify-center max-w-[1100px] w-full mx-auto min-h-[360px]">
-          <SortingCanvas
-            values={values}
-            highlightedIndices={highlightedIndices}
-            variant="zen"
-          />
+          <SortingCanvas values={values} highlightedIndices={highlightedIndices} variant="zen" />
         </div>
 
         {/* Zen Caption & Telemetry */}
@@ -200,8 +198,8 @@ export default function VisualizerPage() {
 
           {showStats && currentStep?.stats && (
             <p className="font-mono text-xs text-ink-faint text-center tabular-nums">
-              Comparisons {currentStep.stats.comparisons ?? 0} &bull; Swaps{' '}
-              {currentStep.stats.swaps ?? 0} &bull; Accesses {currentStep.stats.arrayAccesses ?? 0}
+              Comparisons {currentStep.stats.comparisons ?? 0} &bull; Swaps {currentStep.stats.swaps ?? 0} &bull;
+              Accesses {currentStep.stats.arrayAccesses ?? 0}
             </p>
           )}
         </div>
@@ -222,9 +220,7 @@ export default function VisualizerPage() {
           onGoToStep={goToStep}
           onSetSpeed={setSpeed}
           onTogglePseudocode={() => setShowPseudocodeSheet(true)}
-          onToggleTechnical={() =>
-            setExplanationLevel((prev) => (prev === 'beginner' ? 'technical' : 'beginner'))
-          }
+          onToggleTechnical={() => setExplanationLevel((prev) => (prev === 'beginner' ? 'technical' : 'beginner'))}
           onToggleStats={() => setShowStats((prev) => !prev)}
           onToggleShortcuts={() => setShowShortcuts(true)}
           onExitZen={exitZen}
@@ -275,9 +271,7 @@ export default function VisualizerPage() {
                 <span className="chip font-mono text-micro">Space: {algorithm.complexity.space}</span>
               </div>
               <div className="flex items-center gap-3">
-                <h1 className="text-h1 font-display font-semibold text-ink">
-                  {algorithm.name}
-                </h1>
+                <h1 className="text-h1 font-display font-semibold text-ink">{algorithm.name}</h1>
                 <button
                   type="button"
                   onClick={toggleZen}
@@ -292,16 +286,10 @@ export default function VisualizerPage() {
           </div>
 
           {/* Description */}
-          <p className="text-body text-ink-muted leading-relaxed">
-            {algorithm.description}
-          </p>
+          <p className="text-body text-ink-muted leading-relaxed">{algorithm.description}</p>
 
           {/* Interactive Sorting / Searching Stage */}
-          <SortingCanvas
-            values={values}
-            highlightedIndices={highlightedIndices}
-            variant="default"
-          />
+          <SortingCanvas values={values} highlightedIndices={highlightedIndices} variant="default" />
 
           {/* Playback Controls Toolbar */}
           <PlaybackControls
@@ -324,16 +312,9 @@ export default function VisualizerPage() {
 
         {/* Right Column (4 cols on XL, sticky top-20): Explanation & Pseudocode Panels */}
         <div className="xl:col-span-4 space-y-6 xl:sticky xl:top-20">
-          <ExplanationPanel
-            currentStep={currentStep}
-            explanationLevel={explanationLevel}
-          />
+          <ExplanationPanel currentStep={currentStep} explanationLevel={explanationLevel} />
 
-          <PseudocodePanel
-            pseudocode={algorithm.pseudocode}
-            activeLine={activeLine}
-            variant="card"
-          />
+          <PseudocodePanel pseudocode={algorithm.pseudocode} activeLine={activeLine} variant="card" />
         </div>
       </div>
 

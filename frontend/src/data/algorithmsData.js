@@ -22,7 +22,11 @@ export const ALGORITHMS = [
       method: 'Exchanging',
     },
     pseudocode: [
-      { line: 1, indent: 0, text: 'procedure bubbleSort(A : list of sortable items)' },
+      {
+        line: 1,
+        indent: 0,
+        text: 'procedure bubbleSort(A : list of sortable items)',
+      },
       { line: 2, indent: 1, text: 'n := length(A)' },
       { line: 3, indent: 1, text: 'for i := 0 to n - 2 do' },
       { line: 4, indent: 2, text: 'swapped := false' },
@@ -53,7 +57,11 @@ export const ALGORITHMS = [
       method: 'Selection',
     },
     pseudocode: [
-      { line: 1, indent: 0, text: 'procedure selectionSort(A : list of sortable items)' },
+      {
+        line: 1,
+        indent: 0,
+        text: 'procedure selectionSort(A : list of sortable items)',
+      },
       { line: 2, indent: 1, text: 'n := length(A)' },
       { line: 3, indent: 1, text: 'for i := 0 to n - 2 do' },
       { line: 4, indent: 2, text: 'minIdx := i' },
@@ -84,7 +92,11 @@ export const ALGORITHMS = [
       method: 'Insertion',
     },
     pseudocode: [
-      { line: 1, indent: 0, text: 'procedure insertionSort(A : list of sortable items)' },
+      {
+        line: 1,
+        indent: 0,
+        text: 'procedure insertionSort(A : list of sortable items)',
+      },
       { line: 2, indent: 1, text: 'n := length(A)' },
       { line: 3, indent: 1, text: 'for i := 1 to n - 1 do' },
       { line: 4, indent: 2, text: 'key := A[i]' },
@@ -115,7 +127,11 @@ export const ALGORITHMS = [
       method: 'Merging',
     },
     pseudocode: [
-      { line: 1, indent: 0, text: 'procedure mergeSort(A : list, low : int, high : int)' },
+      {
+        line: 1,
+        indent: 0,
+        text: 'procedure mergeSort(A : list, low : int, high : int)',
+      },
       { line: 2, indent: 1, text: 'if low < high then' },
       { line: 3, indent: 2, text: 'mid := floor((low + high) / 2)' },
       { line: 4, indent: 2, text: 'mergeSort(A, low, mid)' },
@@ -147,7 +163,11 @@ export const ALGORITHMS = [
       method: 'Partitioning',
     },
     pseudocode: [
-      { line: 1, indent: 0, text: 'procedure quickSort(A : list, low : int, high : int)' },
+      {
+        line: 1,
+        indent: 0,
+        text: 'procedure quickSort(A : list, low : int, high : int)',
+      },
       { line: 2, indent: 1, text: 'if low < high then' },
       { line: 3, indent: 2, text: 'pivotIdx := partition(A, low, high)' },
       { line: 4, indent: 2, text: 'quickSort(A, low, pivotIdx - 1)' },
@@ -155,7 +175,11 @@ export const ALGORITHMS = [
       { line: 6, indent: 1, text: 'procedure partition(A, low, high)' },
       { line: 7, indent: 2, text: 'pivot := A[high], i := low - 1' },
       { line: 8, indent: 2, text: 'for j := low to high - 1 do' },
-      { line: 9, indent: 3, text: 'if A[j] < pivot then i++, swap(A[i], A[j])' },
+      {
+        line: 9,
+        indent: 3,
+        text: 'if A[j] < pivot then i++, swap(A[i], A[j])',
+      },
       { line: 10, indent: 2, text: 'swap(A[i + 1], A[high]), return i + 1' },
     ],
     supportedOperations: ['compare', 'swap', 'select', 'pivot', 'sorted'],
@@ -179,7 +203,11 @@ export const ALGORITHMS = [
       method: 'Decrease & Conquer',
     },
     pseudocode: [
-      { line: 1, indent: 0, text: 'procedure binarySearch(A : sorted list, target : value)' },
+      {
+        line: 1,
+        indent: 0,
+        text: 'procedure binarySearch(A : sorted list, target : value)',
+      },
       { line: 2, indent: 1, text: 'low := 0, high := length(A) - 1' },
       { line: 3, indent: 1, text: 'while low <= high do' },
       { line: 4, indent: 2, text: 'mid := floor((low + high) / 2)' },
@@ -212,7 +240,11 @@ export const ALGORITHMS = [
       method: 'Sequential',
     },
     pseudocode: [
-      { line: 1, indent: 0, text: 'procedure linearSearch(A : list, target : value)' },
+      {
+        line: 1,
+        indent: 0,
+        text: 'procedure linearSearch(A : list, target : value)',
+      },
       { line: 2, indent: 1, text: 'n := length(A)' },
       { line: 3, indent: 1, text: 'for i := 0 to n - 1 do' },
       { line: 4, indent: 2, text: 'if A[i] == target then' },
@@ -221,6 +253,68 @@ export const ALGORITHMS = [
     ],
     supportedOperations: ['compare', 'match', 'sorted'],
     defaultInput: { array: [45, 12, 89, 33, 77, 21, 64], target: 33 },
+  },
+  {
+    id: 'stack',
+    name: 'Stack',
+    category: 'Data Structures',
+    description: 'A last-in, first-out collection with push, pop, and peek operations at its top.',
+    complexity: { best: 'O(1)', average: 'O(1)', worst: 'O(1)', space: 'O(n)' },
+    properties: { stable: false, inPlace: true, method: 'LIFO' },
+    pseudocode: [
+      { line: 1, indent: 0, text: 'structure Stack' },
+      { line: 2, indent: 1, text: 'push(value): add value to top' },
+      { line: 3, indent: 1, text: 'pop(): remove and return top' },
+      { line: 4, indent: 1, text: 'peek(): return top without removing' },
+    ],
+    supportedOperations: ['push', 'pop', 'peek'],
+    defaultInput: [],
+  },
+  {
+    id: 'queue',
+    name: 'Queue',
+    category: 'Data Structures',
+    description: 'A first-in, first-out collection that adds at the rear and removes from the front.',
+    complexity: { best: 'O(1)', average: 'O(1)', worst: 'O(1)', space: 'O(n)' },
+    properties: { stable: true, inPlace: true, method: 'FIFO' },
+    pseudocode: [
+      { line: 1, indent: 0, text: 'structure Queue' },
+      { line: 2, indent: 1, text: 'enqueue(value): add value at rear' },
+      { line: 3, indent: 1, text: 'dequeue(): remove and return front' },
+      { line: 4, indent: 1, text: 'peek(): return front without removing' },
+    ],
+    supportedOperations: ['enqueue', 'dequeue', 'peek'],
+    defaultInput: [],
+  },
+  {
+    id: 'linked-list',
+    name: 'Linked List',
+    category: 'Data Structures',
+    description: 'A sequence of nodes connected by links, supporting insertion, deletion, and search.',
+    complexity: { best: 'O(1)', average: 'O(n)', worst: 'O(n)', space: 'O(n)' },
+    properties: { stable: true, inPlace: false, method: 'Sequential Access' },
+    pseudocode: [
+      { line: 1, indent: 0, text: 'structure LinkedList(head)' },
+      { line: 2, indent: 1, text: 'insertHead(value): link node before head' },
+      {
+        line: 3,
+        indent: 1,
+        text: 'insertTail(value): traverse, then link node',
+      },
+      {
+        line: 4,
+        indent: 1,
+        text: 'insertAt(index, value): find position, link node',
+      },
+      { line: 5, indent: 1, text: 'deleteAt(index): unlink node at position' },
+      {
+        line: 6,
+        indent: 1,
+        text: 'search(value): traverse until value is found',
+      },
+    ],
+    supportedOperations: ['insert-head', 'insert-tail', 'insert-at', 'delete-at', 'search'],
+    defaultInput: [],
   },
 ]
 

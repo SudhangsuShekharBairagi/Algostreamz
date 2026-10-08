@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest'
 import { ALGORITHMS, ALGORITHMS_MAP, getAlgorithmById } from '../data/algorithmsData'
 
 describe('algorithmsData registry', () => {
-  it('exports all 7 registered algorithms', () => {
-    expect(ALGORITHMS).toHaveLength(7)
+  it('exports the registered sorting, searching, and data structure algorithms', () => {
+    expect(ALGORITHMS).toHaveLength(10)
     const ids = ALGORITHMS.map((a) => a.id)
     expect(ids).toEqual([
       'bubble-sort',
@@ -13,6 +13,9 @@ describe('algorithmsData registry', () => {
       'quick-sort',
       'binary-search',
       'linear-search',
+      'stack',
+      'queue',
+      'linked-list',
     ])
   })
 
@@ -49,6 +52,10 @@ describe('algorithmsData registry', () => {
     const quickSort = getAlgorithmById('quick-sort')
     expect(quickSort).toBeDefined()
     expect(quickSort?.name).toBe('Quick Sort')
+
+    expect(getAlgorithmById('stack')?.category).toBe('Data Structures')
+    expect(getAlgorithmById('queue')?.category).toBe('Data Structures')
+    expect(getAlgorithmById('linked-list')?.category).toBe('Data Structures')
   })
 
   it('returns undefined for unknown or invalid IDs', () => {
