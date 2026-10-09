@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import AppShell from "./components/layout/AppShell";
 import LandingPage from "./pages/LandingPage";
@@ -5,7 +6,6 @@ import AlgorithmsPage from "./pages/AlgorithmsPage";
 import VisualizerPage from "./pages/VisualizerPage";
 import PlaygroundPage from "./pages/PlaygroundPage";
 import RaceModePage from "./pages/RaceModePage";
-import ExperimentPage from "./pages/ExperimentPage";
 import ChallengesPage from "./pages/ChallengesPage";
 import ProgressPage from "./pages/ProgressPage";
 import ProfilePage from "./pages/ProfilePage";
@@ -16,6 +16,8 @@ import VerifyEmail from "./pages/VerifyEmail";
 import NotFoundPage from "./pages/NotFoundPage";
 import { useAuth } from "./context/AuthContext";
 import { ROUTES } from "./config/siteLinks";
+
+const ExperimentPage = lazy(() => import("./pages/ExperimentPage"));
 
 /** RequireAuth wrapper to guard protected routes */
 function RequireAuth({ children }) {
@@ -38,7 +40,14 @@ function App() {
         <Route path={ROUTES.VISUALIZER} element={<VisualizerPage />} />
         <Route path={ROUTES.PLAYGROUND} element={<PlaygroundPage />} />
         <Route path={ROUTES.RACE} element={<RaceModePage />} />
-        <Route path={ROUTES.EXPERIMENT} element={<ExperimentPage />} />
+        <Route
+          path={ROUTES.EXPERIMENT}
+          element={
+            <Suspense fallback={<p className="text-caption text-ink-muted">Loading experiment lab…</p>}>
+              <ExperimentPage />
+            </Suspense>
+          }
+        />
         <Route path={ROUTES.CHALLENGES} element={<ChallengesPage />} />
         <Route
           path={ROUTES.PROGRESS}

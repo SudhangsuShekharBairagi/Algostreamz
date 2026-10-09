@@ -81,7 +81,7 @@ export const ROUTE_METADATA = {
   [ROUTES.PLAYGROUND]: {
     title: `Custom Sandbox & Playground — ${SITE_NAME}`,
     description:
-      "Test algorithms with custom input arrays, trees, and graph adjacency inputs.",
+      "Run supported sorting and searching algorithms on custom array inputs and saved presets.",
   },
   [ROUTES.RACE]: {
     title: `Race Mode Benchmarking — ${SITE_NAME}`,
@@ -91,7 +91,7 @@ export const ROUTE_METADATA = {
   [ROUTES.EXPERIMENT]: {
     title: `Experimental Invariants Lab — ${SITE_NAME}`,
     description:
-      "Analyze loop invariants, recursion stack depth, and spatial memory allocations.",
+      "Compare measured algorithm operation counts with theoretical growth across input sizes.",
   },
   [ROUTES.CHALLENGES]: {
     title: `Algorithm Practice & Quizzes — ${SITE_NAME}`,
