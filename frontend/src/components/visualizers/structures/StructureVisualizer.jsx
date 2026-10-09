@@ -3,6 +3,8 @@ import { ArrowLeft, Sparkles } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { ROUTES, LABELS } from '../../../config/siteLinks'
 import { useZen } from '../../../context/ZenContext'
+import progressApi from '../../../services/progressApi'
+import { errorMessage } from '../../../services/api'
 import {
   generateLinkedListSteps,
   generateQueueSteps,
@@ -49,6 +51,7 @@ export default function StructureVisualizer({ algorithm }) {
   const [index, setIndex] = useState('')
   const [error, setError] = useState('')
   const { isZen, toggleZen, exitZen, announceMessage } = useZen()
+  const [progressError, setProgressError] = useState('')
 
   const steps = useMemo(() => config.generate(operations), [config, operations])
   const visualizer = useVisualizer(steps)
@@ -70,6 +73,25 @@ export default function StructureVisualizer({ algorithm }) {
   useEffect(() => {
     goToStep(steps.length - 1)
   }, [steps, goToStep])
+
+  useEffect(() => {
+    if (!steps.length || !isAtEnd) return
+
+    let cancelled = false
+    progressApi.completeVisualizer(algorithm.id).then(
+      () => {
+        if (!cancelled) setProgressError('')
+      },
+      (error) => {
+        if (!cancelled) {
+          setProgressError(errorMessage(error, 'Unable to save your progress. Please try again.'))
+        }
+      },
+    )
+    return () => {
+      cancelled = true
+    }
+  }, [algorithm.id, isAtEnd, steps.length])
 
   const values = currentStep?.values || []
   const activeLine = currentStep?.pseudocodeLine || 1
@@ -164,6 +186,11 @@ export default function StructureVisualizer({ algorithm }) {
       {error && (
         <p className="text-caption font-medium text-state-swap" role="alert">
           {error}
+        </p>
+      )}
+      {progressError && (
+        <p className="text-caption font-medium text-state-swap" role="status">
+          {progressError}
         </p>
       )}
     </section>

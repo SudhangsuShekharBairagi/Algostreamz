@@ -5,6 +5,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import AlgorithmsPage from "../pages/AlgorithmsPage";
 import VisualizerPage from "../pages/VisualizerPage";
 import { ZenProvider } from "../context/ZenContext";
+import progressApi from "../services/progressApi";
 
 function renderVisualizer(path) {
   return render(
@@ -19,7 +20,10 @@ function renderVisualizer(path) {
   );
 }
 
-afterEach(() => cleanup());
+afterEach(() => {
+  cleanup();
+  localStorage.clear();
+});
 describe("data structure visualizers", () => {
   it("routes stack actions through the playback timeline", async () => {
     renderVisualizer("/visualizer/stack");
@@ -30,6 +34,7 @@ describe("data structure visualizers", () => {
     expect(
       await screen.findByText("Pushed alpha onto the top of the stack."),
     ).toBeTruthy();
+    expect(progressApi.getLocalProgress().completedVisualizers).toContain("stack");
     expect(screen.getByText("alpha", { selector: "span" })).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: "Pop" }));

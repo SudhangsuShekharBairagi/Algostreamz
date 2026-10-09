@@ -9,6 +9,7 @@ import com.dsaviz.exception.BadRequestException;
 import com.dsaviz.exception.ForbiddenException;
 import com.dsaviz.exception.UnauthorizedException;
 import com.dsaviz.repository.OtpCodeRepository;
+import com.dsaviz.repository.UserProgressRepository;
 import com.dsaviz.repository.UserRepository;
 import com.dsaviz.security.AuthPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,13 +21,16 @@ public class ProfileService {
 
     private final UserRepository userRepository;
     private final OtpCodeRepository otpCodeRepository;
+    private final UserProgressRepository progressRepository;
     private final PasswordEncoder passwordEncoder;
 
     public ProfileService(UserRepository userRepository,
             OtpCodeRepository otpCodeRepository,
+            UserProgressRepository progressRepository,
             PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.otpCodeRepository = otpCodeRepository;
+        this.progressRepository = progressRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -70,6 +74,7 @@ public class ProfileService {
             throw new UnauthorizedException("Password is incorrect.");
         }
         otpCodeRepository.deleteAllByEmailIgnoreCase(user.getEmail());
+        progressRepository.deleteAllByUserId(user.getId());
         userRepository.delete(user);
     }
 

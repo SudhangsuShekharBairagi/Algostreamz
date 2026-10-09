@@ -6,6 +6,8 @@ import { generateSortingSteps } from '../engine/sortingGenerators'
 import { generateSearchingSteps } from '../engine/searchingGenerators'
 import { useVisualizer } from '../hooks/useVisualizer'
 import { useZen } from '../context/ZenContext'
+import progressApi from '../services/progressApi'
+import { errorMessage } from '../services/api'
 import { ROUTES, LABELS } from '../config/siteLinks'
 import SortingCanvas from '../components/visualizer/SortingCanvas'
 import PlaybackControls from '../components/visualizer/PlaybackControls'
@@ -22,6 +24,7 @@ export default function VisualizerPage() {
   const algorithm = getAlgorithmById(algorithmId)
 
   const { isZen, toggleZen, exitZen, controlsVisible, announceMessage } = useZen()
+  const [progressError, setProgressError] = useState('')
 
   // Local Zen toggle states for overlay elements
   const [showPseudocodeSheet, setShowPseudocodeSheet] = useState(false)
@@ -85,6 +88,25 @@ export default function VisualizerPage() {
     setSpeed,
     loadSteps,
   } = visualizer
+
+  useEffect(() => {
+    if (!algorithm || !steps.length || !isAtEnd) return
+
+    let cancelled = false
+    progressApi.completeVisualizer(algorithm.id).then(
+      () => {
+        if (!cancelled) setProgressError('')
+      },
+      (error) => {
+        if (!cancelled) {
+          setProgressError(errorMessage(error, 'Unable to save your progress. Please try again.'))
+        }
+      },
+    )
+    return () => {
+      cancelled = true
+    }
+  }, [algorithm, isAtEnd, steps.length])
 
   // Generate fresh random array dataset
   const handleGenerateRandom = useCallback(() => {
@@ -287,6 +309,11 @@ export default function VisualizerPage() {
 
           {/* Description */}
           <p className="text-body text-ink-muted leading-relaxed">{algorithm.description}</p>
+          {progressError && (
+            <p className="text-caption font-medium text-state-swap" role="status">
+              {progressError}
+            </p>
+          )}
 
           {/* Interactive Sorting / Searching Stage */}
           <SortingCanvas values={values} highlightedIndices={highlightedIndices} variant="default" />

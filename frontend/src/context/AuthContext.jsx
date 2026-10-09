@@ -7,6 +7,7 @@ import {
   useState,
 } from "react";
 import authApi from "../services/authApi";
+import progressApi from "../services/progressApi";
 import tokenStore from "../services/tokenStore";
 
 const AuthContext = createContext(null);
@@ -67,6 +68,13 @@ export function AuthProvider({ children }) {
       window.removeEventListener("auth:expired", onExpired);
     };
   }, []);
+
+  useEffect(() => {
+    if (!user || !progressApi.hasLocalProgress()) return
+    progressApi.syncLocalProgress().catch((error) => {
+      console.error('Unable to sync locally saved progress.', error)
+    })
+  }, [user?.id])
 
   const value = useMemo(
     () => ({

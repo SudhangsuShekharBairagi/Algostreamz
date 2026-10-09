@@ -63,8 +63,29 @@ confirmation returns `400`.
 `204 No Content`, deletes the authenticated user's account and invalidates outstanding
 OTP rows for that email. A wrong password returns `401`.
 
-## Progress summary
+## Progress tracking
 
-The profile page requests the existing `GET /progress` endpoint when available. The
-current `ProgressController` does not yet implement that endpoint, so the page presents an
-unavailable state instead of fabricated statistics until progress persistence is added.
+All progress endpoints require the authenticated user's bearer token. The user is derived
+from the JWT principal; clients cannot select an account. Completing an already-recorded
+item is idempotent.
+
+| Method | Path | Purpose |
+| ------ | ---- | ------- |
+| `GET` | `/progress` | Return completed visualizer and mastered challenge IDs |
+| `POST` | `/progress/visualizer/{algorithmId}` | Record a completed visualizer |
+| `POST` | `/progress/challenge` | Record a mastered challenge |
+
+`GET /progress` returns:
+
+```json
+{
+  "completedVisualizers": ["bubble-sort"],
+  "masteredChallenges": ["merge-step-1"]
+}
+```
+
+`POST /progress/visualizer/{algorithmId}` and `POST /progress/challenge` return
+`204 No Content`. The challenge request body is `{ "challengeId": "merge-step-1" }`.
+Unauthenticated calls return `401`; an empty or overlong challenge ID returns `400`.
+Anonymous visualizer completions are retained in browser storage and synchronized when the
+user signs in.
