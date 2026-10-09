@@ -89,3 +89,8 @@ item is idempotent.
 Unauthenticated calls return `401`; an empty or overlong challenge ID returns `400`.
 Anonymous visualizer completions are retained in browser storage and synchronized when the
 user signs in.
+
+The quiz client submits each correctly answered challenge through
+`POST /progress/challenge` after the quiz is finished. Incorrect answers remain part of the
+client-side score and are not recorded as mastered progress; the progress API tracks mastered
+challenge IDs rather than numeric quiz scores.
