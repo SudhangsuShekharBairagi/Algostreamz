@@ -1,7 +1,7 @@
 import { Mail, Clock, Sparkles } from 'lucide-react'
 import { FaGithub } from 'react-icons/fa'
 import ContactForm from '../common/ContactForm'
-import { SITE_NAME, CONTACT_EMAIL, GITHUB_URL } from '../../config'
+import { CONTACT_EMAIL, GITHUB_URL } from '../../config'
 
 export default function ContactSection() {
   return (

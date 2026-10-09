@@ -5,11 +5,29 @@ visualization of data structures and algorithms.
 
 ## Structure
 
-- `frontend/` — React + Vite + Tailwind CSS (client-side visualizers, fully
-  functional standalone)
-- `backend/` — Spring Boot REST API (optional: auth, progress tracking,
-  Cloudinary media storage, email notifications)
-- `docs/` — synopsis, ER diagram, UML diagrams
+- `frontend/src/pages/` — route-level views, including algorithm visualizers, Race Mode,
+  Challenges, Playground and Experiment.
+- `frontend/src/components/` — reusable layout, visualizer, form and feedback components.
+- `frontend/src/engine/` — deterministic step generators, quiz question generation and
+  operation-count benchmarks. Algorithm calculations stay separate from React rendering.
+- `frontend/src/services/` — API clients and browser-backed local state.
+- `backend/src/main/java/com/dsaviz/` — Spring REST controllers, services, DTOs, entities,
+  repositories and JWT security configuration.
+- `backend/src/test/` — Spring integration tests using an in-memory H2 database.
+- `docs/` — API references and project documentation.
+
+### Screenshots
+
+Replace these placeholders with current captures before publishing a release:
+
+> **Screenshot placeholder — Algorithm visualizer:** capture the visualizer with its
+> playback controls and step explanation visible.
+
+> **Screenshot placeholder — Race Mode:** capture at least two race lanes and the results
+> summary.
+
+> **Screenshot placeholder — Playground and Experiment:** capture a saved input preset and
+> the operation-growth chart.
 
 ## Getting started
 
@@ -20,6 +38,9 @@ cd frontend
 npm install
 npm run dev
 ```
+
+Run the frontend test suite and production build with `npm test -- --run` and
+`npm run build`.
 
 ### Backend
 
@@ -54,14 +75,11 @@ runs unchanged on Render, Railway, Fly.io or a plain VM. Health check:
 
 ## Team
 
-| Module                             | Owner |
-| ---------------------------------- | ----- |
-| Sorting & searching visualizers    |       |
-| Data structure & graph visualizers |       |
-| Backend (auth, progress API)       |       |
-| Cloudinary / email / deployment    |       |
+| Module                             | Owner                       |
+| ---------------------------------- | --------------------------- |
+| Sorting & searching visualizers    |                             |
+| Data structure visualizers         |                             |
+| Backend (auth, progress API)       |                             |
+| Cloudinary / email / deployment    |                             |
 
-## Branching
 
-- `main` — always deployable
-- `feature/<name>` — one branch per module, PR into `main`

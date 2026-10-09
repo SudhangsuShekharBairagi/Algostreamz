@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Code, Play, Save, Trash2 } from 'lucide-react'
+import { Save, Trash2 } from 'lucide-react'
 import { ALGORITHMS } from '../data/algorithmsData'
 import { generateSortingSteps } from '../engine/sortingGenerators'
 import { generateSearchingSteps } from '../engine/searchingGenerators'
@@ -83,8 +83,6 @@ export default function PlaygroundPage() {
     : generateSearchingSteps(algorithmId, values, target), [algorithm.category, algorithmId, target, values])
   const visualizer = useVisualizer(steps)
   const currentStep = visualizer.currentStep
-  const finalStats = steps.at(-1)?.stats ?? {}
-
   const applyTypedInput = (text) => {
     setInputText(text)
     const parts = text.split(',').map((part) => part.trim())

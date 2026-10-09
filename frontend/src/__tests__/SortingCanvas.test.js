@@ -1,5 +1,4 @@
 import { describe, it, expect } from 'vitest'
-import React from 'react'
 import SortingCanvas from '../components/visualizer/SortingCanvas'
 
 describe('SortingCanvas Component', () => {

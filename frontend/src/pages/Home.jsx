@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight, Sparkles, Layers, Sliders, ShieldCheck, Cpu } from 'lucide-react'
+import { ArrowRight, Sparkles, Sliders, ShieldCheck, Cpu } from 'lucide-react'
 import { SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION } from '../config'
 import { ROUTES, LABELS, NAV_LINKS } from '../config/siteLinks'
 

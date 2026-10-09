@@ -36,7 +36,6 @@ export default function SortingCanvas({
       className={containerClasses}
       role="img"
       aria-label={ariaSummary}
-      tabIndex={0}
     >
       {values.map((val, idx) => {
         const heightPercent = Math.max(6, Math.round((val / computedMax) * 100))

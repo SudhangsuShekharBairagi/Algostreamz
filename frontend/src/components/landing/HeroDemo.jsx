@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { Play, Pause, Maximize2, Sparkles, Code2 } from 'lucide-react'
 
 // 12 pre-computed step snapshots for 8 bars Bubble Sort simulation

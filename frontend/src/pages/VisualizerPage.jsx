@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
-import { useParams, Navigate, Link } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { Sparkles, ArrowLeft } from 'lucide-react'
 import { getAlgorithmById } from '../data/algorithmsData'
 import { generateSortingSteps } from '../engine/sortingGenerators'
@@ -18,6 +18,7 @@ import ZenDock from '../components/visualizer/ZenDock'
 import ZenPseudocodeSheet from '../components/visualizer/ZenPseudocodeSheet'
 import ZenShortcutsOverlay from '../components/visualizer/ZenShortcutsOverlay'
 import StructureVisualizer from '../components/visualizers/structures/StructureVisualizer'
+import NotFoundPage from './NotFoundPage'
 
 export default function VisualizerPage() {
   const { algorithmId = 'bubble-sort' } = useParams()
@@ -54,18 +55,13 @@ export default function VisualizerPage() {
   // Generate pure steps from engine
   const steps = useMemo(() => {
     if (!algorithm) return []
-    try {
-      if (algorithm.category === 'Sorting') {
-        return generateSortingSteps(algorithm.id, dataset)
-      }
-      if (algorithm.category === 'Searching') {
-        return generateSearchingSteps(algorithm.id, dataset, searchTarget)
-      }
-      if (algorithm.category === 'Data Structures') return []
-      return generateSortingSteps('bubble-sort', dataset)
-    } catch {
-      return generateSortingSteps('bubble-sort', dataset)
+    if (algorithm.category === 'Sorting') {
+      return generateSortingSteps(algorithm.id, dataset)
     }
+    if (algorithm.category === 'Searching') {
+      return generateSearchingSteps(algorithm.id, dataset, searchTarget)
+    }
+    return []
   }, [algorithm, dataset, searchTarget])
 
   // Shared useVisualizer instance - maintains playback index seamlessly across Standard & Zen modes
@@ -165,7 +161,12 @@ export default function VisualizerPage() {
 
   // Return NotFound if algorithm ID is invalid
   if (!algorithm) {
-    return <Navigate to={ROUTES.ALGORITHMS} replace />
+    return (
+      <NotFoundPage
+        title="404 - Algorithm Not Found"
+        message={`No algorithm with the ID "${algorithmId}" exists in the catalog.`}
+      />
+    )
   }
 
   if (algorithm.category === 'Data Structures') {

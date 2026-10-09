@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   AlertTriangle,
-  Check,
   Edit3,
   LockKeyhole,
   Save,
@@ -13,15 +12,6 @@ import { ROUTES } from "../config/siteLinks";
 import { useAuth } from "../context/AuthContext";
 import profileApi from "../services/profileApi";
 import { errorMessage, fieldErrors } from "../services/api";
-
-const EMPTY_PROFILE = {
-  displayName: "",
-  bio: "",
-  avatarUrl: "",
-  college: "",
-  studyYear: "",
-  location: "",
-};
 
 const PROFILE_FIELDS = [
   ["displayName", "Display name"],
@@ -681,17 +671,20 @@ export default function ProfilePage() {
 
       {deleteOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-ink/50 p-4"
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget) setDeleteOpen(false);
-          }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
         >
+          <button
+            type="button"
+            className="absolute inset-0 bg-ink/50"
+            onClick={() => setDeleteOpen(false)}
+            aria-label="Close delete account dialog"
+          />
           <section
             ref={dialogRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby="delete-dialog-heading"
-            className="w-full max-w-md space-y-4 border border-line bg-surface p-5 shadow-e3"
+            className="relative z-10 w-full max-w-md space-y-4 border border-line bg-surface p-5 shadow-e3"
           >
             <div>
               <h2

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Maximize2, Check, Sparkles, Play, SkipForward, RotateCcw } from 'lucide-react'
+import { Maximize2, Check, Play, SkipForward, RotateCcw } from 'lucide-react'
 import { ROUTES } from '../../config/siteLinks'
 
 export default function ZenSpotlight() {

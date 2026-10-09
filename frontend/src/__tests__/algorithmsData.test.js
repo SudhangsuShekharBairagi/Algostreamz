@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { ALGORITHMS, ALGORITHMS_MAP, getAlgorithmById } from '../data/algorithmsData'
+import { ALGORITHMS, getAlgorithmById } from '../data/algorithmsData'
 
 describe('algorithmsData registry', () => {
   it('exports the registered sorting, searching, and data structure algorithms', () => {

@@ -22,7 +22,13 @@ const ExperimentPage = lazy(() => import("./pages/ExperimentPage"));
 /** RequireAuth wrapper to guard protected routes */
 function RequireAuth({ children }) {
   const { isAuthenticated, initialising } = useAuth();
-  if (initialising) return null;
+  if (initialising) {
+    return (
+      <p className="py-8 text-caption text-ink-muted" role="status">
+        Checking your session…
+      </p>
+    );
+  }
   return isAuthenticated ? children : <Navigate to={ROUTES.LOGIN} replace />;
 }
 
@@ -43,7 +49,7 @@ function App() {
         <Route
           path={ROUTES.EXPERIMENT}
           element={
-            <Suspense fallback={<p className="text-caption text-ink-muted">Loading experiment lab…</p>}>
+            <Suspense fallback={<p className="py-8 text-caption text-ink-muted" role="status">Loading experiment lab…</p>}>
               <ExperimentPage />
             </Suspense>
           }

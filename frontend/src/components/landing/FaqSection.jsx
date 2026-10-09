@@ -1,8 +1,6 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { ChevronDown, Sparkles, MessageSquare } from 'lucide-react'
 import { FAQ_ITEMS } from '../../data/faq'
-import { ROUTES } from '../../config/siteLinks'
 
 export default function FaqSection() {
   const [openIndex, setOpenIndex] = useState(0) // Default first item open

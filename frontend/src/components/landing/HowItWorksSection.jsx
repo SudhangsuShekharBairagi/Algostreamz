@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Sparkles, Cpu, Play, CheckCircle2, HelpCircle } from 'lucide-react'
+import { ArrowRight, Sparkles, Cpu, HelpCircle } from 'lucide-react'
 import { ROUTES } from '../../config/siteLinks'
 
 const STEPS = [

@@ -4,6 +4,7 @@ import { Minimize2 } from 'lucide-react'
 import Navbar from './Navbar'
 import Sidebar from './Sidebar'
 import SiteFooter from './SiteFooter'
+import ErrorBoundary from '../common/ErrorBoundary'
 import { useZen } from '../../context/ZenContext'
 import { useDocumentTitle } from '../../hooks/useDocumentTitle'
 import { LABELS, ROUTES } from '../../config/siteLinks'
@@ -124,7 +125,9 @@ export default function AppShell() {
             fadeIn ? 'opacity-100' : 'opacity-0'
           } ${isZen ? 'py-4 max-w-full' : ''}`}
         >
-          <Outlet />
+          <ErrorBoundary>
+            <Outlet />
+          </ErrorBoundary>
         </main>
       </div>
 

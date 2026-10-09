@@ -5,14 +5,8 @@ import {
   Check,
   Search,
   Sparkles,
-  Play,
-  Pause,
-  RotateCcw,
-  Info,
   ShieldCheck,
   Keyboard,
-  ArrowRight,
-  Layers,
   Palette,
   Type,
   Activity,
@@ -25,7 +19,6 @@ import { ROUTES, LABELS } from '../config/siteLinks'
 export default function DesignSystemPage() {
   const [selectedSegment, setSelectedSegment] = useState('bubble')
   const [counter, setCounter] = useState(42)
-  const [isPlaying, setIsPlaying] = useState(false)
 
   const colorSwatches = [
     { name: 'canvas', hex: '#F8FAFC', variable: '--canvas', role: 'Main app background', contrast: '20.8:1 (AAA)' },

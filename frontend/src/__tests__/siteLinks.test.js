@@ -3,7 +3,7 @@ import { ROUTES, SITE_LINKS } from '../config/siteLinks'
 
 describe('Link Registry Audit', () => {
   it('every internal path in ROUTES is defined and non-empty', () => {
-    Object.entries(ROUTES).forEach(([key, path]) => {
+    Object.values(ROUTES).forEach((path) => {
       expect(path).toBeDefined()
       expect(typeof path).toBe('string')
       expect(path.startsWith('/')).toBe(true)

@@ -1,12 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import React, { useState, useEffect } from 'react'
 import { useVisualizer } from '../hooks/useVisualizer'
-
-const mockSteps = [
-  { stepIndex: 0, type: 'compare', values: [3, 1, 2] },
-  { stepIndex: 1, type: 'swap', values: [1, 3, 2] },
-  { stepIndex: 2, type: 'mark-sorted', values: [1, 2, 3] },
-]
 
 describe('useVisualizer Hook', () => {
   beforeEach(() => {
@@ -42,14 +35,7 @@ describe('useVisualizer Hook', () => {
     expect(clampSpeed(2000)).toBe(1200)
   })
 
-  it('hook exported API returns all expected controller methods and properties', () => {
-    let hookResult = null
-    function TestApp() {
-      hookResult = useVisualizer(mockSteps)
-      return null
-    }
-
-    // Verify hook API structure
+  it('exports the visualizer hook', () => {
     expect(useVisualizer).toBeTypeOf('function')
   })
 })

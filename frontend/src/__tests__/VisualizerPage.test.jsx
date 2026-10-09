@@ -35,4 +35,19 @@ describe('VisualizerPage Component', () => {
       expect(progressApi.getLocalProgress().completedVisualizers).toContain('bubble-sort')
     })
   })
+
+  it('renders a 404 when the algorithm id is not in the catalog', () => {
+    render(
+      <MemoryRouter initialEntries={['/visualizer/not-a-real-algorithm']}>
+        <ZenProvider>
+          <Routes>
+            <Route path="/visualizer/:algorithmId" element={<VisualizerPage />} />
+          </Routes>
+        </ZenProvider>
+      </MemoryRouter>,
+    )
+
+    expect(screen.getByRole('heading', { name: '404 - Algorithm Not Found' })).toBeTruthy()
+    expect(screen.getByText(/not-a-real-algorithm/)).toBeTruthy()
+  })
 })

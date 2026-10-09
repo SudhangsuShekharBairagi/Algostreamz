@@ -3,8 +3,8 @@ import { FaGithub } from 'react-icons/fa'
 import { ArrowUp } from 'lucide-react'
 import Logo from '../common/Logo'
 import { useZen } from '../../context/ZenContext'
-import { SITE_NAME, TAGLINE, GITHUB_URL } from '../../config'
-import { ROUTES, SITE_LINKS } from '../../config/siteLinks'
+import { SITE_NAME, TAGLINE } from '../../config'
+import { ROUTES } from '../../config/siteLinks'
 
 export default function SiteFooter() {
   const { isZen } = useZen()

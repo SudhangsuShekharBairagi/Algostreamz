@@ -39,20 +39,24 @@ export default function ZenShortcutsOverlay({ open = false, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 bg-ink/30 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-in fade-in duration-fast"
-      onClick={onClose}
-      role="dialog"
-      aria-label="Keyboard shortcuts reference"
-      aria-modal="true"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
     >
+      <button
+        type="button"
+        className="absolute inset-0 bg-ink/30 backdrop-blur-xs animate-in fade-in duration-fast"
+        onClick={onClose}
+        aria-label="Close keyboard shortcuts"
+      />
       <div
-        className="card bg-surface p-6 max-w-md w-full shadow-e3 space-y-4 border border-line"
-        onClick={(e) => e.stopPropagation()}
+        className="relative z-10 card bg-surface p-6 max-w-md w-full shadow-e3 space-y-4 border border-line"
+        role="dialog"
+        aria-labelledby="shortcuts-heading"
+        aria-modal="true"
       >
         <div className="flex items-center justify-between border-b border-line pb-3">
           <div className="flex items-center gap-2">
             <Keyboard className="w-5 h-5 text-accent" />
-            <h3 className="font-display font-semibold text-h3 text-ink">Keyboard Shortcuts</h3>
+            <h3 id="shortcuts-heading" className="font-display font-semibold text-h3 text-ink">Keyboard Shortcuts</h3>
           </div>
           <button
             type="button"

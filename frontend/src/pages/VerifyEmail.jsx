@@ -93,7 +93,6 @@ export default function VerifyEmail() {
             autoComplete="one-time-code"
             pattern="\d{6}"
             maxLength={6}
-            autoFocus
             value={code}
             onChange={(event) => setCode(event.target.value.replace(/\D/g, ''))}
             placeholder="000000"

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight, Maximize2, Check, Sparkles } from 'lucide-react'
+import { ArrowRight, Maximize2, Check } from 'lucide-react'
 import HeroDemo from './HeroDemo'
 import { SITE_NAME } from '../../config'
 import { ROUTES, SIDEBAR_CATEGORIES } from '../../config/siteLinks'

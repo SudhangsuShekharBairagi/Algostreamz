@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { Send, Loader2, CheckCircle2, AlertCircle, Mail, RotateCcw } from 'lucide-react'
+import { Send, Loader2, CheckCircle2, RotateCcw } from 'lucide-react'
 import Alert from './Alert'
 import { CONTACT_EMAIL } from '../../config'
 
@@ -142,8 +142,6 @@ export default function ContactForm({ className = '' }) {
   }
 
   const messageLength = form.message.length
-  const isMessageValid = messageLength >= 10 && messageLength <= 1000
-
   return (
     <div className={`card p-6 md:p-8 bg-surface border border-line shadow-e2 font-sans ${className}`}>
       {status === 'error' && (
