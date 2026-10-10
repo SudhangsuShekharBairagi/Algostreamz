@@ -18,12 +18,10 @@ import ZenDock from '../components/visualizer/ZenDock'
 import ZenPseudocodeSheet from '../components/visualizer/ZenPseudocodeSheet'
 import ZenShortcutsOverlay from '../components/visualizer/ZenShortcutsOverlay'
 import StructureVisualizer from '../components/visualizers/structures/StructureVisualizer'
+import GraphVisualizer from '../components/visualizer/GraphVisualizer'
 import NotFoundPage from './NotFoundPage'
 
-export default function VisualizerPage() {
-  const { algorithmId = 'bubble-sort' } = useParams()
-  const algorithm = getAlgorithmById(algorithmId)
-
+function StandardArrayVisualizer({ algorithm }) {
   const { isZen, toggleZen, exitZen, controlsVisible, announceMessage } = useZen()
   const [progressError, setProgressError] = useState('')
 
@@ -121,7 +119,7 @@ export default function VisualizerPage() {
     loadSteps(newSteps)
   }, [algorithm, loadSteps])
 
-  // Global Keyboard Shortcuts Listener
+  // Global Keyboard Shortcuts Listener for Array Visualizer
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) {
@@ -159,20 +157,6 @@ export default function VisualizerPage() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [togglePlay, stepForward, stepBackward, reset])
 
-  // Return NotFound if algorithm ID is invalid
-  if (!algorithm) {
-    return (
-      <NotFoundPage
-        title="404 - Algorithm Not Found"
-        message={`No algorithm with the ID "${algorithmId}" exists in the catalog.`}
-      />
-    )
-  }
-
-  if (algorithm.category === 'Data Structures') {
-    return <StructureVisualizer key={algorithm.id} algorithm={algorithm} />
-  }
-
   const values = currentStep?.values || dataset
   const highlightedIndices = currentStep?.highlightedIndices || {}
   const activeLine = currentStep?.pseudocodeLine || 1
@@ -180,7 +164,11 @@ export default function VisualizerPage() {
   // ================= ZEN LAYOUT (isZen === true) =================
   if (isZen) {
     return (
-      <div className="fixed inset-0 min-h-dvh bg-zen-canvas p-4 md:p-8 flex flex-col justify-between relative overflow-hidden select-none z-30">
+      <div
+        className={`fixed inset-0 min-h-dvh bg-zen-canvas p-4 md:p-8 flex flex-col justify-between relative select-none z-30 transition-all duration-300 ${
+          isAtEnd ? 'overflow-y-auto pb-40 scroll-smooth' : 'overflow-hidden pb-20'
+        }`}
+      >
         {/* Progress Hairline at top of viewport */}
         <div
           className="fixed top-0 left-0 right-0 h-[2px] bg-accent z-50 transition-transform duration-150 origin-left"
@@ -350,4 +338,28 @@ export default function VisualizerPage() {
       <ZenShortcutsOverlay open={showShortcuts} onClose={() => setShowShortcuts(false)} />
     </div>
   )
+}
+
+export default function VisualizerPage() {
+  const { algorithmId = 'bubble-sort' } = useParams()
+  const algorithm = getAlgorithmById(algorithmId)
+
+  if (!algorithm) {
+    return (
+      <NotFoundPage
+        title="404 - Algorithm Not Found"
+        message={`No algorithm with the ID "${algorithmId}" exists in the catalog.`}
+      />
+    )
+  }
+
+  if (algorithm.category === 'Data Structures') {
+    return <StructureVisualizer key={algorithm.id} algorithm={algorithm} />
+  }
+
+  if (algorithm.category === 'Graphs' || ['bfs', 'dfs', 'dijkstra'].includes(algorithm.id)) {
+    return <GraphVisualizer key={algorithm.id} algorithm={algorithm} />
+  }
+
+  return <StandardArrayVisualizer algorithm={algorithm} />
 }

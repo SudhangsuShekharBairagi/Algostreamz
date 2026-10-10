@@ -2,6 +2,8 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 import PlaygroundPage from '../pages/PlaygroundPage'
+import { MemoryRouter } from 'react-router-dom'
+import { ZenProvider } from '../context/ZenContext'
 
 const PRESETS_KEY = 'algostreamz.playground.presets.v1'
 
@@ -12,7 +14,13 @@ afterEach(() => {
 
 describe('PlaygroundPage', () => {
   it('runs sorting and searching traces on selected inputs', () => {
-    render(<PlaygroundPage />)
+    render(
+      <MemoryRouter>
+        <ZenProvider>
+          <PlaygroundPage />
+        </ZenProvider>
+      </MemoryRouter>
+    )
 
     expect(screen.getByRole('heading', { name: 'Bubble Sort trace' })).toBeTruthy()
     expect(screen.getByText(/Input length: 8/)).toBeTruthy()
@@ -31,7 +39,13 @@ describe('PlaygroundPage', () => {
   })
 
   it('saves, loads, and deletes local presets', () => {
-    render(<PlaygroundPage />)
+    render(
+      <MemoryRouter>
+        <ZenProvider>
+          <PlaygroundPage />
+        </ZenProvider>
+      </MemoryRouter>
+    )
 
     fireEvent.change(screen.getByLabelText('Algorithm'), { target: { value: 'linear-search' } })
     fireEvent.change(screen.getByLabelText('Search target'), { target: { value: '21' } })

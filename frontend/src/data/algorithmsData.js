@@ -316,6 +316,82 @@ export const ALGORITHMS = [
     supportedOperations: ['insert-head', 'insert-tail', 'insert-at', 'delete-at', 'search'],
     defaultInput: [],
   },
+  {
+    id: 'binary-search-tree',
+    name: 'Binary Search Tree',
+    category: 'Data Structures',
+    description:
+      'A hierarchical node-based binary tree data structure maintaining sorted order where left child < parent < right child.',
+    complexity: { best: 'O(log n)', average: 'O(log n)', worst: 'O(n)', space: 'O(n)' },
+    properties: { stable: false, inPlace: true, method: 'Binary Partitioning' },
+    pseudocode: [
+      { line: 1, indent: 0, text: 'structure BST' },
+      { line: 2, indent: 1, text: 'insert(val): traverse left/right, link new node' },
+      { line: 3, indent: 1, text: 'search(val): compare val, move left if < or right if >' },
+      { line: 4, indent: 1, text: 'delete(val): remove leaf, swap child, or swap successor' },
+      { line: 5, indent: 1, text: 'inorder(): left -> root -> right' },
+      { line: 6, indent: 1, text: 'preorder(): root -> left -> right' },
+      { line: 7, indent: 1, text: 'postorder(): left -> right -> root' },
+      { line: 8, indent: 1, text: 'levelorder(): BFS queue level by level' },
+    ],
+    supportedOperations: ['insert', 'search', 'delete', 'inorder', 'preorder', 'postorder', 'levelorder'],
+    defaultInput: [50, 30, 70, 20, 40, 60, 80],
+  },
+  {
+    id: 'bfs',
+    name: 'Breadth-First Search',
+    category: 'Graphs',
+    description:
+      'Breadth-First Search explores graph nodes level-by-level starting from a root node, visiting all direct neighbors before moving to the next level.',
+    complexity: { best: 'O(V + E)', average: 'O(V + E)', worst: 'O(V + E)', space: 'O(V)' },
+    properties: { stable: true, inPlace: false, method: 'Queue Traversal' },
+    pseudocode: [
+      { line: 1, indent: 0, text: 'procedure BFS(Graph, start_node)' },
+      { line: 2, indent: 1, text: 'Q := queue; Q.enqueue(start_node)' },
+      { line: 3, indent: 1, text: 'while Q is not empty do' },
+      { line: 4, indent: 2, text: 'u := Q.dequeue(); visit(u)' },
+      { line: 5, indent: 2, text: 'for neighbor v of u do' },
+      { line: 6, indent: 3, text: 'if v is not visited then Q.enqueue(v)' },
+    ],
+    supportedOperations: ['traverse', 'explore', 'discover'],
+    defaultInput: [],
+  },
+  {
+    id: 'dfs',
+    name: 'Depth-First Search',
+    category: 'Graphs',
+    description:
+      'Depth-First Search explores a graph by traversing as far as possible along each branch before backtracking.',
+    complexity: { best: 'O(V + E)', average: 'O(V + E)', worst: 'O(V + E)', space: 'O(V)' },
+    properties: { stable: true, inPlace: false, method: 'Recursive Backtracking' },
+    pseudocode: [
+      { line: 1, indent: 0, text: 'procedure DFS(Graph, u)' },
+      { line: 2, indent: 1, text: 'visit(u); mark u as visited' },
+      { line: 3, indent: 1, text: 'for each neighbor v of u do' },
+      { line: 4, indent: 2, text: 'if v is unvisited then DFS(Graph, v)' },
+    ],
+    supportedOperations: ['traverse', 'backtrack'],
+    defaultInput: [],
+  },
+  {
+    id: 'dijkstra',
+    name: 'Dijkstra Algorithm',
+    category: 'Graphs',
+    description:
+      "Dijkstra's algorithm finds the shortest path between nodes in a graph with non-negative edge weights using a priority queue.",
+    complexity: { best: 'O((V + E) log V)', average: 'O((V + E) log V)', worst: 'O(V²)', space: 'O(V)' },
+    properties: { stable: true, inPlace: false, method: 'Greedy Shortest Path' },
+    pseudocode: [
+      { line: 1, indent: 0, text: 'procedure Dijkstra(Graph, start)' },
+      { line: 2, indent: 1, text: 'set dist[start] = 0, all others ∞' },
+      { line: 3, indent: 1, text: 'while unvisited nodes remain do' },
+      { line: 4, indent: 2, text: 'u := unvisited node with min dist[u]' },
+      { line: 5, indent: 2, text: 'for each neighbor v of u do' },
+      { line: 6, indent: 3, text: 'if dist[u] + weight < dist[v] update dist[v]' },
+    ],
+    supportedOperations: ['relax', 'shortest-path'],
+    defaultInput: [],
+  },
 ]
 
 /** Map indexed by algorithm id for O(1) direct lookups */

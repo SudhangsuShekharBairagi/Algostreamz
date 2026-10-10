@@ -17,6 +17,7 @@ import ExplanationPanel from '../../visualizer/ExplanationPanel'
 import PlaybackControls from '../../visualizer/PlaybackControls'
 import PseudocodePanel from '../../visualizer/PseudocodePanel'
 import StructureCanvas from './StructureCanvas'
+import TreeVisualizer from '../../visualizer/TreeVisualizer'
 
 const GENERATORS = {
   stack: { generate: generateStackSteps, actions: ['push', 'pop', 'peek'] },
@@ -44,6 +45,10 @@ const ACTION_LABELS = {
 }
 
 export default function StructureVisualizer({ algorithm }) {
+  if (algorithm.id === 'binary-search-tree') {
+    return <TreeVisualizer algorithm={algorithm} />
+  }
+
   const structure = algorithm.name
   const config = GENERATORS[algorithm.id]
   const [operations, setOperations] = useState([])

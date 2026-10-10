@@ -34,7 +34,7 @@ describe('ProgressPage', () => {
 
     resolveProgress({ completedVisualizers: [], masteredChallenges: [] })
 
-    expect(await screen.findByText('0 / 10')).toBeTruthy()
+    expect(await screen.findByText('0 / 14')).toBeTruthy()
     expect(screen.getByText('0%')).toBeTruthy()
     expect(screen.getByText(/No progress yet/)).toBeTruthy()
     expect(screen.getByText('0', { selector: 'span' })).toBeTruthy()
@@ -47,8 +47,8 @@ describe('ProgressPage', () => {
     })
     render(<ProgressPage />)
 
-    expect(await screen.findByText('1 / 10')).toBeTruthy()
-    expect(screen.getByText('10%')).toBeTruthy()
+    expect(await screen.findByText('1 / 14')).toBeTruthy()
+    expect(screen.getByText('7%')).toBeTruthy()
     expect(screen.getByText('2', { selector: 'span' })).toBeTruthy()
   })
 
@@ -60,7 +60,7 @@ describe('ProgressPage', () => {
 
     expect(await screen.findByText('Progress service unavailable')).toBeTruthy()
     fireEvent.click(screen.getByRole('button', { name: 'Retry' }))
-    await waitFor(() => expect(screen.getByText('0 / 10')).toBeTruthy())
+    await waitFor(() => expect(screen.getByText('0 / 14')).toBeTruthy())
     expect(progressApi.getProgress).toHaveBeenCalledTimes(2)
   })
 })

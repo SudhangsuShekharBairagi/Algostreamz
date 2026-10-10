@@ -3,7 +3,7 @@ import { ALGORITHMS, getAlgorithmById } from '../data/algorithmsData'
 
 describe('algorithmsData registry', () => {
   it('exports the registered sorting, searching, and data structure algorithms', () => {
-    expect(ALGORITHMS).toHaveLength(10)
+    expect(ALGORITHMS).toHaveLength(14)
     const ids = ALGORITHMS.map((a) => a.id)
     expect(ids).toEqual([
       'bubble-sort',
@@ -16,6 +16,10 @@ describe('algorithmsData registry', () => {
       'stack',
       'queue',
       'linked-list',
+      'binary-search-tree',
+      'bfs',
+      'dfs',
+      'dijkstra',
     ])
   })
 

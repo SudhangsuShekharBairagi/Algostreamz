@@ -86,12 +86,12 @@ export default function ZenDock({
       }`}
     >
       <div
-        className="bg-surface/90 backdrop-blur-md border border-line rounded-full shadow-e3 min-h-[56px] px-3 md:px-5 py-1.5 flex items-center justify-between gap-2 md:gap-4 max-w-[95vw] md:max-w-4xl"
+        className="bg-surface/90 backdrop-blur-md border border-line rounded-full shadow-e3 min-h-[52px] px-3 md:px-5 py-1.5 flex items-center justify-between gap-2 md:gap-4 max-w-[98vw] md:max-w-6xl"
         role="toolbar"
         aria-label="Zen Mode controls"
       >
         {children ? (
-          <div className="flex items-center justify-center gap-2 md:gap-3 w-full py-1 overflow-x-auto">
+          <div className="flex items-center justify-center gap-2 md:gap-3 w-full py-1 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {children}
           </div>
         ) : (
