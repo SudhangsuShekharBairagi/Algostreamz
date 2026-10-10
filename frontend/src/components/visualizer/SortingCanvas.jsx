@@ -2,14 +2,9 @@ import { useMemo } from 'react'
 import { ArrowLeftRight, Check } from 'lucide-react'
 
 /**
- * Editorial Light Sorting Canvas Component.
- * Renders array values as bars with state indicators, value badges, and index labels.
- *
- * @param {Object} props
- * @param {number[]} [props.values=[]] - Current snapshot of array values
- * @param {Object} [props.highlightedIndices={}] - Map of index -> 'comparing' | 'swapping' | 'sorted' | 'pivot'
- * @param {'default' | 'zen'} [props.variant='default'] - Card layout or borderless Zen stage
- * @param {number} [props.maxVal] - Maximum value for scaling (computed automatically if omitted)
+ * Editorial Light Sorting & Searching Canvas Component.
+ * Matches design specification with value-proportional bar heights,
+ * top number labels, vibrant indigo/amber state palette, and smooth transitions.
  */
 export default function SortingCanvas({
   values = [],
@@ -19,30 +14,29 @@ export default function SortingCanvas({
 }) {
   const isZen = variant === 'zen'
 
-  const computedMax = useMemo(() => {
+  // Compute maximum value for proportional height calculations
+  const maxVal = useMemo(() => {
     if (customMaxVal) return customMaxVal
     if (!values.length) return 100
-    return Math.max(...values, 1)
+    const peak = Math.max(...values)
+    return Math.max(peak, 10)
   }, [values, customMaxVal])
 
   const containerClasses = isZen
-    ? 'relative w-full min-h-[360px] p-6 flex items-end justify-center gap-2 md:gap-3 bg-transparent select-none'
-    : 'card relative w-full min-h-[340px] p-6 flex items-end justify-center gap-2 md:gap-3 bg-surface/80 backdrop-blur-sm select-none'
+    ? 'relative w-full h-[320px] p-6 flex items-end justify-center gap-3 sm:gap-4 md:gap-5 bg-transparent select-none'
+    : 'card relative w-full h-[300px] p-6 md:p-8 flex items-end justify-center gap-3 sm:gap-4 md:gap-5 bg-surface/90 border border-line rounded-2xl shadow-e1 select-none'
 
   const ariaSummary = `Array visualization containing ${values.length} elements: ${values.join(', ')}`
 
   return (
-    <div
-      className={containerClasses}
-      role="img"
-      aria-label={ariaSummary}
-    >
+    <div className={containerClasses} role="img" aria-label={ariaSummary}>
       {values.map((val, idx) => {
-        const heightPercent = Math.max(6, Math.round((val / computedMax) * 100))
+        // Compute height percentage strictly proportional to element value
+        const heightPercent = Math.max(16, Math.min(100, Math.round((val / maxVal) * 100)))
         const state = highlightedIndices[idx] || 'default'
 
-        // Determine state styles and badges
-        let barBgClass = 'bg-line-strong/70 text-ink border border-line/80'
+        // Determine bar background, rings, and icons based on algorithm state
+        let barBgClass = 'bg-[#6366F1] text-white shadow-sm'
         let showSwapIcon = false
         let showCheckIcon = false
         let showPivotBadge = false
@@ -50,63 +44,66 @@ export default function SortingCanvas({
         switch (state) {
           case 'comparing':
             barBgClass =
-              'bg-state-compare text-[#451A03] ring-4 ring-state-compare/40 motion-safe:scale-[1.03] shadow-e2'
+              'bg-[#F59E0B] text-white ring-4 ring-[#F59E0B]/30 motion-safe:scale-[1.03] shadow-e2 border border-amber-300'
             break
           case 'swapping':
             barBgClass =
-              'bg-state-swap text-white ring-4 ring-state-swap/30 motion-safe:scale-[1.05] shadow-e3'
+              'bg-[#EF4444] text-white ring-4 ring-rose-500/30 motion-safe:scale-[1.05] shadow-e3 border border-rose-400'
             showSwapIcon = true
             break
           case 'sorted':
+          case 'match':
             barBgClass =
-              'bg-state-sorted text-white ring-2 ring-state-sorted-ring shadow-e1'
+              'bg-[#10B981] text-white ring-2 ring-emerald-400/40 shadow-e1 border border-emerald-400'
             showCheckIcon = true
             break
           case 'pivot':
             barBgClass =
-              'bg-state-pivot text-white ring-4 ring-state-pivot-ring/40 motion-safe:scale-[1.02] shadow-e2'
+              'bg-[#8B5CF6] text-white ring-4 ring-purple-500/30 motion-safe:scale-[1.02] shadow-e2 border border-purple-300'
             showPivotBadge = true
             break
+          case 'eliminated':
+            barBgClass = 'bg-sunken text-ink-faint opacity-25 scale-95 border border-line/40'
+            break
           default:
-            barBgClass = 'bg-line-strong/70 text-ink border border-line/80'
+            barBgClass = 'bg-[#6366F1] text-white shadow-sm hover:bg-[#4F46E5]'
         }
 
         return (
           <div
             key={`bar-${idx}-${val}`}
-            className="flex flex-col items-center flex-1 max-w-[56px] min-w-[24px] transition-all duration-base ease-out-custom"
-            style={{ height: '100%' }}
+            className="flex flex-col items-center flex-1 max-w-[60px] min-w-[24px] h-full justify-end transition-all duration-base ease-out-custom"
           >
-            {/* Top Indicator / Value Badge */}
-            <div className="mb-2 flex flex-col items-center justify-end min-h-[28px] gap-0.5">
+            {/* Top Value Label & Indicators */}
+            <div className="mb-2 flex flex-col items-center justify-end min-h-[32px] gap-0.5">
               {showSwapIcon && (
-                <ArrowLeftRight className="w-3.5 h-3.5 text-state-swap animate-bounce" />
+                <ArrowLeftRight className="w-3.5 h-3.5 text-[#EF4444] animate-bounce" />
               )}
               {showPivotBadge && (
-                <span className="font-mono text-[9px] uppercase font-bold tracking-wider px-1 py-0.2 rounded bg-state-pivot/20 text-state-pivot">
+                <span className="font-mono text-[9px] uppercase font-bold tracking-wider px-1 rounded bg-[#8B5CF6]/20 text-[#8B5CF6]">
                   pivot
                 </span>
               )}
-              <span className="font-mono text-xs font-semibold tabular-nums text-ink">
+              <span className="font-mono text-sm font-bold tabular-nums text-ink">
                 {val}
               </span>
             </div>
 
-            {/* Main Bar Element */}
+            {/* Main Bar Element (Height is strictly proportional to element value) */}
             <div className="w-full flex-1 flex items-end justify-center">
               <div
-                className={`w-full rounded-t-md transition-all duration-base ease-out-custom flex flex-col items-center justify-end pb-1 ${barBgClass}`}
+                className={`w-full rounded-xl transition-all duration-base ease-out-custom flex flex-col items-center justify-end pb-2 ${barBgClass}`}
                 style={{ height: `${heightPercent}%` }}
               >
                 {showCheckIcon && (
-                  <Check className="w-3.5 h-3.5 text-white/90 mb-1" />
+                  <Check className="w-4 h-4 text-white/90 shrink-0" />
                 )}
               </div>
             </div>
 
             {/* Bottom Index Label */}
             <div className="mt-2 text-center">
-              <span className="font-mono text-[11px] text-ink-faint tabular-nums">
+              <span className="font-mono text-[11px] font-medium text-ink-faint tabular-nums">
                 [{idx}]
               </span>
             </div>

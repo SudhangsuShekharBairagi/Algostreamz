@@ -29,8 +29,8 @@ export default class ErrorBoundary extends Component {
             >
               Try again
             </button>
-            <Link to={ROUTES.HOME} className="btn-primary inline-flex min-h-10 items-center px-4 text-caption focus-ring">
-              Go home
+            <Link to={ROUTES.ALGORITHMS} className="btn-primary inline-flex min-h-10 items-center gap-1.5 px-4 text-caption focus-ring">
+              Back to Explore
             </Link>
           </div>
         </section>

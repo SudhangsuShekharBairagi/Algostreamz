@@ -19,6 +19,8 @@ import { Link } from 'react-router-dom'
 import { ROUTES, LABELS } from '../../config/siteLinks'
 import { useZen } from '../../context/ZenContext'
 import { useVisualizer } from '../../hooks/useVisualizer'
+import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts'
+import { useToast } from '../../context/ToastContext'
 import progressApi from '../../services/progressApi'
 import {
   createDefaultGraph,
@@ -32,6 +34,7 @@ import ExplanationPanel from './ExplanationPanel'
 import PseudocodePanel from './PseudocodePanel'
 import ZenDock from './ZenDock'
 import ZenCaption from './ZenCaption'
+import ZenShortcutsOverlay from './ZenShortcutsOverlay'
 
 /**
  * Interactive Graph Laboratory & Visualizer.
@@ -41,6 +44,7 @@ import ZenCaption from './ZenCaption'
  */
 export default function GraphVisualizer({ algorithm, variant: propVariant }) {
   const { isZen: globalZen, toggleZen, exitZen, announceMessage } = useZen()
+  const { showToast } = useToast()
   const isZen = propVariant === 'zen' || globalZen
 
   // Graph topology state
@@ -69,8 +73,9 @@ export default function GraphVisualizer({ algorithm, variant: propVariant }) {
   const [startNodeId, setStartNodeId] = useState('A')
   const [targetNodeId, setTargetNodeId] = useState('F')
 
-  // Zen Mode peek overlay state (S key)
+  // Zen Mode peek overlay state (S key) & Help Shortcuts (Shift+?)
   const [showDistanceOverlay, setShowDistanceOverlay] = useState(false)
+  const [showShortcuts, setShowShortcuts] = useState(false)
 
   // Sync algoType with algorithm prop when navigating between graph algorithm routes
   useEffect(() => {
@@ -142,33 +147,26 @@ export default function GraphVisualizer({ algorithm, variant: propVariant }) {
   const shortestPathEdges = currentStep?.shortestPathEdges ?? []
   const activeLine = currentStep?.pseudocodeLine ?? 1
 
-  // Handle Keyboard Shortcuts for Graph Visualizer
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return
-      if (e.key === ' ' || e.code === 'Space') {
-        e.preventDefault()
-        togglePlay()
-      } else if (e.key === 'ArrowRight') {
-        e.preventDefault()
-        stepForward()
-      } else if (e.key === 'ArrowLeft') {
-        e.preventDefault()
-        stepBackward()
-      } else if (e.key === 'r' || e.key === 'R') {
-        e.preventDefault()
-        reset()
-      } else if (e.key === 's' || e.key === 'S') {
-        e.preventDefault()
-        setShowDistanceOverlay((prev) => !prev)
-      } else if (e.key === 'z' || e.key === 'Z') {
-        e.preventDefault()
-        toggleZen()
-      }
-    }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [togglePlay, stepForward, stepBackward, reset, toggleZen])
+  // Handle Global Keyboard Shortcuts for Graph Visualizer
+  useKeyboardShortcuts({
+    onTogglePlay: togglePlay,
+    onStepForward: stepForward,
+    onStepBackward: stepBackward,
+    onReset: reset,
+    onSpeedUp: () => setSpeed((s) => Math.max(100, s - 100)),
+    onSlowDown: () => setSpeed((s) => Math.min(1000, s + 100)),
+    onToggleZen: toggleZen,
+    onEscape: () => {
+      if (edgeModalOpen) setEdgeModalOpen(false)
+      else if (showShortcuts) setShowShortcuts(false)
+      else if (showDistanceOverlay) setShowDistanceOverlay(false)
+      else if (isZen) exitZen()
+    },
+    onToggleStats: () => setShowDistanceOverlay((prev) => !prev),
+    onToggleShortcuts: () => setShowShortcuts((prev) => !prev),
+    isZen,
+    enabled: true,
+  })
 
   // Focus modal weight input when opened
   useEffect(() => {
@@ -243,7 +241,13 @@ export default function GraphVisualizer({ algorithm, variant: propVariant }) {
     if (e) e.preventDefault()
     if (!pendingEdge) return
 
-    const weightNum = Math.max(1, Number(weightInput) || 1)
+    const num = Number(weightInput)
+    if (isNaN(num) || num < 1 || num > 99) {
+      showToast('Weight must be a number between 1 and 99', 'warning', isZen)
+      return
+    }
+
+    const weightNum = Math.max(1, Math.min(99, num))
     const newEdge = {
       id: `${pendingEdge.source}-${pendingEdge.target}`,
       source: pendingEdge.source,
@@ -256,6 +260,7 @@ export default function GraphVisualizer({ algorithm, variant: propVariant }) {
       edges: [...prev.edges, newEdge],
     }))
 
+    showToast(`Connected ${pendingEdge.source} ↔ ${pendingEdge.target} (weight ${weightNum})`, 'success', isZen)
     setPendingEdge(null)
     setEdgeModalOpen(false)
   }
@@ -1014,6 +1019,9 @@ export default function GraphVisualizer({ algorithm, variant: propVariant }) {
           </form>
         </div>
       )}
+
+      {/* Keyboard Shortcuts Help Overlay */}
+      <ZenShortcutsOverlay open={showShortcuts} onClose={() => setShowShortcuts(false)} />
     </div>
   )
 }

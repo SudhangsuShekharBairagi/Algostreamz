@@ -171,7 +171,7 @@ export default function ExplanationPanel({
         </div>
 
         {/* Narrative Headline & Content */}
-        <div className="p-3.5 rounded-lg bg-sunken/60 border border-line/60 space-y-1.5">
+        <div className="p-3.5 rounded-lg bg-sunken/60 border border-line/60 space-y-1.5 min-h-[76px] flex flex-col justify-center">
           <p className="font-display text-body font-semibold text-ink leading-relaxed">
             {activeLevel === 'technical'
               ? explanation?.technical || explanation?.beginner || 'Step evaluation completed.'
@@ -186,23 +186,27 @@ export default function ExplanationPanel({
         </div>
 
         {/* Comparative Element Chips */}
-        {indices.length > 0 && values.length > 0 && (
-          <div className="flex flex-wrap items-center gap-2 pt-1">
-            <span className="text-micro font-mono text-ink-faint">Inspected:</span>
-            {indices.map((idx) => {
-              const val = values[idx]
-              if (val === undefined) return null
-              return (
-                <span
-                  key={`chip-${idx}-${val}`}
-                  className="chip font-mono text-xs bg-surface border-line text-ink font-semibold shadow-e1"
-                >
-                  [Index {idx}: Value {val}]
-                </span>
-              )
-            })}
-          </div>
-        )}
+        <div className="flex flex-wrap items-center gap-2 pt-1 min-h-[32px]">
+          {indices.length > 0 && values.length > 0 ? (
+            <>
+              <span className="text-micro font-mono text-ink-faint">Inspected:</span>
+              {indices.map((idx) => {
+                const val = values[idx]
+                if (val === undefined) return null
+                return (
+                  <span
+                    key={`chip-${idx}-${val}`}
+                    className="chip font-mono text-xs bg-surface border-line text-ink font-semibold shadow-e1"
+                  >
+                    [Index {idx}: Value {val}]
+                  </span>
+                )
+              })}
+            </>
+          ) : (
+            <span className="text-micro font-mono text-ink-faint opacity-50">&mdash;</span>
+          )}
+        </div>
       </div>
 
       {/* 3. Real-Time Telemetry Bar */}

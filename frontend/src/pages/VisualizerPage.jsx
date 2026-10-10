@@ -17,18 +17,23 @@ import ZenCaption from '../components/visualizer/ZenCaption'
 import ZenDock from '../components/visualizer/ZenDock'
 import ZenPseudocodeSheet from '../components/visualizer/ZenPseudocodeSheet'
 import ZenShortcutsOverlay from '../components/visualizer/ZenShortcutsOverlay'
+import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts'
+import { useToast } from '../context/ToastContext'
+import CustomArrayModal from '../components/visualizer/CustomArrayModal'
 import StructureVisualizer from '../components/visualizers/structures/StructureVisualizer'
 import GraphVisualizer from '../components/visualizer/GraphVisualizer'
 import NotFoundPage from './NotFoundPage'
 
 function StandardArrayVisualizer({ algorithm }) {
   const { isZen, toggleZen, exitZen, controlsVisible, announceMessage } = useZen()
+  const { showToast } = useToast()
   const [progressError, setProgressError] = useState('')
 
   // Local Zen toggle states for overlay elements
   const [showPseudocodeSheet, setShowPseudocodeSheet] = useState(false)
   const [showShortcuts, setShowShortcuts] = useState(false)
   const [showStats, setShowStats] = useState(false)
+  const [showCustomModal, setShowCustomModal] = useState(false)
   const [explanationLevel, setExplanationLevel] = useState('beginner')
 
   // Dataset state management
@@ -117,45 +122,55 @@ function StandardArrayVisualizer({ algorithm }) {
       newSteps = generateSortingSteps(algorithm?.id || 'bubble-sort', newArr)
     }
     loadSteps(newSteps)
-  }, [algorithm, loadSteps])
+    showToast(`Generated random dataset (${newArr.length} elements)`, 'info', isZen)
+  }, [algorithm, loadSteps, showToast, isZen])
 
-  // Global Keyboard Shortcuts Listener for Array Visualizer
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) {
-        return
+  // Custom Dataset Input Apply Handler
+  const handleApplyCustomInput = useCallback(
+    (newArray, newTarget) => {
+      setDataset(newArray)
+      let newSteps = []
+      if (algorithm?.category === 'Searching') {
+        const target = newTarget !== undefined ? newTarget : searchTarget
+        setSearchTarget(target)
+        newSteps = generateSearchingSteps(algorithm.id, newArray, target)
+      } else {
+        newSteps = generateSortingSteps(algorithm?.id || 'bubble-sort', newArray)
       }
+      loadSteps(newSteps)
+    },
+    [algorithm, searchTarget, loadSteps]
+  )
 
-      if (e.key === ' ' || e.code === 'Space') {
-        e.preventDefault()
-        togglePlay()
-      } else if (e.key === 'ArrowRight') {
-        e.preventDefault()
-        stepForward()
-      } else if (e.key === 'ArrowLeft') {
-        e.preventDefault()
-        stepBackward()
-      } else if (e.key === 'r' || e.key === 'R') {
-        e.preventDefault()
-        reset()
-      } else if (e.key === 'p' || e.key === 'P') {
-        e.preventDefault()
-        setShowPseudocodeSheet((prev) => !prev)
-      } else if (e.key === 't' || e.key === 'T') {
-        e.preventDefault()
-        setExplanationLevel((prev) => (prev === 'beginner' ? 'technical' : 'beginner'))
-      } else if (e.key === 's' || e.key === 'S') {
-        e.preventDefault()
-        setShowStats((prev) => !prev)
-      } else if (e.key === '?') {
-        e.preventDefault()
-        setShowShortcuts((prev) => !prev)
+  // Centralized Global Keyboard Shortcuts
+  useKeyboardShortcuts({
+    onTogglePlay: togglePlay,
+    onStepForward: stepForward,
+    onStepBackward: stepBackward,
+    onReset: reset,
+    onSpeedUp: () => setSpeed((s) => Math.max(100, s - 100)),
+    onSlowDown: () => setSpeed((s) => Math.min(1000, s + 100)),
+    onToggleZen: toggleZen,
+    onEscape: () => {
+      if (showCustomModal) setShowCustomModal(false)
+      else if (showShortcuts) setShowShortcuts(false)
+      else if (showPseudocodeSheet) setShowPseudocodeSheet(false)
+      else if (isZen) exitZen()
+    },
+    onTogglePseudocode: () => setShowPseudocodeSheet((prev) => !prev),
+    onToggleTechnical: () => setExplanationLevel((prev) => (prev === 'beginner' ? 'technical' : 'beginner')),
+    onToggleStats: () => setShowStats((prev) => !prev),
+    onToggleFullscreen: () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen?.().catch(() => {})
+      } else {
+        document.exitFullscreen?.().catch(() => {})
       }
-    }
-
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [togglePlay, stepForward, stepBackward, reset])
+    },
+    onToggleShortcuts: () => setShowShortcuts((prev) => !prev),
+    isZen,
+    enabled: true,
+  })
 
   const values = currentStep?.values || dataset
   const highlightedIndices = currentStep?.highlightedIndices || {}
@@ -322,6 +337,8 @@ function StandardArrayVisualizer({ algorithm }) {
             onGoToStep={goToStep}
             onSetSpeed={setSpeed}
             onGenerateRandom={handleGenerateRandom}
+            onOpenCustomInput={() => setShowCustomModal(true)}
+            onToggleShortcuts={() => setShowShortcuts(true)}
             variant="bar"
           />
         </div>
@@ -334,7 +351,18 @@ function StandardArrayVisualizer({ algorithm }) {
         </div>
       </div>
 
-      {/* Zen Shortcuts Modal */}
+      {/* Custom Array Input Modal */}
+      <CustomArrayModal
+        open={showCustomModal}
+        onClose={() => setShowCustomModal(false)}
+        currentDataset={dataset}
+        currentTarget={searchTarget}
+        isSearching={algorithm.category === 'Searching'}
+        onApply={handleApplyCustomInput}
+        isZen={isZen}
+      />
+
+      {/* Keyboard Shortcuts Modal */}
       <ZenShortcutsOverlay open={showShortcuts} onClose={() => setShowShortcuts(false)} />
     </div>
   )

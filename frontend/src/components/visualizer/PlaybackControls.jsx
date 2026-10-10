@@ -1,4 +1,4 @@
-import { Play, Pause, SkipBack, SkipForward, RotateCcw, Shuffle } from 'lucide-react'
+import { Play, Pause, SkipBack, SkipForward, RotateCcw, Shuffle, Sparkles, Keyboard, SlidersHorizontal } from 'lucide-react'
 
 const SPEED_OPTIONS = [
   { label: '0.5x', ms: 800 },
@@ -25,6 +25,10 @@ export default function PlaybackControls({
   onGoToStep,
   onSetSpeed,
   onGenerateRandom,
+  onOpenCustomInput,
+  isPredictMode = false,
+  onTogglePredict,
+  onToggleShortcuts,
   variant = 'bar',
 }) {
   const isDock = variant === 'dock'
@@ -141,6 +145,19 @@ export default function PlaybackControls({
           })}
         </div>
 
+        {/* Custom Dataset Input Button */}
+        {onOpenCustomInput && (
+          <button
+            type="button"
+            onClick={onOpenCustomInput}
+            title="Custom dataset input"
+            aria-label="Open custom array input modal"
+            className="btn-ghost min-w-[40px] min-h-[40px] md:min-w-[44px] md:min-h-[44px] p-2.5 flex items-center justify-center focus-ring border border-line text-ink-muted hover:text-ink"
+          >
+            <SlidersHorizontal className="w-4 h-4" />
+          </button>
+        )}
+
         {/* Random Dataset Generator */}
         {onGenerateRandom && (
           <button
@@ -151,6 +168,19 @@ export default function PlaybackControls({
             className="btn-ghost min-w-[40px] min-h-[40px] md:min-w-[44px] md:min-h-[44px] p-2.5 flex items-center justify-center focus-ring border border-line"
           >
             <Shuffle className="w-4 h-4 text-ink-muted" />
+          </button>
+        )}
+
+        {/* Keyboard Shortcuts Help Popover Button */}
+        {onToggleShortcuts && (
+          <button
+            type="button"
+            onClick={onToggleShortcuts}
+            title="Keyboard Shortcuts (?)"
+            aria-label="View keyboard shortcuts help modal"
+            className="btn-ghost min-w-[40px] min-h-[40px] md:min-w-[44px] md:min-h-[44px] p-2.5 flex items-center justify-center focus-ring border border-line text-ink-muted hover:text-ink"
+          >
+            <Keyboard className="w-4 h-4 text-accent" />
           </button>
         )}
       </div>

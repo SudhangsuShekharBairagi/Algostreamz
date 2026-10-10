@@ -3,7 +3,7 @@ import { Code, ChevronRight } from 'lucide-react'
 
 /**
  * Editorial Pseudocode Panel Component.
- * Displays step-synchronized algorithm pseudocode with line gutter, active highlight, and auto-scroll.
+ * Displays step-synchronized algorithm pseudocode with line gutter, active highlight, and smooth internal scroll.
  *
  * @param {Object} props
  * @param {Array<{line: number, indent: number, text: string}>} [props.pseudocode=[]] - Pseudocode lines array
@@ -12,19 +12,28 @@ import { Code, ChevronRight } from 'lucide-react'
  */
 export default function PseudocodePanel({ pseudocode = [], activeLine = 1, variant = 'card' }) {
   const isFlat = variant === 'flat'
+  const scrollContainerRef = useRef(null)
   const activeLineRef = useRef(null)
 
-  // Auto-scroll active line into view smoothly
+  // Scroll active line into view inside container without triggering window layout shifts
   useEffect(() => {
-    if (activeLineRef.current) {
+    if (scrollContainerRef.current && activeLineRef.current) {
       try {
+        const container = scrollContainerRef.current
+        const activeEl = activeLineRef.current
+        const containerHeight = container.clientHeight
+        const activeTop = activeEl.offsetTop
+        const activeHeight = activeEl.offsetHeight
+
+        const targetScrollTop = activeTop - containerHeight / 2 + activeHeight / 2
         const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-        activeLineRef.current.scrollIntoView({
-          block: 'center',
+
+        container.scrollTo({
+          top: Math.max(0, targetScrollTop),
           behavior: prefersReduced ? 'auto' : 'smooth',
         })
       } catch {
-        // Fallback for non-standard environments
+        // Fallback
       }
     }
   }, [activeLine])
@@ -42,7 +51,10 @@ export default function PseudocodePanel({ pseudocode = [], activeLine = 1, varia
         </div>
       )}
 
-      <div className="font-mono text-[13px] leading-[1.7] bg-sunken/60 p-3 rounded-lg border border-line/50 max-h-[320px] overflow-y-auto overflow-x-auto select-text">
+      <div
+        ref={scrollContainerRef}
+        className="font-mono text-[13px] leading-[1.7] bg-sunken/60 p-3 rounded-lg border border-line/50 max-h-[320px] overflow-y-auto overflow-x-auto select-text"
+      >
         {pseudocode.map((item) => {
           const { line, indent = 0, text } = item
           const isActive = line === activeLine
@@ -74,7 +86,7 @@ export default function PseudocodePanel({ pseudocode = [], activeLine = 1, varia
                 {text}
               </span>
             </div>
-          )
+          );
         })}
       </div>
     </div>

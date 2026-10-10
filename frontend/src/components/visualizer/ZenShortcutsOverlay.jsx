@@ -3,17 +3,17 @@ import { X, Keyboard } from 'lucide-react'
 
 const SHORTCUTS = [
   { key: 'Space', description: 'Play / Pause algorithm' },
-  { key: '←', description: 'Step backward' },
-  { key: '→', description: 'Step forward' },
-  { key: 'R', description: 'Reset to step 0' },
+  { key: '← / →', description: 'Step backward / forward' },
+  { key: '↑ / ↓', description: 'Speed up / slow down' },
+  { key: 'R', description: 'Reset algorithm' },
   { key: 'Z', description: 'Toggle Zen Mode' },
   { key: 'P', description: 'Toggle Pseudocode sheet' },
-  { key: 'T', description: 'Toggle Technical explanation' },
-  { key: 'S', description: 'Toggle Stats telemetry' },
   { key: 'C', description: 'Toggle Caption narrative' },
+  { key: 'T', description: 'Technical / Beginner explanation' },
+  { key: 'S', description: 'Toggle Stats strip / Live table' },
   { key: 'F', description: 'Toggle Fullscreen' },
-  { key: 'Esc', description: 'Exit Zen Mode / Close overlays' },
-  { key: '?', description: 'Show keyboard shortcuts' },
+  { key: 'Esc', description: 'Exit Zen Mode / Close modal' },
+  { key: '?', description: 'Keyboard shortcut help' },
 ]
 
 /**
