@@ -4,8 +4,11 @@ import { ALGORITHMS } from '../data/algorithmsData'
 import { generateSortingSteps } from '../engine/sortingGenerators'
 import { generateSearchingSteps } from '../engine/searchingGenerators'
 import { useVisualizer } from '../hooks/useVisualizer'
+import { useZen } from '../hooks/useZen'
 import SortingCanvas from '../components/visualizer/SortingCanvas'
 import PlaybackControls from '../components/visualizer/PlaybackControls'
+import TactileDataStructureSandbox from '../components/visualizer/TactileDataStructureSandbox'
+import TactileLinkedListSandbox from '../components/visualizer/TactileLinkedListSandbox'
 
 const PLAYGROUND_ALGORITHMS = ALGORITHMS.filter(
   (algorithm) => algorithm.category === 'Sorting' || algorithm.category === 'Searching',
@@ -53,6 +56,8 @@ function makeValues(pattern, currentValues) {
 }
 
 export default function PlaygroundPage() {
+  const { isZen } = useZen()
+  const [sandboxCategory, setSandboxCategory] = useState('array') // 'array' | 'ds' | 'linkedlist'
   const [algorithmId, setAlgorithmId] = useState('bubble-sort')
   const [pattern, setPattern] = useState('typed')
   const [values, setValues] = useState(INITIAL_VALUES)
@@ -161,13 +166,53 @@ export default function PlaygroundPage() {
 
   return (
     <div className="space-y-6 pb-10">
-      <header>
-        <span className="chip text-accent font-semibold text-micro uppercase tracking-wider">Custom Playground</span>
-        <h1 className="text-h1 font-display font-semibold text-ink mt-2">Algorithm Sandbox &amp; Input Editor</h1>
-        <p className="text-body text-ink-muted text-pretty max-w-[68ch] mt-1">
-          Choose a sorting or searching algorithm, create edge-case inputs, and save reusable local presets.
-        </p>
-      </header>
+      {!isZen && (
+        <header className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-line pb-4">
+          <div>
+            <span className="chip text-accent font-semibold text-micro uppercase tracking-wider">Custom Playground</span>
+            <h1 className="text-h1 font-display font-semibold text-ink mt-1">Algorithm &amp; Data Structure Sandbox</h1>
+            <p className="text-body text-ink-muted text-pretty max-w-[68ch] mt-1">
+              Test sorting/searching algorithms, linear structures (Stack &amp; Queue), or linked list pointer topology.
+            </p>
+          </div>
+          <div className="segmented shrink-0 flex-wrap" role="tablist" aria-label="Playground mode selection">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={sandboxCategory === 'array'}
+              onClick={() => setSandboxCategory('array')}
+              className={`segmented-option focus-ring ${sandboxCategory === 'array' ? 'selected' : ''}`}
+            >
+              Sorting &amp; Searching
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={sandboxCategory === 'ds'}
+              onClick={() => setSandboxCategory('ds')}
+              className={`segmented-option focus-ring ${sandboxCategory === 'ds' ? 'selected' : ''}`}
+            >
+              Stack &amp; Queue
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={sandboxCategory === 'linkedlist'}
+              onClick={() => setSandboxCategory('linkedlist')}
+              className={`segmented-option focus-ring ${sandboxCategory === 'linkedlist' ? 'selected' : ''}`}
+            >
+              Linked List
+            </button>
+          </div>
+        </header>
+      )}
+
+      {sandboxCategory === 'ds' ? (
+        <TactileDataStructureSandbox />
+      ) : sandboxCategory === 'linkedlist' ? (
+        <TactileLinkedListSandbox />
+      ) : (
+        <>
 
       <section className="card p-5 space-y-5" aria-label="Playground setup">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -279,6 +324,8 @@ export default function PlaygroundPage() {
           )}
         </div>
       </section>
+        </>
+      )}
     </div>
   )
 }
