@@ -35,6 +35,9 @@ import PseudocodePanel from './PseudocodePanel'
 import ZenDock from './ZenDock'
 import ZenCaption from './ZenCaption'
 import ZenShortcutsOverlay from './ZenShortcutsOverlay'
+import { CODE_SNIPPETS } from '../../data/codeSnippets'
+import CallStackPanel from './CallStackPanel'
+import { getCallStackAtStep } from '../../utils/callStack'
 
 /**
  * Interactive Graph Laboratory & Visualizer.
@@ -146,6 +149,10 @@ export default function GraphVisualizer({ algorithm, variant: propVariant }) {
   const predecessors = currentStep?.predecessors ?? {}
   const shortestPathEdges = currentStep?.shortestPathEdges ?? []
   const activeLine = currentStep?.pseudocodeLine ?? 1
+  const callStack = useMemo(
+    () => (algoType === 'dfs' ? getCallStackAtStep(steps, currentStepIndex) : null),
+    [algoType, currentStepIndex, steps],
+  )
 
   // Handle Global Keyboard Shortcuts for Graph Visualizer
   useKeyboardShortcuts({
@@ -948,8 +955,13 @@ export default function GraphVisualizer({ algorithm, variant: propVariant }) {
 
         {/* Right Column (4 cols): Explanation & Pseudocode Panels */}
         <aside className="space-y-6 xl:sticky xl:top-20 xl:col-span-4">
+          {callStack && <CallStackPanel {...callStack} />}
           <ExplanationPanel currentStep={currentStep} />
-          <PseudocodePanel pseudocode={currentPseudocode} activeLine={activeLine} />
+          <PseudocodePanel
+            pseudocode={currentPseudocode}
+            activeLine={activeLine}
+            codeSnippets={CODE_SNIPPETS[algoType]}
+          />
         </aside>
       </div>
 

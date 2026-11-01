@@ -215,43 +215,43 @@ export default function ExplanationPanel({
           Real-Time Telemetry
         </span>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+        <div className="grid grid-cols-2 gap-2.5">
           {/* Metric 1: Comparisons */}
-          <div className="card p-3 bg-surface border border-line/80 rounded-lg flex flex-col justify-between shadow-e1">
+          <div className="card min-h-20 p-3 bg-surface border border-line/80 rounded-lg flex flex-col justify-between shadow-e1">
             <span className="font-mono text-[10px] text-ink-faint uppercase font-semibold">
               Comparisons
             </span>
-            <span className="font-mono text-lg font-bold text-ink tabular-nums transition-all duration-base">
+            <span className="font-mono text-2xl md:text-3xl font-bold text-ink tabular-nums transition-all duration-base">
               {comparisons}
             </span>
           </div>
 
           {/* Metric 2: Swaps */}
-          <div className="card p-3 bg-surface border border-line/80 rounded-lg flex flex-col justify-between shadow-e1">
+          <div className="card min-h-20 p-3 bg-surface border border-line/80 rounded-lg flex flex-col justify-between shadow-e1">
             <span className="font-mono text-[10px] text-ink-faint uppercase font-semibold">
               Swaps
             </span>
-            <span className="font-mono text-lg font-bold text-ink tabular-nums transition-all duration-base">
+            <span className="font-mono text-2xl md:text-3xl font-bold text-ink tabular-nums transition-all duration-base">
               {swaps}
             </span>
           </div>
 
           {/* Metric 3: Total Operations */}
-          <div className="card p-3 bg-surface border border-line/80 rounded-lg flex flex-col justify-between shadow-e1">
+          <div className="card min-h-20 p-3 bg-surface border border-line/80 rounded-lg flex flex-col justify-between shadow-e1">
             <span className="font-mono text-[10px] text-ink-faint uppercase font-semibold">
               Total Ops
             </span>
-            <span className="font-mono text-lg font-bold text-accent tabular-nums transition-all duration-base">
+            <span className="font-mono text-2xl md:text-3xl font-bold text-accent tabular-nums transition-all duration-base">
               {totalOps}
             </span>
           </div>
 
           {/* Metric 4: Array Accesses */}
-          <div className="card p-3 bg-surface border border-line/80 rounded-lg flex flex-col justify-between shadow-e1">
+          <div className="card min-h-20 p-3 bg-surface border border-line/80 rounded-lg flex flex-col justify-between shadow-e1">
             <span className="font-mono text-[10px] text-ink-faint uppercase font-semibold">
               Accesses
             </span>
-            <span className="font-mono text-lg font-bold text-ink tabular-nums transition-all duration-base">
+            <span className="font-mono text-2xl md:text-3xl font-bold text-ink tabular-nums transition-all duration-base">
               {accesses}
             </span>
           </div>

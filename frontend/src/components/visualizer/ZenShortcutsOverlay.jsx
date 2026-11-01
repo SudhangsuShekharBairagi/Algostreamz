@@ -12,21 +12,22 @@ const SHORTCUTS = [
   { key: 'T', description: 'Technical / Beginner explanation' },
   { key: 'S', description: 'Toggle Stats strip / Live table' },
   { key: 'F', description: 'Toggle Fullscreen' },
+  { key: 'M', description: 'Toggle visualizer sound' },
+  { key: 'E', description: 'Export current visualization as PNG' },
   { key: 'Esc', description: 'Exit Zen Mode / Close modal' },
   { key: '?', description: 'Keyboard shortcut help' },
 ]
 
 /**
  * Minimal Keyboard Shortcuts Modal Overlay.
- * Dismissible via any key stroke or background click.
+ * Dismissible via Escape or background click.
  */
 export default function ZenShortcutsOverlay({ open = false, onClose }) {
   useEffect(() => {
     if (!open) return undefined
 
     const handleKeyDown = (e) => {
-      // Any key dismisses overlay
-      if (e.key !== '?') {
+      if (e.key === 'Escape') {
         onClose && onClose()
       }
     }
@@ -78,7 +79,7 @@ export default function ZenShortcutsOverlay({ open = false, onClose }) {
         </div>
 
         <p className="text-micro text-ink-faint text-center pt-2">
-          Press any key or click outside to dismiss.
+          Press Escape or click outside to dismiss.
         </p>
       </div>
     </div>

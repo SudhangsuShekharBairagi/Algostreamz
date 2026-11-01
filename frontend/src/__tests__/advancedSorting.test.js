@@ -4,8 +4,31 @@ import {
   generateQuickSortSteps,
   generateAdvancedSortingSteps,
 } from '../engine/advancedSorting'
+import { getCallStackAtStep } from '../utils/callStack'
 
 describe('Advanced Sorting Generators (Merge Sort & Quick Sort)', () => {
+  it.each([
+    ['Merge Sort', generateMergeSortSteps],
+    ['Quick Sort', generateQuickSortSteps],
+  ])('%s call events keep the stack non-negative and empty at completion', (_, generate) => {
+    const steps = generate([8, 3, 6, 1, 7, 2, 5, 4])
+    let depth = 0
+
+    steps.forEach((step) => {
+      if (step.callEvent?.type === 'enter') depth += 1
+      if (step.callEvent?.type === 'exit') depth -= 1
+      expect(depth).toBeGreaterThanOrEqual(0)
+      if (step.callEvent) {
+        expect(step.callEvent.functionName).toBeTruthy()
+        expect(step.callEvent.args).toBeDefined()
+        expect(step.callEvent.depth).toBeGreaterThanOrEqual(0)
+      }
+    })
+
+    expect(depth).toBe(0)
+    expect(getCallStackAtStep(steps, steps.length - 1).totalDepth).toBe(0)
+  })
+
   describe('Merge Sort', () => {
     it('never mutates input array', () => {
       const input = [38, 27, 43, 3, 9, 82, 10]

@@ -30,7 +30,8 @@ export function generateMergeSortSteps(initialArray = []) {
     beginner,
     technical,
     extraHighlights = {},
-    auxiliarySubarrays = null
+    auxiliarySubarrays = null,
+    callEvent = null
   ) => {
     const highlightedIndices = {}
     sortedSet.forEach((idx) => {
@@ -38,7 +39,7 @@ export function generateMergeSortSteps(initialArray = []) {
     })
     Object.assign(highlightedIndices, extraHighlights)
 
-    steps.push({
+    const step = {
       stepIndex: stepIndex++,
       type,
       indices: [...indices],
@@ -55,11 +56,18 @@ export function generateMergeSortSteps(initialArray = []) {
         arrayAccesses,
       },
       auxiliarySubarrays: auxiliarySubarrays ? { ...auxiliarySubarrays } : null,
-    })
+    }
+    if (callEvent) step.callEvent = callEvent
+    steps.push(step)
   }
 
   if (n === 0) {
-    addStep('mark-sorted', [], 1, 'Array is empty.', 'Initial array length is 0; sorting completed.')
+    addStep('mark-sorted', [], 1, 'Array is empty.', 'Initial array length is 0; sorting completed.', {}, null, {
+      type: 'enter', functionName: 'mergeSort', args: { low: 0, high: -1 }, depth: 0,
+    })
+    addStep('call-exit', [], 1, 'Leaving mergeSort(0, -1).', 'Exit mergeSort(low=0, high=-1).', {}, null, {
+      type: 'exit', functionName: 'mergeSort', args: { low: 0, high: -1 }, depth: 0,
+    })
     return steps
   }
 
@@ -70,12 +78,21 @@ export function generateMergeSortSteps(initialArray = []) {
       [0],
       1,
       'Array with 1 element is inherently sorted.',
-      'Base case reached: length is 1.'
+      'Base case reached: length is 1.',
+      {},
+      null,
+      { type: 'enter', functionName: 'mergeSort', args: { low: 0, high: 0 }, depth: 0 }
     )
+    addStep('call-exit', [], 1, 'Leaving mergeSort(0, 0).', 'Exit mergeSort(low=0, high=0).', {}, null, {
+      type: 'exit', functionName: 'mergeSort', args: { low: 0, high: 0 }, depth: 0,
+    })
     return steps
   }
 
-  function merge(low, mid, high) {
+  function merge(low, mid, high, depth) {
+    addStep('call-enter', [], 7, `Entering merge(${low}, ${mid}, ${high}).`, `Enter merge(low=${low}, mid=${mid}, high=${high}).`, {}, null, {
+      type: 'enter', functionName: 'merge', args: { low, mid, high }, depth,
+    })
     const leftArr = arr.slice(low, mid + 1)
     const rightArr = arr.slice(mid + 1, high + 1)
     arrayAccesses += (mid - low + 1) + (high - mid)
@@ -171,9 +188,16 @@ export function generateMergeSortSteps(initialArray = []) {
       j++
       k++
     }
+    addStep('call-exit', [], 7, `Leaving merge(${low}, ${mid}, ${high}).`, `Exit merge(low=${low}, mid=${mid}, high=${high}).`, {}, null, {
+      type: 'exit', functionName: 'merge', args: { low, mid, high }, depth,
+    })
   }
 
-  function mergeSortRecursive(low, high) {
+  function mergeSortRecursive(low, high, depth = 0) {
+    const args = { low, high }
+    addStep('call-enter', [], 1, `Entering mergeSort(${low}, ${high}).`, `Enter mergeSort(low=${low}, high=${high}).`, {}, null, {
+      type: 'enter', functionName: 'mergeSort', args, depth,
+    })
     if (low < high) {
       const mid = Math.floor((low + high) / 2)
       addStep(
@@ -185,10 +209,13 @@ export function generateMergeSortSteps(initialArray = []) {
         { [mid]: 'pivot', [low]: 'comparing', [high]: 'comparing' }
       )
 
-      mergeSortRecursive(low, mid)
-      mergeSortRecursive(mid + 1, high)
-      merge(low, mid, high)
+      mergeSortRecursive(low, mid, depth + 1)
+      mergeSortRecursive(mid + 1, high, depth + 1)
+      merge(low, mid, high, depth + 1)
     }
+    addStep('call-exit', [], 1, `Leaving mergeSort(${low}, ${high}).`, `Exit mergeSort(low=${low}, high=${high}).`, {}, null, {
+      type: 'exit', functionName: 'mergeSort', args, depth,
+    })
   }
 
   mergeSortRecursive(0, n - 1)
@@ -226,14 +253,14 @@ export function generateQuickSortSteps(initialArray = []) {
 
   const sortedSet = new Set()
 
-  const addStep = (type, indices, pseudocodeLine, beginner, technical, extraHighlights = {}) => {
+  const addStep = (type, indices, pseudocodeLine, beginner, technical, extraHighlights = {}, callEvent = null) => {
     const highlightedIndices = {}
     sortedSet.forEach((idx) => {
       highlightedIndices[idx] = 'sorted'
     })
     Object.assign(highlightedIndices, extraHighlights)
 
-    steps.push({
+    const step = {
       stepIndex: stepIndex++,
       type,
       indices: [...indices],
@@ -249,11 +276,18 @@ export function generateQuickSortSteps(initialArray = []) {
         swaps,
         arrayAccesses,
       },
-    })
+    }
+    if (callEvent) step.callEvent = callEvent
+    steps.push(step)
   }
 
   if (n === 0) {
-    addStep('mark-sorted', [], 1, 'Array is empty.', 'Initial array length is 0; sorting completed.')
+    addStep('mark-sorted', [], 1, 'Array is empty.', 'Initial array length is 0; sorting completed.', {
+      type: 'enter', functionName: 'quickSort', args: { low: 0, high: -1 }, depth: 0,
+    })
+    addStep('call-exit', [], 1, 'Leaving quickSort(0, -1).', 'Exit quickSort(low=0, high=-1).', {}, {
+      type: 'exit', functionName: 'quickSort', args: { low: 0, high: -1 }, depth: 0,
+    })
     return steps
   }
 
@@ -264,8 +298,12 @@ export function generateQuickSortSteps(initialArray = []) {
       [0],
       1,
       'Single element array is inherently sorted.',
-      'Base case reached: length is 1.'
+      'Base case reached: length is 1.',
+      { type: 'enter', functionName: 'quickSort', args: { low: 0, high: 0 }, depth: 0 }
     )
+    addStep('call-exit', [], 1, 'Leaving quickSort(0, 0).', 'Exit quickSort(low=0, high=0).', {}, {
+      type: 'exit', functionName: 'quickSort', args: { low: 0, high: 0 }, depth: 0,
+    })
     return steps
   }
 
@@ -348,11 +386,22 @@ export function generateQuickSortSteps(initialArray = []) {
     return pivotTargetIdx
   }
 
-  function quickSortRecursive(low, high) {
+  function quickSortRecursive(low, high, depth = 0) {
+    const args = { low, high }
+    addStep('call-enter', [], 1, `Entering quickSort(${low}, ${high}).`, `Enter quickSort(low=${low}, high=${high}).`, {}, {
+      type: 'enter', functionName: 'quickSort', args, depth,
+    })
     if (low < high) {
+      const partitionArgs = { low, high }
+      addStep('call-enter', [], 6, `Entering partition(${low}, ${high}).`, `Enter partition(low=${low}, high=${high}).`, {}, {
+        type: 'enter', functionName: 'partition', args: partitionArgs, depth: depth + 1,
+      })
       const pivotIdx = partition(low, high)
-      quickSortRecursive(low, pivotIdx - 1)
-      quickSortRecursive(pivotIdx + 1, high)
+      addStep('call-exit', [], 6, `Leaving partition(${low}, ${high}).`, `Exit partition(low=${low}, high=${high}).`, {}, {
+        type: 'exit', functionName: 'partition', args: partitionArgs, depth: depth + 1,
+      })
+      quickSortRecursive(low, pivotIdx - 1, depth + 1)
+      quickSortRecursive(pivotIdx + 1, high, depth + 1)
     } else if (low === high) {
       sortedSet.add(low)
       addStep(
@@ -364,6 +413,9 @@ export function generateQuickSortSteps(initialArray = []) {
         { [low]: 'sorted' }
       )
     }
+    addStep('call-exit', [], 1, `Leaving quickSort(${low}, ${high}).`, `Exit quickSort(low=${low}, high=${high}).`, {}, {
+      type: 'exit', functionName: 'quickSort', args, depth,
+    })
   }
 
   quickSortRecursive(0, n - 1)

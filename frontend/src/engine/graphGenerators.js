@@ -323,26 +323,31 @@ export function generateDfsSteps(nodes = [], edges = [], startNodeId = 'A') {
     distances[u] = depth
     stats.arrayAccesses++
 
-    steps.push(
-      makeGraphStep(
-        steps.length,
-        'visit',
-        nodes,
-        edges,
-        u,
-        null,
-        visitedOrder,
-        distances,
-        predecessors,
-        { ...nodeStates },
-        { ...edgeStates },
-        [],
-        2,
-        `Visited Node ${u} (depth ${depth}).`,
-        `Label ${u} as visited and process node.`,
-        stats
-      )
+    const visitStep = makeGraphStep(
+      steps.length,
+      'visit',
+      nodes,
+      edges,
+      u,
+      null,
+      visitedOrder,
+      distances,
+      predecessors,
+      { ...nodeStates },
+      { ...edgeStates },
+      [],
+      2,
+      `Visited Node ${u} (depth ${depth}).`,
+      `Label ${u} as visited and process node.`,
+      stats
     )
+    visitStep.callEvent = {
+      type: 'enter',
+      functionName: 'dfs',
+      args: { node: u },
+      depth,
+    }
+    steps.push(visitStep)
 
     const neighbors = adj[u] || []
     for (const neighbor of neighbors) {
@@ -378,6 +383,31 @@ export function generateDfsSteps(nodes = [], edges = [], startNodeId = 'A') {
     }
 
     nodeStates[u] = 'sorted'
+    const exitStep = makeGraphStep(
+      steps.length,
+      'call-exit',
+      nodes,
+      edges,
+      u,
+      null,
+      visitedOrder,
+      distances,
+      predecessors,
+      { ...nodeStates },
+      { ...edgeStates },
+      [],
+      2,
+      `Returning from DFS(${u}).`,
+      `Exit dfs(node=${u}).`,
+      stats
+    )
+    exitStep.callEvent = {
+      type: 'exit',
+      functionName: 'dfs',
+      args: { node: u },
+      depth,
+    }
+    steps.push(exitStep)
   }
 
   dfsRec(startId, 0)

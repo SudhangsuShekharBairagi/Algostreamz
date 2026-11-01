@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
-import { Sparkles, ArrowLeft } from 'lucide-react'
+import { useParams, Link, useSearchParams } from 'react-router-dom'
+import { Sparkles, ArrowLeft, Copy, ImageDown } from 'lucide-react'
 import { getAlgorithmById } from '../data/algorithmsData'
 import { generateSortingSteps } from '../engine/sortingGenerators'
 import { generateSearchingSteps } from '../engine/searchingGenerators'
@@ -23,10 +23,17 @@ import CustomArrayModal from '../components/visualizer/CustomArrayModal'
 import StructureVisualizer from '../components/visualizers/structures/StructureVisualizer'
 import GraphVisualizer from '../components/visualizer/GraphVisualizer'
 import NotFoundPage from './NotFoundPage'
+import { createVisualizerSearch, parseVisualizerSearch } from '../utils/shareableVisualizer'
+import { CODE_SNIPPETS } from '../data/codeSnippets'
+import useVisualizerAudio from '../hooks/useVisualizerAudio'
+import { exportVisualizerImage } from '../utils/exportVisualizerImage'
+import CallStackPanel from '../components/visualizer/CallStackPanel'
+import { getCallStackAtStep } from '../utils/callStack'
 
 function StandardArrayVisualizer({ algorithm }) {
   const { isZen, toggleZen, exitZen, controlsVisible, announceMessage } = useZen()
   const { showToast } = useToast()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [progressError, setProgressError] = useState('')
 
   // Local Zen toggle states for overlay elements
@@ -37,7 +44,7 @@ function StandardArrayVisualizer({ algorithm }) {
   const [explanationLevel, setExplanationLevel] = useState('beginner')
 
   // Dataset state management
-  const [dataset, setDataset] = useState(() => {
+  const getDefaultDataset = () => {
     if (!algorithm) return [44, 27, 89, 15, 62, 38, 71, 10]
     if (Array.isArray(algorithm.defaultInput)) {
       return algorithm.defaultInput
@@ -46,14 +53,17 @@ function StandardArrayVisualizer({ algorithm }) {
       return algorithm.defaultInput.array
     }
     return [44, 27, 89, 15, 62, 38, 71, 10]
-  })
+  }
 
-  const [searchTarget, setSearchTarget] = useState(() => {
-    if (algorithm && algorithm.defaultInput && algorithm.defaultInput.target !== undefined) {
-      return algorithm.defaultInput.target
-    }
-    return 60
-  })
+  const defaultDataset = getDefaultDataset()
+  const defaultTarget = algorithm?.defaultInput?.target ?? 60
+  const [initialShareState] = useState(() => parseVisualizerSearch(searchParams, {
+    defaultInput: defaultDataset,
+    defaultTarget,
+  }))
+  const [dataset, setDataset] = useState(() => initialShareState.input)
+
+  const [searchTarget, setSearchTarget] = useState(() => initialShareState.target)
 
   // Generate pure steps from engine
   const steps = useMemo(() => {
@@ -68,7 +78,7 @@ function StandardArrayVisualizer({ algorithm }) {
   }, [algorithm, dataset, searchTarget])
 
   // Shared useVisualizer instance - maintains playback index seamlessly across Standard & Zen modes
-  const visualizer = useVisualizer(steps)
+  const visualizer = useVisualizer(steps, { initialSpeed: initialShareState.speed })
 
   const {
     currentStepIndex,
@@ -87,6 +97,60 @@ function StandardArrayVisualizer({ algorithm }) {
     setSpeed,
     loadSteps,
   } = visualizer
+  const { soundEnabled, soundSuppressed, toggleSound } = useVisualizerAudio(currentStep)
+  const handleExportImage = useCallback(async () => {
+    try {
+      await exportVisualizerImage({
+        algorithmName: algorithm.name,
+        values: currentStep?.values ?? dataset,
+        highlightedIndices: currentStep?.highlightedIndices ?? {},
+      })
+      showToast('Current visualization exported as PNG', 'success', isZen)
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Unable to export the visualization', 'error', isZen)
+    }
+  }, [algorithm.name, currentStep, dataset, isZen, showToast])
+  const [urlReady, setUrlReady] = useState(false)
+
+  useEffect(() => {
+    goToStep(initialShareState.step)
+    setUrlReady(true)
+  }, [goToStep, initialShareState])
+
+  useEffect(() => {
+    if (!urlReady) return
+    const nextParams = createVisualizerSearch({
+      input: dataset,
+      speed,
+      step: currentStepIndex,
+      target: searchTarget,
+      includeTarget: algorithm.category === 'Searching',
+    })
+    if (nextParams.toString() !== searchParams.toString()) {
+      setSearchParams(nextParams, { replace: true })
+    }
+  }, [
+    algorithm.category,
+    currentStepIndex,
+    dataset,
+    searchParams,
+    searchTarget,
+    setSearchParams,
+    speed,
+    urlReady,
+  ])
+
+  const handleCopyLink = useCallback(async () => {
+    try {
+      if (!navigator.clipboard?.writeText) {
+        throw new Error('Clipboard access is unavailable in this browser.')
+      }
+      await navigator.clipboard.writeText(window.location.href)
+      showToast('Shareable link copied', 'success', isZen)
+    } catch {
+      showToast('Unable to copy the shareable link', 'error', isZen)
+    }
+  }, [isZen, showToast])
 
   useEffect(() => {
     if (!algorithm || !steps.length || !isAtEnd) return
@@ -168,6 +232,8 @@ function StandardArrayVisualizer({ algorithm }) {
       }
     },
     onToggleShortcuts: () => setShowShortcuts((prev) => !prev),
+    onToggleSound: toggleSound,
+    onExportImage: handleExportImage,
     isZen,
     enabled: true,
   })
@@ -175,6 +241,11 @@ function StandardArrayVisualizer({ algorithm }) {
   const values = currentStep?.values || dataset
   const highlightedIndices = currentStep?.highlightedIndices || {}
   const activeLine = currentStep?.pseudocodeLine || 1
+  const callStack = useMemo(
+    () => getCallStackAtStep(steps, currentStepIndex),
+    [currentStepIndex, steps],
+  )
+  const hasCallStack = ['merge-sort', 'quick-sort'].includes(algorithm.id)
 
   // ================= ZEN LAYOUT (isZen === true) =================
   if (isZen) {
@@ -197,6 +268,9 @@ function StandardArrayVisualizer({ algorithm }) {
             {announceMessage}
           </div>
         )}
+        <p className="sr-only" aria-live="polite" aria-atomic="true">
+          {algorithm.name}. Step {currentStepIndex + 1} of {steps.length}. {currentStep?.explanation?.beginner ?? ''}
+        </p>
 
         {/* Header Line */}
         <div className="pt-4 text-center space-y-1">
@@ -204,7 +278,28 @@ function StandardArrayVisualizer({ algorithm }) {
           <p className="font-mono text-xs text-ink-faint tabular-nums">
             Step {currentStepIndex + 1} / {steps.length}
           </p>
+          <button
+            type="button"
+            onClick={handleCopyLink}
+            className="btn-ghost inline-flex items-center gap-1.5 border border-line px-3 py-1.5 text-xs font-medium text-ink-muted hover:text-ink focus-ring"
+          >
+            <Copy className="w-3.5 h-3.5" />
+            Copy link
+          </button>
+          <button
+            type="button"
+            onClick={handleExportImage}
+            className="btn-ghost inline-flex items-center gap-1.5 border border-line px-3 py-1.5 text-xs font-medium text-ink-muted hover:text-ink focus-ring"
+          >
+            <ImageDown className="w-3.5 h-3.5" />
+            Export PNG
+          </button>
         </div>
+        {hasCallStack && (
+          <div className="fixed top-24 right-4 z-20 w-72 max-w-[calc(100vw-2rem)]">
+            <CallStackPanel {...callStack} variant="flat" />
+          </div>
+        )}
 
         {/* Stage Area */}
         <div className="flex-1 my-8 flex items-center justify-center max-w-[1100px] w-full mx-auto min-h-[360px]">
@@ -249,6 +344,9 @@ function StandardArrayVisualizer({ algorithm }) {
           onToggleTechnical={() => setExplanationLevel((prev) => (prev === 'beginner' ? 'technical' : 'beginner'))}
           onToggleStats={() => setShowStats((prev) => !prev)}
           onToggleShortcuts={() => setShowShortcuts(true)}
+          soundEnabled={soundEnabled}
+          soundSuppressed={soundSuppressed}
+          onToggleSound={toggleSound}
           onExitZen={exitZen}
         />
 
@@ -258,6 +356,7 @@ function StandardArrayVisualizer({ algorithm }) {
           onClose={() => setShowPseudocodeSheet(false)}
           pseudocode={algorithm.pseudocode}
           activeLine={activeLine}
+          codeSnippets={CODE_SNIPPETS[algorithm.id]}
         />
 
         {/* Zen Shortcuts Modal */}
@@ -268,7 +367,7 @@ function StandardArrayVisualizer({ algorithm }) {
 
   // ================= STANDARD LAYOUT (isZen === false) =================
   return (
-    <div className="space-y-6 pb-12">
+    <div className="space-y-4 pb-8">
       {/* Back Link */}
       <div className="flex items-center gap-2">
         <Link
@@ -281,11 +380,11 @@ function StandardArrayVisualizer({ algorithm }) {
       </div>
 
       {/* Main Responsive Grid Layout */}
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+      <div className="grid min-w-0 grid-cols-1 items-start gap-4 xl:grid-cols-12 xl:gap-5">
         {/* Left Column (8 cols on XL): Header, Canvas, Playback Controls */}
-        <div className="xl:col-span-8 space-y-6">
+        <div className="min-w-0 space-y-4 xl:col-span-8">
           {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-4">
+          <div className="flex flex-col gap-3 border-b border-line pb-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <div className="flex items-center gap-2 flex-wrap mb-1">
                 <span className="chip text-accent font-semibold text-micro uppercase tracking-wider">
@@ -296,8 +395,25 @@ function StandardArrayVisualizer({ algorithm }) {
                 <span className="chip font-mono text-micro">Worst: {algorithm.complexity.worst}</span>
                 <span className="chip font-mono text-micro">Space: {algorithm.complexity.space}</span>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex min-w-0 flex-wrap items-center gap-2 sm:gap-3">
                 <h1 className="text-h1 font-display font-semibold text-ink">{algorithm.name}</h1>
+                <button
+                  type="button"
+                  onClick={handleExportImage}
+                  className="btn-ghost border border-line px-3 py-1.5 text-xs font-medium inline-flex items-center gap-1.5 text-ink-muted hover:text-ink focus-ring"
+                  aria-label="Export current visualization as PNG"
+                >
+                  <ImageDown className="w-3.5 h-3.5" />
+                  Export PNG
+                </button>
+                <button
+                  type="button"
+                  onClick={handleCopyLink}
+                  className="btn-ghost border border-line px-3 py-1.5 text-xs font-medium inline-flex items-center gap-1.5 text-ink-muted hover:text-ink focus-ring"
+                >
+                  <Copy className="w-3.5 h-3.5" />
+                  Copy link
+                </button>
                 <button
                   type="button"
                   onClick={toggleZen}
@@ -321,6 +437,9 @@ function StandardArrayVisualizer({ algorithm }) {
 
           {/* Interactive Sorting / Searching Stage */}
           <SortingCanvas values={values} highlightedIndices={highlightedIndices} variant="default" />
+          <p className="sr-only" aria-live="polite" aria-atomic="true">
+            {algorithm.name}. Step {currentStepIndex + 1} of {steps.length}. {currentStep?.explanation?.beginner ?? ''}
+          </p>
 
           {/* Playback Controls Toolbar */}
           <PlaybackControls
@@ -339,17 +458,26 @@ function StandardArrayVisualizer({ algorithm }) {
             onGenerateRandom={handleGenerateRandom}
             onOpenCustomInput={() => setShowCustomModal(true)}
             onToggleShortcuts={() => setShowShortcuts(true)}
+            soundEnabled={soundEnabled}
+            soundSuppressed={soundSuppressed}
+            onToggleSound={toggleSound}
             variant="bar"
           />
         </div>
 
-        {/* Right Column (4 cols on XL, sticky top-20): Explanation & Pseudocode Panels */}
-        <div className="xl:col-span-4 space-y-6 xl:sticky xl:top-20">
+        {/* Right Column: explanation and telemetry */}
+        <div className="min-w-0 space-y-4 xl:col-span-4">
+          {hasCallStack && <CallStackPanel {...callStack} />}
           <ExplanationPanel currentStep={currentStep} explanationLevel={explanationLevel} />
-
-          <PseudocodePanel pseudocode={algorithm.pseudocode} activeLine={activeLine} variant="card" />
         </div>
       </div>
+
+      <PseudocodePanel
+        pseudocode={algorithm.pseudocode}
+        activeLine={activeLine}
+        variant="card"
+        codeSnippets={CODE_SNIPPETS[algorithm.id]}
+      />
 
       {/* Custom Array Input Modal */}
       <CustomArrayModal
@@ -389,5 +517,5 @@ export default function VisualizerPage() {
     return <GraphVisualizer key={algorithm.id} algorithm={algorithm} />
   }
 
-  return <StandardArrayVisualizer algorithm={algorithm} />
+  return <StandardArrayVisualizer key={algorithm.id} algorithm={algorithm} />
 }

@@ -18,6 +18,7 @@ import PlaybackControls from '../../visualizer/PlaybackControls'
 import PseudocodePanel from '../../visualizer/PseudocodePanel'
 import StructureCanvas from './StructureCanvas'
 import TreeVisualizer from '../../visualizer/TreeVisualizer'
+import { CODE_SNIPPETS } from '../../../data/codeSnippets'
 
 const GENERATORS = {
   stack: { generate: generateStackSteps, actions: ['push', 'pop', 'peek'] },
@@ -291,7 +292,11 @@ export default function StructureVisualizer({ algorithm }) {
         </div>
         <aside className="space-y-6 xl:sticky xl:top-20 xl:col-span-4">
           <ExplanationPanel currentStep={currentStep} />
-          <PseudocodePanel pseudocode={algorithm.pseudocode} activeLine={activeLine} />
+          <PseudocodePanel
+            pseudocode={algorithm.pseudocode}
+            activeLine={activeLine}
+            codeSnippets={CODE_SNIPPETS[algorithm.id]}
+          />
         </aside>
       </div>
     </div>

@@ -1,4 +1,17 @@
-import { Play, Pause, SkipBack, SkipForward, RotateCcw, Shuffle, Sparkles, Keyboard, SlidersHorizontal } from 'lucide-react'
+import { useEffect, useRef } from 'react'
+import {
+  Play,
+  Pause,
+  SkipBack,
+  SkipForward,
+  RotateCcw,
+  Shuffle,
+  Keyboard,
+  SlidersHorizontal,
+  MoreHorizontal,
+  Volume2,
+  VolumeX,
+} from 'lucide-react'
 
 const SPEED_OPTIONS = [
   { label: '0.5x', ms: 800 },
@@ -26,23 +39,39 @@ export default function PlaybackControls({
   onSetSpeed,
   onGenerateRandom,
   onOpenCustomInput,
-  isPredictMode = false,
-  onTogglePredict,
   onToggleShortcuts,
+  soundEnabled = false,
+  soundSuppressed = false,
+  onToggleSound,
   variant = 'bar',
 }) {
   const isDock = variant === 'dock'
+  const overflowRef = useRef(null)
 
   const containerClasses = isDock
     ? 'bg-surface/90 backdrop-blur-md border border-line shadow-e3 rounded-pill px-4 py-2.5 flex items-center justify-between gap-4 max-w-2xl mx-auto'
-    : 'bg-surface border border-line rounded-lg p-3 md:p-4 shadow-e1 flex flex-wrap md:flex-nowrap items-center justify-between gap-4 w-full'
+    : 'bg-surface border border-line rounded-lg p-3 md:p-4 shadow-e1 flex flex-wrap items-center gap-3 w-full min-w-0'
 
   const maxStep = Math.max(0, totalSteps - 1)
+  const closeOverflow = () => {
+    if (overflowRef.current) overflowRef.current.open = false
+  }
+
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === 'Escape' && overflowRef.current?.open) {
+        closeOverflow()
+        overflowRef.current.querySelector('summary')?.focus()
+      }
+    }
+    window.addEventListener('keydown', handleEscape)
+    return () => window.removeEventListener('keydown', handleEscape)
+  }, [])
 
   return (
     <div className={containerClasses} role="toolbar" aria-label="Algorithm playback controls">
-      {/* Primary Action Buttons */}
-      <div className="flex items-center gap-1.5 md:gap-2">
+      <div role="group" aria-label="Transport controls" className="flex min-w-0 basis-full flex-1 flex-wrap items-center gap-3 xl:basis-auto">
+        <div className="flex shrink-0 items-center gap-1.5 md:gap-2">
         <button
           type="button"
           onClick={onReset}
@@ -97,10 +126,9 @@ export default function PlaybackControls({
         >
           <SkipForward className="w-4 h-4 text-ink-muted" />
         </button>
-      </div>
+        </div>
 
-      {/* Scrubber Timeline Slider */}
-      <div className="flex-1 min-w-[160px] flex items-center gap-3">
+        <div role="group" aria-label="Playback timeline" className="flex min-w-[120px] flex-1 items-center gap-3">
         <label htmlFor="timeline-scrubber" className="sr-only">
           Timeline Scrubber
         </label>
@@ -121,10 +149,10 @@ export default function PlaybackControls({
         <span className="font-mono text-xs text-ink-muted tabular-nums whitespace-nowrap min-w-[48px] text-right">
           {totalSteps > 0 ? `${currentStepIndex + 1}/${totalSteps}` : '0/0'}
         </span>
+        </div>
       </div>
 
-      {/* Speed Multiplier Segmented Control */}
-      <div className="flex items-center gap-2">
+      <div role="group" aria-label="Speed controls" className="flex shrink-0 items-center gap-2">
         <div className="segmented" role="radiogroup" aria-label="Playback speed">
           {SPEED_OPTIONS.map((opt) => {
             const isSelected = Math.abs(speed - opt.ms) < 30
@@ -144,45 +172,71 @@ export default function PlaybackControls({
             )
           })}
         </div>
+      </div>
 
-        {/* Custom Dataset Input Button */}
-        {onOpenCustomInput && (
+      <div role="group" aria-label="Visualizer tools" className="ml-auto flex shrink-0 items-center gap-2">
+        {onToggleSound && (
           <button
             type="button"
-            onClick={onOpenCustomInput}
-            title="Custom dataset input"
-            aria-label="Open custom array input modal"
-            className="btn-ghost min-w-[40px] min-h-[40px] md:min-w-[44px] md:min-h-[44px] p-2.5 flex items-center justify-center focus-ring border border-line text-ink-muted hover:text-ink"
+            onClick={onToggleSound}
+            aria-pressed={soundEnabled}
+            aria-label={soundEnabled ? 'Mute visualizer sounds' : 'Enable visualizer sounds'}
+            title={soundSuppressed ? 'Sound is suppressed by reduced-motion preference' : 'Toggle visualizer sounds (M)'}
+            className="btn-ghost min-w-[40px] min-h-[40px] p-2.5 flex items-center justify-center focus-ring border border-line"
           >
-            <SlidersHorizontal className="w-4 h-4" />
+            {soundEnabled ? <Volume2 className="w-4 h-4 text-accent" /> : <VolumeX className="w-4 h-4 text-ink-muted" />}
           </button>
         )}
-
-        {/* Random Dataset Generator */}
-        {onGenerateRandom && (
-          <button
-            type="button"
-            onClick={onGenerateRandom}
-            title="Generate random array dataset"
-            aria-label="Generate new random array"
-            className="btn-ghost min-w-[40px] min-h-[40px] md:min-w-[44px] md:min-h-[44px] p-2.5 flex items-center justify-center focus-ring border border-line"
+        <details ref={overflowRef} className="relative">
+          <summary
+            aria-label="More visualizer controls"
+            className="btn-ghost flex min-h-[40px] cursor-pointer list-none items-center justify-center gap-1.5 border border-line px-2.5 text-ink-muted hover:text-ink focus-ring [&::-webkit-details-marker]:hidden"
           >
-            <Shuffle className="w-4 h-4 text-ink-muted" />
-          </button>
-        )}
-
-        {/* Keyboard Shortcuts Help Popover Button */}
-        {onToggleShortcuts && (
-          <button
-            type="button"
-            onClick={onToggleShortcuts}
-            title="Keyboard Shortcuts (?)"
-            aria-label="View keyboard shortcuts help modal"
-            className="btn-ghost min-w-[40px] min-h-[40px] md:min-w-[44px] md:min-h-[44px] p-2.5 flex items-center justify-center focus-ring border border-line text-ink-muted hover:text-ink"
-          >
-            <Keyboard className="w-4 h-4 text-accent" />
-          </button>
-        )}
+            <MoreHorizontal className="h-4 w-4" />
+            <span className="text-xs">More</span>
+          </summary>
+          <div className="absolute right-0 top-full z-30 mt-2 flex min-w-52 flex-col gap-1 rounded-lg border border-line bg-surface p-2 shadow-e3">
+            {onGenerateRandom && (
+              <button
+                type="button"
+                onClick={() => {
+                  onGenerateRandom()
+                  closeOverflow()
+                }}
+                className="btn-ghost flex w-full items-center gap-2 px-2.5 py-2 text-left text-caption focus-ring"
+              >
+                <Shuffle className="h-4 w-4" />
+                Shuffle dataset
+              </button>
+            )}
+            {onOpenCustomInput && (
+              <button
+                type="button"
+                onClick={() => {
+                  onOpenCustomInput()
+                  closeOverflow()
+                }}
+                className="btn-ghost flex w-full items-center gap-2 px-2.5 py-2 text-left text-caption focus-ring"
+              >
+                <SlidersHorizontal className="h-4 w-4" />
+                Input settings
+              </button>
+            )}
+            {onToggleShortcuts && (
+              <button
+                type="button"
+                onClick={() => {
+                  onToggleShortcuts()
+                  closeOverflow()
+                }}
+                className="btn-ghost flex w-full items-center gap-2 px-2.5 py-2 text-left text-caption focus-ring"
+              >
+                <Keyboard className="h-4 w-4 text-accent" />
+                Keyboard shortcuts
+              </button>
+            )}
+          </div>
+        </details>
       </div>
     </div>
   )

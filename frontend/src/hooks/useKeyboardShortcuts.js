@@ -24,6 +24,8 @@ import { useEffect } from 'react'
  * @param {Function} [handlers.onToggleStats] - S
  * @param {Function} [handlers.onToggleFullscreen] - F
  * @param {Function} [handlers.onToggleShortcuts] - ?
+ * @param {Function} [handlers.onToggleSound] - M
+ * @param {Function} [handlers.onExportImage] - E
  * @param {boolean} [handlers.isZen=false] - Whether Zen mode is currently active
  * @param {boolean} [handlers.enabled=true] - Whether hook listener is enabled
  */
@@ -42,6 +44,8 @@ export function useKeyboardShortcuts({
   onToggleStats,
   onToggleFullscreen,
   onToggleShortcuts,
+  onToggleSound,
+  onExportImage,
   isZen = false,
   enabled = true,
 } = {}) {
@@ -114,7 +118,17 @@ export function useKeyboardShortcuts({
       }
 
       // Mode-specific / Zen Overlays Shortcuts
-      if (key === 'p' || key === 'P') {
+      if (key === 'm' || key === 'M') {
+        if (onToggleSound) {
+          e.preventDefault()
+          onToggleSound()
+        }
+      } else if (key === 'e' || key === 'E') {
+        if (onExportImage) {
+          e.preventDefault()
+          onExportImage()
+        }
+      } else if (key === 'p' || key === 'P') {
         if (onTogglePseudocode) {
           e.preventDefault()
           onTogglePseudocode()
@@ -159,6 +173,8 @@ export function useKeyboardShortcuts({
     onToggleStats,
     onToggleFullscreen,
     onToggleShortcuts,
+    onToggleSound,
+    onExportImage,
     isZen,
     enabled,
   ])

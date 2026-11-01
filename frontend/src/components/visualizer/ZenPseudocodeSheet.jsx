@@ -11,6 +11,7 @@ export default function ZenPseudocodeSheet({
   onClose,
   pseudocode = [],
   activeLine = 1,
+  codeSnippets,
 }) {
   if (!open) return null
 
@@ -42,7 +43,12 @@ export default function ZenPseudocodeSheet({
           </button>
         </div>
 
-        <PseudocodePanel pseudocode={pseudocode} activeLine={activeLine} variant="flat" />
+        <PseudocodePanel
+          pseudocode={pseudocode}
+          activeLine={activeLine}
+          variant="flat"
+          codeSnippets={codeSnippets}
+        />
       </div>
     </>
   )

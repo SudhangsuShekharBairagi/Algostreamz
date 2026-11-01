@@ -24,7 +24,7 @@ export default function SortingCanvas({
 
   const containerClasses = isZen
     ? 'relative w-full h-[320px] p-6 flex items-end justify-center gap-3 sm:gap-4 md:gap-5 bg-transparent select-none'
-    : 'card relative w-full h-[300px] p-6 md:p-8 flex items-end justify-center gap-3 sm:gap-4 md:gap-5 bg-surface/90 border border-line rounded-2xl shadow-e1 select-none'
+    : 'card relative w-full h-[300px] min-w-0 p-2 sm:p-4 md:p-8 flex items-end justify-center gap-1 sm:gap-2 md:gap-5 bg-surface/90 border border-line rounded-2xl shadow-e1 select-none'
 
   const ariaSummary = `Array visualization containing ${values.length} elements: ${values.join(', ')}`
 
@@ -72,7 +72,7 @@ export default function SortingCanvas({
         return (
           <div
             key={`bar-${idx}-${val}`}
-            className="flex flex-col items-center flex-1 max-w-[60px] min-w-[24px] h-full justify-end transition-all duration-base ease-out-custom"
+            className="flex flex-col items-center flex-1 max-w-[60px] min-w-0 sm:min-w-[24px] h-full justify-end transition-all duration-base ease-out-custom"
           >
             {/* Top Value Label & Indicators */}
             <div className="mb-2 flex flex-col items-center justify-end min-h-[32px] gap-0.5">

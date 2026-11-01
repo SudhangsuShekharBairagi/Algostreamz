@@ -42,6 +42,160 @@
 }
 
 /* Future dark mode slot: override variables here if theme switching is enabled */
+
 [data-theme='dark'] {
-  /* Editorial light theme is active by default. Dark theme variable overrides can be added here. */
+  color-scheme: dark;
+
+  /* Backgrounds */
+  --canvas: 11 15 25;             /* #0B0F19 — Main application background */
+  --zen-canvas: 17 24 39;         /* #111827 — Editorial / alternate background */
+  --surface: 22 30 46;            /* #161E2E — Cards, panels, dialogs */
+  --sunken: 15 23 42;             /* #0F172A — Visualization canvas */
+
+  /* Borders */
+  --line: 51 65 85;               /* #334155 — Standard borders */
+  --line-strong: 71 85 105;       /* #475569 — Emphasized borders */
+
+  /* Typography */
+  --ink: 241 245 249;             /* #F1F5F9 — Primary text */
+  --ink-muted: 189 199 214;       /* #BDC7D6 — Secondary text */
+  --ink-faint: 148 163 184;       /* #94A3B8 — Muted text */
+
+  /* Brand / Interactive Accent */
+  --accent: 129 140 248;          /* #818CF8 — Indigo accent */
+  --accent-hover: 165 180 252;    /* #A5B4FC — Hover accent */
+  --accent-strong: 99 102 241;    /* #6366F1 — Strong accent */
+  --accent-soft: 30 41 75;        /* #1E294B — Accent backgrounds */
+
+  /* =========================================
+     ALGORITHM VISUALIZATION STATES
+     ========================================= */
+
+  /* Comparing elements: array comparisons, edge checks */
+  --state-compare: 251 191 36;       /* #FBBF24 */
+  --state-compare-text: 69 26 3;      /* #451A03 */
+  --state-compare-ring: 253 230 138;  /* #FDE68A */
+
+  /* Swapping / active mutation */
+  --state-swap: 251 113 133;          /* #FB7185 */
+  --state-swap-text: 76 5 25;         /* #4C0519 */
+  --state-swap-ring: 190 18 60;       /* #BE123C */
+
+  /* Sorted / visited / completed */
+  --state-sorted: 52 211 153;         /* #34D399 */
+  --state-sorted-text: 2 44 34;       /* #022C22 */
+  --state-sorted-ring: 16 185 129;    /* #10B981 */
+
+  /* Pivot / selected node / current focus */
+  --state-pivot: 167 139 250;         /* #A78BFA */
+  --state-pivot-text: 46 16 101;      /* #2E1065 */
+  --state-pivot-ring: 139 92 246;     /* #8B5CF6 */
+
+  /* =========================================
+     DATA STRUCTURE VISUALIZATION TOKENS
+     Optional additional tokens
+     ========================================= */
+
+  /* Array cells and linked-list nodes */
+  --node-bg: 30 41 59;                /* #1E293B */
+  --node-border: 100 116 139;         /* #64748B */
+  --node-text: 248 250 252;           /* #F8FAFC */
+
+  /* Graphs and tree connections */
+  --edge: 100 116 139;                /* #64748B */
+  --edge-active: 129 140 248;         /* #818CF8 */
+
+  /* Code editor and execution panels */
+  --code-bg: 9 14 24;                 /* #090E18 */
+  --code-line-active: 30 41 75;       /* #1E294B */
+  --console-text: 203 213 225;        /* #CBD5E1 */
+
+  /* Playback controls */
+  --control-bg: 30 41 59;             /* #1E293B */
+  --control-hover: 51 65 85;          /* #334155 */
+  --control-disabled: 71 85 105;      /* #475569 */
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 320ms;
+}
+
+/* Optional: smooth theme transition */
+html {
+  color-scheme: light;
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+body {
+  background-color: rgb(var(--canvas));
+  color: rgb(var(--ink));
+  transition:
+    background-color var(--duration-base) var(--ease-out),
+    color var(--duration-base) var(--ease-out);
+}
+
+/* Shared surfaces */
+[data-theme='dark'] .visualizer-panel {
+  background-color: rgb(var(--surface));
+  border: 1px solid rgb(var(--line));
+}
+
+[data-theme='dark'] .visualization-canvas {
+  background-color: rgb(var(--sunken));
+  border: 1px solid rgb(var(--line));
+}
+
+/* Array / tree / linked-list nodes */
+[data-theme='dark'] .visualizer-node {
+  background-color: rgb(var(--node-bg));
+  color: rgb(var(--node-text));
+  border: 1px solid rgb(var(--node-border));
+  transition:
+    background-color var(--duration-fast) ease,
+    border-color var(--duration-fast) ease,
+    transform var(--duration-fast) ease;
+}
+
+/* Algorithm state classes */
+[data-theme='dark'] .state-compare {
+  background-color: rgb(var(--state-compare));
+  color: rgb(var(--state-compare-text));
+  border-color: rgb(var(--state-compare-ring));
+}
+
+[data-theme='dark'] .state-swap {
+  background-color: rgb(var(--state-swap));
+  color: rgb(var(--state-swap-text));
+  border-color: rgb(var(--state-swap-ring));
+}
+
+[data-theme='dark'] .state-sorted {
+  background-color: rgb(var(--state-sorted));
+  color: rgb(var(--state-sorted-text));
+  border-color: rgb(var(--state-sorted-ring));
+}
+
+[data-theme='dark'] .state-pivot {
+  background-color: rgb(var(--state-pivot));
+  color: rgb(var(--state-pivot-text));
+  border-color: rgb(var(--state-pivot-ring));
+}
+
+/* Keyboard accessibility */
+[data-theme='dark'] :focus-visible {
+  outline: 2px solid rgb(var(--accent));
+  outline-offset: 3px;
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  body,
+  [data-theme='dark'] .visualizer-node {
+    transition: none;
+  }
 }

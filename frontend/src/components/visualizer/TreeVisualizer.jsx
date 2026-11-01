@@ -29,6 +29,7 @@ import {
 import PlaybackControls from './PlaybackControls'
 import ExplanationPanel from './ExplanationPanel'
 import PseudocodePanel from './PseudocodePanel'
+import { CODE_SNIPPETS } from '../../data/codeSnippets'
 import ZenDock from './ZenDock'
 import ZenCaption from './ZenCaption'
 
@@ -670,7 +671,11 @@ export default function TreeVisualizer({ algorithm, variant: propVariant }) {
         {/* Right Column (4 cols): Explanation & Pseudocode Panels */}
         <aside className="space-y-6 xl:sticky xl:top-20 xl:col-span-4">
           <ExplanationPanel currentStep={currentStep} />
-          <PseudocodePanel pseudocode={currentPseudocode} activeLine={activeLine} />
+          <PseudocodePanel
+            pseudocode={currentPseudocode}
+            activeLine={activeLine}
+            codeSnippets={CODE_SNIPPETS['binary-search-tree']}
+          />
         </aside>
       </div>
     </div>

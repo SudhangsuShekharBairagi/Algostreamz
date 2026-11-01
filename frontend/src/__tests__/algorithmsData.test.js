@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { ALGORITHMS, getAlgorithmById } from '../data/algorithmsData'
+import { CODE_SNIPPETS } from '../data/codeSnippets'
 
 describe('algorithmsData registry', () => {
   it('exports the registered sorting, searching, and data structure algorithms', () => {
@@ -41,6 +42,28 @@ describe('algorithmsData registry', () => {
       expect(Array.isArray(algo.pseudocode)).toBe(true)
       expect(Array.isArray(algo.supportedOperations)).toBe(true)
       expect(algo.defaultInput).toBeDefined()
+    })
+  })
+
+  it('provides all language snippets with valid pseudocode-to-code line mappings', () => {
+    const languages = ['java', 'python', 'cpp']
+
+    ALGORITHMS.forEach((algorithm) => {
+      const snippets = CODE_SNIPPETS[algorithm.id]
+      expect(snippets, `${algorithm.id} snippets`).toBeDefined()
+
+      languages.forEach((language) => {
+        const languageSnippet = snippets[language]
+        expect(languageSnippet?.code, `${algorithm.id} ${language} code`).toBeTruthy()
+        const codeLineCount = languageSnippet.code.split('\n').length
+        expect(languageSnippet.lineMap, `${algorithm.id} ${language} line map`).toHaveLength(
+          algorithm.pseudocode.length,
+        )
+        languageSnippet.lineMap.forEach((line) => {
+          expect(line, `${algorithm.id} ${language} mapped line`).toBeGreaterThan(0)
+          expect(line, `${algorithm.id} ${language} mapped line`).toBeLessThanOrEqual(codeLineCount)
+        })
+      })
     })
   })
 

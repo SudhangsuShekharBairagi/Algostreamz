@@ -13,6 +13,8 @@ import {
   LogOut,
   BarChart2,
   FileText,
+  Volume2,
+  VolumeX,
 } from 'lucide-react'
 
 const SPEED_OPTIONS = [
@@ -46,6 +48,9 @@ export default function ZenDock({
   onToggleStats,
   onToggleCaption,
   onToggleShortcuts,
+  soundEnabled = false,
+  soundSuppressed = false,
+  onToggleSound,
   onExitZen,
 }) {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -267,6 +272,23 @@ export default function ZenDock({
                       <span>Fullscreen</span>
                     </div>
                     <kbd className="kbd">F</kbd>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onToggleSound && onToggleSound()
+                      setMenuOpen(false)
+                    }}
+                    aria-pressed={soundEnabled}
+                    title={soundSuppressed ? 'Sound is suppressed by reduced-motion preference' : undefined}
+                    className="w-full px-4 py-2.5 text-left text-xs font-medium text-ink hover:bg-sunken flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      {soundEnabled ? <Volume2 className="w-4 h-4 text-accent" /> : <VolumeX className="w-4 h-4 text-accent" />}
+                      <span>{soundEnabled ? 'Mute Sounds' : 'Enable Sounds'}</span>
+                    </div>
+                    <kbd className="kbd">M</kbd>
                   </button>
 
                   <button

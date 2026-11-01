@@ -81,10 +81,10 @@ export default function Sidebar({ mobileOpen, onCloseMobile, isZen = false }) {
 
   return (
     <>
-      {/* 1. Mobile Backdrop Scrim (<1024px) */}
+      {/* Mobile backdrop starts below the fixed-height navbar. */}
       {mobileOpen && !isZen && (
         <div
-          className="fixed inset-0 z-40 bg-ink/30 backdrop-blur-sm lg:hidden transition-opacity duration-200"
+          className="fixed inset-x-0 top-14 bottom-0 z-40 bg-ink/30 backdrop-blur-sm md:hidden transition-opacity duration-200"
           onClick={onCloseMobile}
           aria-hidden="true"
         />
@@ -94,14 +94,12 @@ export default function Sidebar({ mobileOpen, onCloseMobile, isZen = false }) {
       <aside
         inert={isZen ? '' : undefined}
         aria-hidden={isZen}
-        className={`fixed top-14 bottom-0 left-0 z-40 bg-surface border-r border-line flex flex-col transition-all duration-300 ease-out-custom
+        className={`fixed top-14 bottom-0 left-0 z-40 h-[calc(100dvh-3.5rem)] bg-surface border-r border-line flex flex-col transition-all duration-300 ease-out-custom
           ${
             isZen
               ? 'w-0 -translate-x-full opacity-0 overflow-hidden pointer-events-none'
-              : `hidden lg:flex ${collapsed ? 'w-[72px]' : 'w-[264px]'} lg:static lg:translate-x-0 ${
-                  mobileOpen
-                    ? 'flex w-[264px] translate-x-0 shadow-e3'
-                    : '-translate-x-full lg:translate-x-0'
+              : `${mobileOpen ? 'flex w-[264px] translate-x-0 shadow-e3' : 'hidden -translate-x-full'} md:sticky md:top-14 md:bottom-auto md:z-20 md:flex md:h-[calc(100vh-3.5rem)] md:translate-x-0 md:shrink-0 md:shadow-none ${
+                  collapsed ? 'md:w-[72px]' : 'md:w-[264px]'
                 }`
           }
         `}
@@ -120,7 +118,7 @@ export default function Sidebar({ mobileOpen, onCloseMobile, isZen = false }) {
             onClick={toggleCollapsed}
             title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             aria-label={LABELS.SIDEBAR_TOGGLE}
-            className="hidden lg:flex btn-ghost p-1.5 focus-ring text-ink-muted hover:text-ink ml-auto"
+            className="hidden md:flex btn-ghost p-1.5 focus-ring text-ink-muted hover:text-ink ml-auto"
           >
             {collapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
           </button>
@@ -131,7 +129,7 @@ export default function Sidebar({ mobileOpen, onCloseMobile, isZen = false }) {
             type="button"
             onClick={onCloseMobile}
             aria-label="Close sidebar navigation"
-            className="lg:hidden btn-ghost p-1.5 focus-ring text-ink-muted hover:text-ink ml-auto"
+            className="md:hidden btn-ghost p-1.5 focus-ring text-ink-muted hover:text-ink ml-auto"
           >
             <X className="w-5 h-5" />
           </button>

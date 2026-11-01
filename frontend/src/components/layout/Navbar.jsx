@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Sun, Menu, ChevronRight, ArrowRight, UserRound } from "lucide-react";
-import { FaGithub } from "react-icons/fa";
+import { Sun, Menu, ChevronDown, ArrowRight, UserRound } from "lucide-react";
 import ZenToggle from "../common/ZenToggle";
 import Logo from "../common/Logo";
-import { SITE_NAME } from "../../config";
 import { SITE_LINKS, LABELS, ROUTES } from "../../config/siteLinks";
 import { useAuth } from "../../context/AuthContext";
 
@@ -20,6 +18,7 @@ export default function Navbar({
 
   const [scrolled, setScrolled] = useState(false);
   const [activeAnchor, setActiveAnchor] = useState("");
+  const [isMobileViewport, setIsMobileViewport] = useState(() => window.innerWidth < 768);
 
   // 1. Scroll listener for landing page header transparency
   useEffect(() => {
@@ -30,6 +29,12 @@ export default function Navbar({
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobileViewport(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   // 2. IntersectionObserver to highlight active anchor on Landing Page ('/')
@@ -58,33 +63,12 @@ export default function Navbar({
     return () => observer.disconnect();
   }, [isLandingPage]);
 
-  // Helper to format breadcrumb from pathname
-  const getBreadcrumbs = () => {
-    if (isLandingPage) return null;
-
-    const segments = currentPath.split("/").filter(Boolean);
-    const breadcrumbItems = [];
-
-    if (segments[0] === "visualizer" && segments[1]) {
-      const formattedName = segments[1]
-        .split("-")
-        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-        .join(" ");
-      breadcrumbItems.push({
-        label: "Visualizer",
-        href: ROUTES.DEFAULT_VISUALIZER,
-      });
-      breadcrumbItems.push({ label: formattedName, href: currentPath });
-    } else if (segments[0]) {
-      const formattedName =
-        segments[0].charAt(0).toUpperCase() + segments[0].slice(1);
-      breadcrumbItems.push({ label: formattedName, href: currentPath });
-    }
-
-    return breadcrumbItems;
-  };
-
-  const breadcrumbs = getBreadcrumbs();
+  const primaryLinks = isLandingPage
+    ? SITE_LINKS.anchors.slice(0, 3)
+    : SITE_LINKS.primary.slice(0, 4);
+  const moreLinks = isLandingPage
+    ? SITE_LINKS.anchors.slice(3)
+    : SITE_LINKS.primary.slice(4);
 
   // Smooth scroll helper for landing anchors
   const handleAnchorClick = (e, href) => {
@@ -113,94 +97,133 @@ export default function Navbar({
           : "bg-canvas/80 backdrop-blur-md border-b border-line"
       }`}
     >
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between gap-4">
-        {/* Left Side: Mobile Menu Trigger + Logo + Breadcrumbs */}
-        <div className="flex items-center gap-3">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 h-full flex flex-nowrap items-center justify-between gap-2 md:gap-3">
+        <div className="flex shrink-0 items-center gap-2 md:gap-3">
           {!isLandingPage && (
             <button
               type="button"
               onClick={onToggleMobileSidebar}
               aria-label={LABELS.SIDEBAR_TOGGLE}
-              className="lg:hidden btn-ghost p-1.5 focus-ring"
+              className="md:hidden btn-ghost p-1.5 focus-ring"
             >
               <Menu className="w-5 h-5 text-ink" />
             </button>
           )}
 
           <Logo />
-
-          {/* Breadcrumbs for internal routes */}
-          {breadcrumbs && breadcrumbs.length > 0 && (
-            <div className="hidden sm:flex items-center gap-1.5 pl-3 border-l border-line text-caption font-medium">
-              {breadcrumbs.map((item, index) => (
-                <div
-                  key={`breadcrumb-${item.label}-${index}`}
-                  className="flex items-center gap-1.5"
-                >
-                  {index > 0 && (
-                    <ChevronRight className="w-3.5 h-3.5 text-ink-faint" />
-                  )}
-                  <span
-                    className={
-                      index === breadcrumbs.length - 1
-                        ? "text-ink font-semibold"
-                        : "text-ink-muted hover:text-ink"
-                    }
-                  >
-                    {item.label}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
 
-        {/* Center/Right Nav Links */}
-        <nav className="hidden lg:flex items-center gap-6 h-full">
-          {isLandingPage
-            ? /* 1. Landing Page Section Anchor Links */
-              SITE_LINKS.anchors.map((anchor) => {
-                const isActive = activeAnchor === anchor.href;
-                return (
-                  <a
-                    key={anchor.href}
-                    href={anchor.href}
-                    onClick={(e) => handleAnchorClick(e, anchor.href)}
-                    className={`relative flex items-center h-full text-caption font-medium transition-colors focus-ring px-1 ${
-                      isActive
-                        ? "text-ink font-semibold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-accent"
-                        : "text-ink-muted hover:text-ink"
-                    }`}
-                  >
-                    {anchor.label}
-                  </a>
-                );
-              })
-            : /* 2. Primary Application Navigation Links */
-              SITE_LINKS.primary.map((link) => {
-                const isActive =
-                  currentPath === link.href ||
-                  (link.href.startsWith("/visualizer") &&
-                    currentPath.startsWith("/visualizer"));
+        <nav aria-label="Main navigation" className="flex min-w-0 flex-1 items-center justify-center gap-2 xl:gap-4">
+          <div className="hidden min-w-0 flex-nowrap items-center gap-2 md:flex xl:gap-4">
+            {primaryLinks.map((link) => {
+              const isActive = isLandingPage
+                ? activeAnchor === link.href
+                : currentPath === link.href ||
+                  (link.href.startsWith("/visualizer") && currentPath.startsWith("/visualizer"));
+              const linkClass = `relative flex shrink-0 items-center h-full whitespace-nowrap text-caption font-medium transition-colors focus-ring px-1 ${
+                isActive
+                  ? "text-ink font-semibold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-accent"
+                  : "text-ink-muted hover:text-ink"
+              }`;
 
+              return isLandingPage ? (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={(e) => handleAnchorClick(e, link.href)}
+                  className={linkClass}
+                >
+                  {link.label}
+                </a>
+              ) : (
+                <Link key={link.id} to={link.href} className={linkClass}>
+                  {link.label}
+                </Link>
+              );
+            })}
+          </div>
+
+          <details className="group relative shrink-0">
+            <summary className="flex cursor-pointer list-none items-center gap-1 rounded-md px-2 py-2 text-caption font-medium text-ink-muted hover:bg-sunken hover:text-ink focus-ring [&::-webkit-details-marker]:hidden">
+              More
+              <ChevronDown className="h-3.5 w-3.5 transition-transform group-open:rotate-180" />
+            </summary>
+            <div className="absolute right-0 top-full z-50 mt-2 min-w-48 rounded-lg border border-line bg-surface p-1.5 shadow-e3">
+              {isMobileViewport && (
+              <div>
+                {(isLandingPage ? SITE_LINKS.anchors : SITE_LINKS.primary).map((link) => {
+                  const className = "block whitespace-nowrap rounded-md px-3 py-2 text-caption font-medium text-ink-muted hover:bg-sunken hover:text-ink focus-ring";
+                  return isLandingPage ? (
+                    <a
+                      key={link.href}
+                      href={link.href}
+                      onClick={(e) => {
+                        handleAnchorClick(e, link.href);
+                        e.currentTarget.closest("details").open = false;
+                      }}
+                      className={className}
+                    >
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link
+                      key={link.id}
+                      to={link.href}
+                      onClick={(e) => {
+                        e.currentTarget.closest("details").open = false;
+                      }}
+                      className={className}
+                    >
+                      {link.label}
+                    </Link>
+                  );
+                })}
+              </div>
+              )}
+              {!isMobileViewport && moreLinks.map((link) => {
+                const className = "block whitespace-nowrap rounded-md px-3 py-2 text-caption font-medium text-ink-muted hover:bg-sunken hover:text-ink focus-ring";
                 return (
-                  <Link
-                    key={link.id}
-                    to={link.href}
-                    className={`relative flex items-center h-full text-caption font-medium transition-colors focus-ring px-1 ${
-                      isActive
-                        ? "text-ink font-semibold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-accent"
-                        : "text-ink-muted hover:text-ink"
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
+                  <div key={isLandingPage ? link.href : link.id}>
+                    {isLandingPage ? (
+                      <a
+                        href={link.href}
+                        onClick={(e) => {
+                          handleAnchorClick(e, link.href);
+                          e.currentTarget.closest("details").open = false;
+                        }}
+                        className={className}
+                      >
+                        {link.label}
+                      </a>
+                    ) : (
+                      <Link
+                        to={link.href}
+                        onClick={(e) => {
+                          e.currentTarget.closest("details").open = false;
+                        }}
+                        className={className}
+                      >
+                        {link.label}
+                      </Link>
+                    )}
+                  </div>
                 );
               })}
+              <a
+                href={SITE_LINKS.external.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                title="View Algostreamz on GitHub"
+                className="block whitespace-nowrap rounded-md px-3 py-2 text-caption font-medium text-ink-muted hover:bg-sunken hover:text-ink focus-ring"
+              >
+                GitHub repository
+              </a>
+            </div>
+          </details>
         </nav>
 
         {/* Far Right Action Items */}
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 flex-nowrap items-center gap-1 md:gap-2">
           {user && (
             <Link
               to={ROUTES.PROFILE}
@@ -209,7 +232,7 @@ export default function Navbar({
               className="btn-ghost inline-flex min-h-10 items-center gap-2 border border-line px-2.5 text-caption font-medium text-ink-muted hover:text-ink focus-ring"
             >
               <UserRound className="h-4 w-4 text-accent" />
-              <span className="hidden max-w-32 truncate sm:inline">
+              <span className="hidden max-w-32 truncate lg:inline">
                 {user.displayName || "Profile"}
               </span>
             </Link>
@@ -240,17 +263,6 @@ export default function Navbar({
             <Sun className="w-4 h-4" />
           </button>
 
-          {/* GitHub Repository Link */}
-          <a
-            href={"https://github.com/SudhangsuShekharBairagi/Algostreamz"}
-            target="_blank"
-            rel="noopener noreferrer"
-            title={`View ${SITE_NAME} on GitHub`}
-            aria-label="GitHub Repository"
-            className="btn-ghost p-2 text-ink-muted hover:text-ink focus-ring"
-          >
-            <FaGithub className="w-4 h-4" />
-          </a>
         </div>
       </div>
     </header>

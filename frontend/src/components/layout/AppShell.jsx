@@ -30,6 +30,7 @@ export default function AppShell() {
 
   // Hide sidebar structural space on Landing Page '/' and Contact Page '/contact'
   const hideSidebarSpace = currentPath === ROUTES.HOME || currentPath === ROUTES.CONTACT
+  const isVisualizerPage = currentPath.startsWith('/visualizer/')
 
   // Accessibility: Move focus to main container on route change & trigger fade-in
   useEffect(() => {
@@ -121,7 +122,9 @@ export default function AppShell() {
           id="main"
           tabIndex={-1}
           ref={mainRef}
-          className={`flex-1 w-full max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-8 outline-none transition-opacity duration-200 ${
+          className={`min-w-0 flex-1 w-full max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 ${
+            isVisualizerPage ? 'py-4 md:py-5' : 'py-8'
+          } outline-none transition-opacity duration-200 ${
             fadeIn ? 'opacity-100' : 'opacity-0'
           } ${isZen ? 'py-4 max-w-full' : ''}`}
         >
