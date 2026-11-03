@@ -81,7 +81,7 @@ export const ROUTE_METADATA = {
   [ROUTES.PLAYGROUND]: {
     title: `Custom Sandbox & Playground — ${SITE_NAME}`,
     description:
-      "Run supported sorting and searching algorithms on custom array inputs and saved presets.",
+      "Run sorting and searching algorithms on custom arrays, or explore Stack, Queue, and Linked List operations.",
   },
   [ROUTES.RACE]: {
     title: `Race Mode Benchmarking — ${SITE_NAME}`,
@@ -144,7 +144,6 @@ export const LABELS = {
   RESET: "Reset",
   SKIP_TO_CONTENT: "Skip to main content",
   SIDEBAR_TOGGLE: "Toggle sidebar navigation",
-  THEME_COMING_SOON: "Dark mode coming soon",
 };
 
 export const SIDEBAR_CATEGORIES = [
@@ -199,6 +198,30 @@ export const SIDEBAR_CATEGORIES = [
         label: "Linear Search",
         href: "/visualizer/linear-search",
         icon: "Scan",
+      },
+    ],
+  },
+  {
+    id: "data-structures",
+    label: "Data Structures",
+    items: [
+      {
+        id: "stack",
+        label: "Stack",
+        href: "/visualizer/stack",
+        icon: "Layers",
+      },
+      {
+        id: "queue",
+        label: "Queue",
+        href: "/visualizer/queue",
+        icon: "ListOrdered",
+      },
+      {
+        id: "linked-list",
+        label: "Linked List",
+        href: "/visualizer/linked-list",
+        icon: "Link2",
       },
     ],
   },

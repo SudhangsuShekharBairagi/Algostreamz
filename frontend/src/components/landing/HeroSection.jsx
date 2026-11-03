@@ -63,7 +63,7 @@ export default function HeroSection() {
 
           {/* Subtitle */}
           <p className="text-body text-ink-muted text-pretty max-w-[52ch]">
-            {SITE_NAME} turns sorting, searching, trees and graphs into step-by-step visual stories, with pseudocode that follows along, plain-English explanations, and a Zen mode for deep focus.
+            {SITE_NAME} turns sorting, searching, trees, graphs, stacks, queues and linked lists into step-by-step visual stories, with pseudocode that follows along, plain-English explanations, and a Zen mode for deep focus.
           </p>
 
           {/* Call to Actions */}
@@ -102,15 +102,15 @@ export default function HeroSection() {
               <strong>{totalAlgorithms}</strong> algorithms
             </span>
             <span className="chip font-medium text-ink-muted bg-surface shadow-e1">
-              <Check className="w-3.5 h-3.5 text-emerald-600" />
+              <Check className="w-3.5 h-3.5 text-state-sorted" />
               Step back and forward
             </span>
             <span className="chip font-medium text-ink-muted bg-surface shadow-e1">
-              <Check className="w-3.5 h-3.5 text-emerald-600" />
+              <Check className="w-3.5 h-3.5 text-state-sorted" />
               Beginner and technical explanations
             </span>
             <span className="chip font-medium text-ink-muted bg-surface shadow-e1">
-              <Check className="w-3.5 h-3.5 text-emerald-600" />
+              <Check className="w-3.5 h-3.5 text-state-sorted" />
               Keyboard friendly
             </span>
           </div>
