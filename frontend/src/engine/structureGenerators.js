@@ -1,20 +1,16 @@
-export const MAX_STRUCTURE_ITEMS = 20
+import {
+  MAX_ITEMS,
+  MAX_VALUE_LENGTH,
+  structureMessages,
+} from './structureConfig'
+
+export const MAX_STRUCTURE_ITEMS = MAX_ITEMS
 export const MAX_STRUCTURE_OPERATIONS = 100
-export const MAX_STRUCTURE_VALUE_LENGTH = 32
+export const MAX_STRUCTURE_VALUE_LENGTH = MAX_VALUE_LENGTH
 
 const EMPTY_STATS = { comparisons: 0, swaps: 0, arrayAccesses: 0 }
 
-function makeStep(
-  stepIndex,
-  type,
-  values,
-  indices,
-  pseudocodeLine,
-  beginner,
-  technical,
-  highlightedIndices = {},
-  stats = EMPTY_STATS
-) {
+function makeStep(stepIndex, type, values, indices, pseudocodeLine, beginner, technical, highlightedIndices = {}, stats = EMPTY_STATS) {
   return {
     stepIndex,
     type,
@@ -31,15 +27,7 @@ function createSteps(structure, operations) {
   const values = []
   const history = Array.isArray(operations) ? operations.slice(0, MAX_STRUCTURE_OPERATIONS) : []
   const steps = [
-    makeStep(
-      0,
-      'initialize',
-      values,
-      [],
-      1,
-      `${structure} is empty and ready for operations.`,
-      `Initialize an empty ${structure.toLowerCase()} state.`
-    ),
+    makeStep(0, 'initialize', values, [], 1, structureMessages.empty(structure), `Initialize an empty ${structure.toLowerCase()} state.`),
   ]
   const stats = { ...EMPTY_STATS }
 
@@ -53,26 +41,24 @@ function createSteps(structure, operations) {
     let technical = 'The operation descriptor is missing or unsupported.'
     let indices = []
     let highlightedIndices = {}
+    const validValue = value.length > 0 && value.length <= MAX_VALUE_LENGTH
 
-    const validValue = value.length > 0 && value.length <= MAX_STRUCTURE_VALUE_LENGTH
     const addValue = (position, line, description, detail) => {
+      pseudocodeLine = line
       if (!validValue) {
         type = 'invalid-operation'
-        pseudocodeLine = line
-        explanation = `Enter a value between 1 and ${MAX_STRUCTURE_VALUE_LENGTH} characters.`
+        explanation = structureMessages.invalidValue
         technical = 'The operation value must be a non-empty string within the supported length.'
         return
       }
-      if (values.length >= MAX_STRUCTURE_ITEMS) {
+      if (values.length >= MAX_ITEMS) {
         type = 'limit-reached'
-        pseudocodeLine = line
-        explanation = `The ${structure.toLowerCase()} is limited to ${MAX_STRUCTURE_ITEMS} items.`
-        technical = `The maximum supported collection size is ${MAX_STRUCTURE_ITEMS}.`
+        explanation = structureMessages.overflow(structure)
+        technical = `The maximum supported collection size is ${MAX_ITEMS}.`
         return
       }
       values.splice(position, 0, value)
       type = action
-      pseudocodeLine = line
       explanation = description
       technical = detail
       indices = [position]
@@ -82,17 +68,12 @@ function createSteps(structure, operations) {
 
     if (structure === 'Stack') {
       if (action === 'push') {
-        addValue(
-          values.length,
-          2,
-          `Pushed ${value} onto the top of the stack.`,
-          `Append ${value} at index ${values.length}, the stack top.`
-        )
+        addValue(values.length, 2, `Pushed ${value} onto the top of the stack.`, `Append ${value} at index ${values.length}, the stack top.`)
       } else if (action === 'pop' || action === 'peek') {
         pseudocodeLine = action === 'pop' ? 3 : 4
         if (values.length === 0) {
           type = 'underflow'
-          explanation = `Cannot ${action} because the stack is empty.`
+          explanation = structureMessages.underflow(action, structure)
           technical = `The ${action} operation requires a non-empty stack.`
         } else if (action === 'peek') {
           indices = [values.length - 1]
@@ -109,23 +90,21 @@ function createSteps(structure, operations) {
       }
     } else if (structure === 'Queue') {
       if (action === 'enqueue') {
-        addValue(
-          values.length,
-          2,
-          `Enqueued ${value} at the rear of the queue.`,
-          `Append ${value} at index ${values.length}, the queue rear.`
-        )
-      } else if (action === 'dequeue' || action === 'peek') {
-        pseudocodeLine = action === 'dequeue' ? 3 : 4
+        addValue(values.length, 2, `Enqueued ${value} at the rear of the queue.`, `Append ${value} at index ${values.length}, the queue rear.`)
+      } else if (['dequeue', 'peek', 'front', 'rear'].includes(action)) {
+        pseudocodeLine = action === 'dequeue' ? 3 : action === 'rear' ? 5 : 4
         if (values.length === 0) {
           type = 'underflow'
-          explanation = `Cannot ${action} because the queue is empty.`
+          explanation = structureMessages.underflow(action === 'peek' ? 'peek' : action, structure)
           technical = `The ${action} operation requires a non-empty queue.`
-        } else if (action === 'peek') {
-          indices = [0]
-          highlightedIndices = { 0: 'active' }
-          explanation = `The front of the queue is ${values[0]}.`
-          technical = 'Read queue[0] without changing the queue.'
+        } else if (action === 'peek' || action === 'front' || action === 'rear') {
+          const targetIndex = action === 'rear' ? values.length - 1 : 0
+          indices = [targetIndex]
+          highlightedIndices = { [targetIndex]: 'active' }
+          explanation = action === 'rear'
+            ? `The rear of the queue is ${values[targetIndex]}.`
+            : `The front of the queue is ${values[targetIndex]}.`
+          technical = `Read queue[${targetIndex}] without changing the queue.`
           stats.arrayAccesses++
         } else {
           const removed = values.shift()
@@ -136,19 +115,9 @@ function createSteps(structure, operations) {
       }
     } else if (structure === 'Linked List') {
       if (action === 'insert-head') {
-        addValue(
-          0,
-          2,
-          `Inserted ${value} at the head of the list.`,
-          `Create a node with value ${value} and link it before the current head.`
-        )
+        addValue(0, 2, `Inserted ${value} at the head of the list.`, `Create a node with value ${value} and link it before the current head.`)
       } else if (action === 'insert-tail') {
-        addValue(
-          values.length,
-          3,
-          `Inserted ${value} at the tail of the list.`,
-          `Traverse to the final node and link a node containing ${value}.`
-        )
+        addValue(values.length, 3, `Inserted ${value} at the tail of the list.`, `Traverse to the final node and link a node containing ${value}.`)
       } else if (action === 'insert-at') {
         pseudocodeLine = 4
         if (!Number.isInteger(index) || index < 0 || index > values.length) {
@@ -156,16 +125,15 @@ function createSteps(structure, operations) {
           explanation = `Choose an insertion index from 0 to ${values.length}.`
           technical = 'A valid insertion index is in the inclusive range [0, list length].'
         } else {
-          addValue(
-            index,
-            4,
-            `Inserted ${value} at index ${index}.`,
-            `Link a new node containing ${value} at position ${index}.`
-          )
+          addValue(index, 4, `Inserted ${value} at index ${index}.`, `Link a new node containing ${value} at position ${index}.`)
         }
       } else if (action === 'delete-at') {
         pseudocodeLine = 5
-        if (!Number.isInteger(index) || index < 0 || index >= values.length) {
+        if (values.length === 0) {
+          type = 'underflow'
+          explanation = structureMessages.underflow('delete', structure)
+          technical = 'The delete operation requires a non-empty linked list.'
+        } else if (!Number.isInteger(index) || index < 0 || index >= values.length) {
           type = 'invalid-operation'
           explanation = `Choose a deletion index from 0 to ${Math.max(0, values.length - 1)}.`
           technical = 'A valid deletion index must identify an existing node.'
@@ -173,40 +141,61 @@ function createSteps(structure, operations) {
           const [removed] = values.splice(index, 1)
           explanation = `Deleted ${removed} from index ${index}.`
           technical = `Unlink the node at position ${index} and reconnect its neighbors.`
-          indices = values.length > 0 ? [Math.min(index, values.length - 1)] : []
+          indices = values.length ? [Math.min(index, values.length - 1)] : []
           highlightedIndices = indices.length ? { [indices[0]]: 'active' } : {}
           stats.arrayAccesses++
         }
-      } else if (action === 'search') {
-        pseudocodeLine = 6
+      } else if (action === 'delete-value' || action === 'search') {
+        pseudocodeLine = action === 'search' ? 6 : 7
         if (!validValue) {
           type = 'invalid-operation'
-          explanation = `Enter a value between 1 and ${MAX_STRUCTURE_VALUE_LENGTH} characters.`
-          technical = 'Search values must be non-empty strings within the supported length.'
+          explanation = structureMessages.invalidValue
+          technical = `${action === 'search' ? 'Search' : 'Delete'} values must be non-empty strings within the supported length.`
         } else {
           const foundIndex = values.indexOf(value)
-          const comparisons = foundIndex === -1 ? values.length : foundIndex + 1
-          stats.comparisons += comparisons
-          stats.arrayAccesses += comparisons
-          if (foundIndex === -1) {
-            type = 'not-found'
-            explanation = `${value} is not in the linked list.`
-            technical = `A linear scan completed without finding ${value}.`
+          if (values.length === 0) {
+            type = 'underflow'
+            explanation = structureMessages.underflow(action === 'search' ? 'search' : 'delete', structure)
+            technical = `The ${action} operation requires a non-empty linked list.`
           } else {
-            type = 'found'
-            indices = [foundIndex]
-            highlightedIndices = { [foundIndex]: 'found' }
-            explanation = `Found ${value} at index ${foundIndex}.`
-            technical = `The first matching node is at position ${foundIndex}.`
+            stats.comparisons += foundIndex === -1 ? values.length : foundIndex + 1
+            stats.arrayAccesses += foundIndex === -1 ? values.length : foundIndex + 1
+            if (foundIndex === -1) {
+              type = 'not-found'
+              explanation = `${value} is not in the linked list.`
+              technical = `A linear scan completed without finding ${value}.`
+            } else if (action === 'delete-value') {
+              values.splice(foundIndex, 1)
+              type = action
+              explanation = `Deleted ${value} from index ${foundIndex}.`
+              technical = `Unlink the first node containing ${value} and reconnect its neighbors.`
+              indices = values.length ? [Math.min(foundIndex, values.length - 1)] : []
+              highlightedIndices = indices.length ? { [indices[0]]: 'active' } : {}
+            } else {
+              type = 'found'
+              indices = [foundIndex]
+              highlightedIndices = { [foundIndex]: 'found' }
+              explanation = `Found ${value} at index ${foundIndex}.`
+              technical = `The first matching node is at position ${foundIndex}.`
+            }
           }
         }
+      } else if (action === 'reverse') {
+        pseudocodeLine = 8
+        values.reverse()
+        type = 'reverse'
+        explanation = 'Reversed the linked list.'
+        technical = 'Reverse the direction of each link in the list.'
+        indices = values.map((_, currentIndex) => currentIndex)
+        highlightedIndices = Object.fromEntries(indices.map((currentIndex) => [currentIndex, 'active']))
+        stats.arrayAccesses += values.length
       }
     }
 
     const allowedActions = {
       Stack: ['push', 'pop', 'peek'],
-      Queue: ['enqueue', 'dequeue', 'peek'],
-      'Linked List': ['insert-head', 'insert-tail', 'insert-at', 'delete-at', 'search'],
+      Queue: ['enqueue', 'dequeue', 'peek', 'front', 'rear'],
+      'Linked List': ['insert-head', 'insert-tail', 'insert-at', 'delete-at', 'delete-value', 'search', 'reverse'],
     }
     if (!allowedActions[structure].includes(action)) {
       type = 'invalid-operation'
@@ -214,9 +203,7 @@ function createSteps(structure, operations) {
       technical = `The action ${String(action)} is not supported for ${structure}.`
     }
 
-    steps.push(
-      makeStep(steps.length, type, values, indices, pseudocodeLine, explanation, technical, highlightedIndices, stats)
-    )
+    steps.push(makeStep(steps.length, type, values, indices, pseudocodeLine, explanation, technical, highlightedIndices, stats))
   })
 
   return steps

@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Save, Trash2 } from 'lucide-react'
 import { ALGORITHMS } from '../data/algorithmsData'
 import { generateSortingSteps } from '../engine/sortingGenerators'
@@ -57,7 +58,15 @@ function makeValues(pattern, currentValues) {
 
 export default function PlaygroundPage() {
   const { isZen } = useZen()
-  const [sandboxCategory, setSandboxCategory] = useState('array') // 'array' | 'ds' | 'linkedlist'
+  const [searchParams, setSearchParams] = useSearchParams()
+  const initialMode = searchParams.get('mode')
+  const [sandboxCategory, setSandboxCategory] = useState(() =>
+    initialMode === 'stack' || initialMode === 'queue'
+      ? 'ds'
+      : initialMode === 'linkedlist'
+        ? 'linkedlist'
+        : 'array',
+  )
   const [algorithmId, setAlgorithmId] = useState('bubble-sort')
   const [pattern, setPattern] = useState('typed')
   const [values, setValues] = useState(INITIAL_VALUES)
@@ -83,6 +92,12 @@ export default function PlaygroundPage() {
   })
 
   const algorithm = PLAYGROUND_ALGORITHMS.find((item) => item.id === algorithmId)
+  const selectSandboxCategory = (category) => {
+    setSandboxCategory(category)
+    setSearchParams(category === 'array' ? {} : {
+      mode: category === 'ds' ? (initialMode === 'queue' ? 'queue' : 'stack') : 'linkedlist',
+    })
+  }
   const steps = useMemo(() => algorithm.category === 'Sorting'
     ? generateSortingSteps(algorithmId, values)
     : generateSearchingSteps(algorithmId, values, target), [algorithm.category, algorithmId, target, values])
@@ -180,7 +195,7 @@ export default function PlaygroundPage() {
               type="button"
               role="tab"
               aria-selected={sandboxCategory === 'array'}
-              onClick={() => setSandboxCategory('array')}
+              onClick={() => selectSandboxCategory('array')}
               className={`segmented-option focus-ring ${sandboxCategory === 'array' ? 'selected' : ''}`}
             >
               Sorting &amp; Searching
@@ -189,7 +204,7 @@ export default function PlaygroundPage() {
               type="button"
               role="tab"
               aria-selected={sandboxCategory === 'ds'}
-              onClick={() => setSandboxCategory('ds')}
+              onClick={() => selectSandboxCategory('ds')}
               className={`segmented-option focus-ring ${sandboxCategory === 'ds' ? 'selected' : ''}`}
             >
               Stack &amp; Queue
@@ -198,7 +213,7 @@ export default function PlaygroundPage() {
               type="button"
               role="tab"
               aria-selected={sandboxCategory === 'linkedlist'}
-              onClick={() => setSandboxCategory('linkedlist')}
+              onClick={() => selectSandboxCategory('linkedlist')}
               className={`segmented-option focus-ring ${sandboxCategory === 'linkedlist' ? 'selected' : ''}`}
             >
               Linked List
@@ -208,7 +223,7 @@ export default function PlaygroundPage() {
       )}
 
       {sandboxCategory === 'ds' ? (
-        <TactileDataStructureSandbox />
+        <TactileDataStructureSandbox initialMode={initialMode === 'queue' ? 'queue' : 'stack'} />
       ) : sandboxCategory === 'linkedlist' ? (
         <TactileLinkedListSandbox />
       ) : (

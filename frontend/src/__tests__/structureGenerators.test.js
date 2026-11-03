@@ -64,6 +64,22 @@ describe('data structure step generators', () => {
     expect(duplicates.at(-1).values).toEqual(['same'])
   })
 
+  it('supports queue front and rear reads without changing the queue', () => {
+    const steps = generateQueueSteps([
+      { action: 'enqueue', value: 'first' },
+      { action: 'enqueue', value: 'last' },
+      { action: 'front' },
+      { action: 'peek' },
+      { action: 'rear' },
+    ])
+    expect(steps.slice(-3).map((step) => step.values)).toEqual([
+      ['first', 'last'],
+      ['first', 'last'],
+      ['first', 'last'],
+    ])
+    expect(steps.slice(-3).map((step) => step.indices)).toEqual([[0], [0], [1]])
+  })
+
   it('handles linked-list head, tail, indexed insert/delete, search, and duplicates', () => {
     const steps = generateLinkedListSteps([
       { action: 'insert-head', value: 'same' },
@@ -88,9 +104,34 @@ describe('data structure step generators', () => {
       { action: 'insert-tail', value: 'only' },
       { action: 'delete-at', index: 0 },
     ])
-    expect(steps[1].type).toBe('not-found')
-    expect(steps[2].type).toBe('invalid-operation')
+    expect(steps[1].type).toBe('underflow')
+    expect(steps[2].type).toBe('underflow')
     expect(steps.at(-1).values).toEqual([])
+  })
+
+  it('supports linked-list reverse and delete by value', () => {
+    const steps = generateLinkedListSteps([
+      { action: 'insert-tail', value: 'first' },
+      { action: 'insert-tail', value: 'second' },
+      { action: 'insert-tail', value: 'first' },
+      { action: 'reverse' },
+      { action: 'delete-value', value: 'first' },
+    ])
+    expect(steps.at(-2).values).toEqual(['first', 'second', 'first'])
+    expect(steps.at(-1).values).toEqual(['second', 'first'])
+  })
+
+  it('uses the same underflow wording for empty linked-list operations', () => {
+    const steps = generateLinkedListSteps([
+      { action: 'delete-at', index: 0 },
+      { action: 'delete-value', value: 'missing' },
+      { action: 'search', value: 'missing' },
+    ])
+    expect(steps.slice(1).map((step) => step.explanation.beginner)).toEqual([
+      'Cannot delete because the linked list is empty.',
+      'Cannot delete because the linked list is empty.',
+      'Cannot search because the linked list is empty.',
+    ])
   })
 
   it('does not mutate the operation history and enforces the item cap', () => {

@@ -13,6 +13,18 @@ afterEach(() => {
 })
 
 describe('PlaygroundPage', () => {
+  it('opens the requested structure tab from the URL', () => {
+    render(
+      <MemoryRouter initialEntries={['/playground?mode=linkedlist']}>
+        <ZenProvider>
+          <PlaygroundPage />
+        </ZenProvider>
+      </MemoryRouter>
+    )
+    expect(screen.getByRole('tab', { name: 'Linked List' }).getAttribute('aria-selected')).toBe('true')
+    expect(screen.getByText('Linked List is empty')).toBeTruthy()
+  })
+
   it('runs sorting and searching traces on selected inputs', () => {
     render(
       <MemoryRouter>

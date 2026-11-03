@@ -10,25 +10,24 @@ import {
   generateQueueSteps,
   generateStackSteps,
   MAX_STRUCTURE_OPERATIONS,
-  MAX_STRUCTURE_VALUE_LENGTH,
 } from '../../../engine/structureGenerators'
+import { MAX_VALUE_LENGTH } from '../../../engine/structureConfig'
 import { useVisualizer } from '../../../hooks/useVisualizer'
 import ExplanationPanel from '../../visualizer/ExplanationPanel'
 import PlaybackControls from '../../visualizer/PlaybackControls'
 import PseudocodePanel from '../../visualizer/PseudocodePanel'
 import StructureCanvas from './StructureCanvas'
-import TreeVisualizer from '../../visualizer/TreeVisualizer'
 import { CODE_SNIPPETS } from '../../../data/codeSnippets'
 
 const GENERATORS = {
   stack: { generate: generateStackSteps, actions: ['push', 'pop', 'peek'] },
   queue: {
     generate: generateQueueSteps,
-    actions: ['enqueue', 'dequeue', 'peek'],
+    actions: ['enqueue', 'dequeue', 'front', 'peek', 'rear'],
   },
   'linked-list': {
     generate: generateLinkedListSteps,
-    actions: ['insert-head', 'insert-tail', 'insert-at', 'delete-at', 'search'],
+    actions: ['insert-head', 'insert-tail', 'insert-at', 'delete-at', 'delete-value', 'search', 'reverse'],
   },
 }
 
@@ -38,28 +37,32 @@ const ACTION_LABELS = {
   peek: 'Peek',
   enqueue: 'Enqueue',
   dequeue: 'Dequeue',
+  front: 'Front',
+  rear: 'Rear',
   'insert-head': 'Insert at head',
   'insert-tail': 'Insert at tail',
   'insert-at': 'Insert at index',
   'delete-at': 'Delete at index',
+  'delete-value': 'Delete by value',
   search: 'Search',
+  reverse: 'Reverse',
 }
 
 export default function StructureVisualizer({ algorithm }) {
-  if (algorithm.id === 'binary-search-tree') {
-    return <TreeVisualizer algorithm={algorithm} />
-  }
-
   const structure = algorithm.name
   const config = GENERATORS[algorithm.id]
   const [operations, setOperations] = useState([])
   const [value, setValue] = useState('')
   const [index, setIndex] = useState('')
+  const [listVariant, setListVariant] = useState('singly')
   const [error, setError] = useState('')
   const { isZen, toggleZen, exitZen, announceMessage } = useZen()
   const [progressError, setProgressError] = useState('')
 
   const steps = useMemo(() => config.generate(operations), [config, operations])
+  const hasValidOperation = steps.some(
+    ({ type }) => type !== 'initialize' && !['underflow', 'invalid-operation', 'limit-reached'].includes(type),
+  )
   const visualizer = useVisualizer(steps)
   const {
     currentStepIndex,
@@ -81,7 +84,7 @@ export default function StructureVisualizer({ algorithm }) {
   }, [steps, goToStep])
 
   useEffect(() => {
-    if (!steps.length || !isAtEnd) return
+    if (!operations.length || !hasValidOperation || !isAtEnd) return
 
     let cancelled = false
     progressApi.completeVisualizer(algorithm.id).then(
@@ -97,18 +100,18 @@ export default function StructureVisualizer({ algorithm }) {
     return () => {
       cancelled = true
     }
-  }, [algorithm.id, isAtEnd, steps.length])
+  }, [algorithm.id, hasValidOperation, isAtEnd, operations.length])
 
   const values = currentStep?.values || []
   const activeLine = currentStep?.pseudocodeLine || 1
   const needsValue = (action) =>
-    ['push', 'enqueue', 'insert-head', 'insert-tail', 'insert-at', 'search'].includes(action)
+    ['push', 'enqueue', 'insert-head', 'insert-tail', 'insert-at', 'delete-value', 'search'].includes(action)
   const needsIndex = (action) => ['insert-at', 'delete-at'].includes(action)
 
   const runOperation = (action) => {
     const trimmedValue = value.trim()
-    if (needsValue(action) && (!trimmedValue || trimmedValue.length > MAX_STRUCTURE_VALUE_LENGTH)) {
-      setError(`Enter a value between 1 and ${MAX_STRUCTURE_VALUE_LENGTH} characters.`)
+    if (needsValue(action) && (!trimmedValue || trimmedValue.length > MAX_VALUE_LENGTH)) {
+      setError(`Enter a value between 1 and ${MAX_VALUE_LENGTH} characters.`)
       return
     }
     if (needsIndex(action) && index.trim() === '') {
@@ -148,7 +151,7 @@ export default function StructureVisualizer({ algorithm }) {
           <input
             type="text"
             value={value}
-            maxLength={MAX_STRUCTURE_VALUE_LENGTH}
+            maxLength={MAX_VALUE_LENGTH}
             onChange={(event) => setValue(event.target.value)}
             aria-label="Value"
             className="h-11 w-full rounded-md border border-line-strong bg-surface px-3 text-body text-ink focus-ring"
@@ -170,6 +173,12 @@ export default function StructureVisualizer({ algorithm }) {
         )}
       </div>
       <div className="flex flex-wrap gap-2">
+        {algorithm.id === 'linked-list' && (
+          <div className="segmented" role="tablist" aria-label="Linked List variant selection">
+            <button type="button" role="tab" aria-selected={listVariant === 'singly'} onClick={() => setListVariant('singly')} className={`segmented-option focus-ring ${listVariant === 'singly' ? 'selected' : ''}`}>Singly</button>
+            <button type="button" role="tab" aria-selected={listVariant === 'doubly'} onClick={() => setListVariant('doubly')} className={`segmented-option focus-ring ${listVariant === 'doubly' ? 'selected' : ''}`}>Doubly</button>
+          </div>
+        )}
         {config.actions.map((action) => (
           <button
             key={action}
@@ -243,6 +252,7 @@ export default function StructureVisualizer({ algorithm }) {
             values={values}
             highlightedIndices={currentStep?.highlightedIndices}
             variant="zen"
+            listVariant={listVariant}
           />
           <ExplanationPanel currentStep={currentStep} variant="strip" />
           {playback}
@@ -260,6 +270,12 @@ export default function StructureVisualizer({ algorithm }) {
         >
           <ArrowLeft className="h-4 w-4" />
           <span>Back to Algorithms</span>
+        </Link>
+        <Link
+          to={`${ROUTES.PLAYGROUND}?mode=${algorithm.id === 'linked-list' ? 'linkedlist' : algorithm.id}`}
+          className="ml-auto inline-flex items-center gap-1.5 text-caption font-medium text-accent hover:text-accent-hover focus-ring rounded"
+        >
+          Try it in Playground
         </Link>
       </div>
       <div className="grid grid-cols-1 items-start gap-6 xl:grid-cols-12">
@@ -286,7 +302,7 @@ export default function StructureVisualizer({ algorithm }) {
             </button>
           </header>
           <p className="text-body leading-relaxed text-ink-muted">{algorithm.description}</p>
-          <StructureCanvas structure={structure} values={values} highlightedIndices={currentStep?.highlightedIndices} />
+          <StructureCanvas structure={structure} values={values} highlightedIndices={currentStep?.highlightedIndices} listVariant={listVariant} />
           {operationsPanel}
           {playback}
         </div>

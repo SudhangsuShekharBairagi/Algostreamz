@@ -22,6 +22,7 @@ import { useToast } from '../context/ToastContext'
 import CustomArrayModal from '../components/visualizer/CustomArrayModal'
 import StructureVisualizer from '../components/visualizers/structures/StructureVisualizer'
 import GraphVisualizer from '../components/visualizer/GraphVisualizer'
+import TreeVisualizer from '../components/visualizer/TreeVisualizer'
 import NotFoundPage from './NotFoundPage'
 import { createVisualizerSearch, parseVisualizerSearch } from '../utils/shareableVisualizer'
 import { CODE_SNIPPETS } from '../data/codeSnippets'
@@ -507,6 +508,10 @@ export default function VisualizerPage() {
         message={`No algorithm with the ID "${algorithmId}" exists in the catalog.`}
       />
     )
+  }
+
+  if (algorithm.id === 'binary-search-tree') {
+    return <TreeVisualizer key={algorithm.id} algorithm={algorithm} />
   }
 
   if (algorithm.category === 'Data Structures') {

@@ -25,6 +25,11 @@ afterEach(() => {
   localStorage.clear();
 });
 describe("data structure visualizers", () => {
+  it("does not mark an untouched empty structure as completed", () => {
+    renderVisualizer("/visualizer/stack");
+    expect(progressApi.getLocalProgress().completedVisualizers).not.toContain("stack");
+  });
+
   it("routes stack actions through the playback timeline", async () => {
     renderVisualizer("/visualizer/stack");
     fireEvent.change(screen.getByRole("textbox", { name: "Value" }), {
@@ -92,7 +97,7 @@ describe("data structure visualizers", () => {
     fireEvent.click(screen.getByRole("button", { name: "Delete at index" }));
     expect(await screen.findByText("Deleted node from index 0.")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Clear structure" }));
-    expect(screen.getByRole("status").textContent).toContain("Empty structure");
+    expect(screen.getByRole("status").textContent).toContain("Linked List is empty");
   });
 
   it("filters the catalog to the data structures category", async () => {

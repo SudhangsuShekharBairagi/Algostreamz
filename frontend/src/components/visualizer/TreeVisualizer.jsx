@@ -38,7 +38,7 @@ import ZenCaption from './ZenCaption'
  * Supports Insert, Search, Delete, and Traversals (Inorder, Preorder, Postorder, Level-order).
  * Calculates (x, y) coordinates with subtree layout math and animates nodes with CSS transitions.
  */
-export default function TreeVisualizer({ algorithm, variant: propVariant }) {
+export default function TreeVisualizer({ variant: propVariant }) {
   const { isZen: globalZen, toggleZen, exitZen, announceMessage } = useZen()
   const isZen = propVariant === 'zen' || globalZen
 
@@ -363,12 +363,12 @@ export default function TreeVisualizer({ algorithm, variant: propVariant }) {
           type="button"
           onClick={togglePlay}
           title={isPlaying ? 'Pause' : 'Play'}
-          className="w-8 h-8 rounded-full bg-accent hover:bg-accent-hover text-white flex items-center justify-center focus-ring shadow-e1 transition-transform active:scale-95"
+          className="w-8 h-8 rounded-full bg-accent hover:bg-accent-hover text-on-accent flex items-center justify-center focus-ring shadow-e1 transition-transform active:scale-95"
         >
           {isPlaying ? (
-            <Pause className="w-4 h-4 fill-white" />
+            <Pause className="w-4 h-4 fill-on-accent" />
           ) : (
-            <Play className="w-4 h-4 fill-white ml-0.5" />
+            <Play className="w-4 h-4 fill-on-accent ml-0.5" />
           )}
         </button>
 
@@ -403,7 +403,7 @@ export default function TreeVisualizer({ algorithm, variant: propVariant }) {
               y1={link.y1}
               x2={link.x2}
               y2={link.y2}
-              className="stroke-line-strong transition-all duration-slow ease-out-custom"
+              className="stroke-edge transition-all duration-slow ease-out-custom"
               strokeWidth="2"
             />
           ))}
@@ -417,13 +417,13 @@ export default function TreeVisualizer({ algorithm, variant: propVariant }) {
             const visitOrder = visitSequenceMap[node.id]
 
             // Semantic styling map based on Tailwind design tokens
-            let nodeCircleClass = 'fill-surface stroke-line-strong'
-            let nodeTextClass = 'fill-ink'
+            let nodeCircleClass = 'fill-node-bg stroke-node-border'
+            let nodeTextClass = 'fill-node-text'
 
             switch (state) {
               case 'comparing':
                 nodeCircleClass = 'fill-state-compare stroke-state-compare-ring'
-                nodeTextClass = 'fill-[#451A03]'
+                nodeTextClass = 'fill-state-compare-text'
                 break
               case 'active':
                 nodeCircleClass = 'fill-accent-soft stroke-accent'
@@ -431,11 +431,11 @@ export default function TreeVisualizer({ algorithm, variant: propVariant }) {
                 break
               case 'found':
                 nodeCircleClass = 'fill-state-sorted stroke-state-sorted-ring'
-                nodeTextClass = 'fill-white'
+                nodeTextClass = 'fill-state-sorted-text'
                 break
               case 'pivot':
                 nodeCircleClass = 'fill-state-pivot stroke-state-pivot-ring'
-                nodeTextClass = 'fill-white'
+                nodeTextClass = 'fill-state-pivot-text'
                 break
               default:
                 if (isActive) {
@@ -482,7 +482,7 @@ export default function TreeVisualizer({ algorithm, variant: propVariant }) {
                     <text
                       textAnchor="middle"
                       y="3.5"
-                      className="font-mono text-[10px] font-bold fill-white tabular-nums select-none"
+                      className="font-mono text-[10px] font-bold fill-on-accent tabular-nums select-none"
                     >
                       {visitOrder}
                     </text>

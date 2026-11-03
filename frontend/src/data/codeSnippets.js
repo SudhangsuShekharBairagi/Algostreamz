@@ -263,6 +263,7 @@ public:
   void enqueue(int value) { items.addLast(value); }
   int dequeue() { return items.removeFirst(); }
   int peek() { return items.getFirst(); }
+  int rear() { return items.getLast(); }
 }`,
     `from collections import deque
 class Queue:
@@ -273,15 +274,18 @@ class Queue:
     def dequeue(self):
         return self.items.popleft()
     def peek(self):
-        return self.items[0]`,
+        return self.items[0]
+    def rear(self):
+        return self.items[-1]`,
     `class Queue {
   deque<int> items;
 public:
   void enqueue(int value) { items.push_back(value); }
   int dequeue() { int v = items.front(); items.pop_front(); return v; }
   int peek() const { return items.front(); }
+  int rear() const { return items.back(); }
 };`,
-    { java: [1, 3, 4, 5], python: [2, 7, 9, 10], cpp: [1, 4, 5, 6] },
+    { java: [1, 3, 4, 5, 6], python: [2, 5, 7, 9, 11], cpp: [1, 4, 5, 6, 7] },
   ),
   'linked-list': snippet(
     `class Node { int value; Node next; Node(int v) { value = v; } }
@@ -297,6 +301,8 @@ class LinkedList {
   void insertAt(int i, int v) { if (i == 0) insertHead(v); else { Node p = nodeAt(i - 1); if (p != null) { Node n = new Node(v); n.next = p.next; p.next = n; } } }
   void deleteAt(int i) { if (i == 0 && head != null) head = head.next; else { Node p = nodeAt(i - 1); if (p != null && p.next != null) p.next = p.next.next; } }
   boolean search(int v) { for (Node p = head; p != null; p = p.next) if (p.value == v) return true; return false; }
+  void deleteValue(int v) { if (head != null && head.value == v) { head = head.next; return; } for (Node p = head; p != null && p.next != null; p = p.next) if (p.next.value == v) { p.next = p.next.next; return; } }
+  void reverse() { Node previous = null, current = head; while (current != null) { Node next = current.next; current.next = previous; previous = current; current = next; } head = previous; }
 }`,
     `class Node:
     def __init__(self, value, next=None):
@@ -331,7 +337,18 @@ class LinkedList:
         while current:
             if current.value == value: return True
             current = current.next
-        return False`,
+        return False
+    def delete_value(self, value):
+        if self.head and self.head.value == value: self.head = self.head.next; return
+        current = self.head
+        while current and current.next:
+            if current.next.value == value: current.next = current.next.next; return
+            current = current.next
+    def reverse(self):
+        previous, current = None, self.head
+        while current:
+            current.next, previous, current = previous, current, current.next
+        self.head = previous`,
     `struct Node { int value; Node* next = nullptr; explicit Node(int v) : value(v) {} };
 class LinkedList {
   Node* head = nullptr;
@@ -342,8 +359,10 @@ public:
   void insertAt(int i, int v) { if (i == 0) insertHead(v); else if (Node* p = nodeAt(i - 1)) { Node* n = new Node(v); n->next = p->next; p->next = n; } }
   void deleteAt(int i) { if (i == 0 && head) head = head->next; else if (Node* p = nodeAt(i - 1); p && p->next) p->next = p->next->next; }
   bool search(int v) const { for (Node* p = head; p; p = p->next) if (p->value == v) return true; return false; }
+  void deleteValue(int v) { if (head && head->value == v) { head = head->next; return; } for (Node* p = head; p && p->next; p = p->next) if (p->next->value == v) { p->next = p->next->next; return; } }
+  void reverse() { Node* previous = nullptr; Node* current = head; while (current) { Node* next = current->next; current->next = previous; previous = current; current = next; } head = previous; }
 };`,
-    { java: [1, 3, 4, 5, 6, 7], python: [3, 8, 9, 22, 26, 28], cpp: [1, 6, 7, 8, 9, 10] },
+    { java: [1, 3, 4, 5, 6, 7, 14, 15], python: [3, 8, 9, 22, 26, 28, 32, 38], cpp: [1, 6, 7, 8, 9, 10, 11, 12] },
   ),
   'binary-search-tree': snippet(
     `class Node { int value; Node left, right; Node(int v) { value = v; } }
