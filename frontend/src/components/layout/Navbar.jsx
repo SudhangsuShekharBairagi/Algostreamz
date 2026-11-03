@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Sun, Menu, ChevronDown, ArrowRight, UserRound } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Sun, Moon, Menu, ChevronDown, ArrowRight, UserRound, LogOut } from "lucide-react";
 import ZenToggle from "../common/ZenToggle";
 import Logo from "../common/Logo";
 import { SITE_LINKS, LABELS, ROUTES } from "../../config/siteLinks";
 import { useAuth } from "../../context/AuthContext";
+import { useToast } from "../../context/ToastContext";
+import { useTheme } from "../../context/ThemeContext";
 
 export default function Navbar({
   onToggleMobileSidebar,
@@ -12,7 +14,10 @@ export default function Navbar({
   isZen = false,
 }) {
   const location = useLocation();
-  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { user, initialising, isAuthenticated, signOut } = useAuth();
+  const { showToast } = useToast();
+  const { theme, toggleTheme } = useTheme();
   const currentPath = location.pathname;
   const isLandingPage = currentPath === ROUTES.HOME;
 
@@ -69,6 +74,16 @@ export default function Navbar({
   const moreLinks = isLandingPage
     ? SITE_LINKS.anchors.slice(3)
     : SITE_LINKS.primary.slice(4);
+
+  const handleSignOut = async () => {
+    await signOut();
+    showToast("Signed out", "success");
+    navigate(ROUTES.HOME);
+  };
+
+  const closeMoreMenu = (event) => {
+    event.currentTarget.closest("details").open = false;
+  };
 
   // Smooth scroll helper for landing anchors
   const handleAnchorClick = (e, href) => {
@@ -218,13 +233,69 @@ export default function Navbar({
               >
                 GitHub repository
               </a>
+              {isMobileViewport && !initialising && (
+                <div className="mt-1 border-t border-line pt-1">
+                  {isAuthenticated ? (
+                    <>
+                      <Link
+                        to={ROUTES.PROFILE}
+                        onClick={closeMoreMenu}
+                        className="block rounded-md px-3 py-2 text-caption font-medium text-ink-muted hover:bg-sunken hover:text-ink focus-ring"
+                      >
+                        Profile
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={(event) => {
+                          closeMoreMenu(event);
+                          void handleSignOut();
+                        }}
+                        className="block w-full rounded-md px-3 py-2 text-left text-caption font-medium text-ink-muted hover:bg-sunken hover:text-ink focus-ring"
+                      >
+                        {LABELS.SIGN_OUT}
+                      </button>
+                    </>
+                  ) : (
+                    <Link
+                      to={ROUTES.LOGIN}
+                      onClick={closeMoreMenu}
+                      className="block rounded-md px-3 py-2 text-caption font-medium text-ink-muted hover:bg-sunken hover:text-ink focus-ring"
+                    >
+                      {LABELS.SIGN_IN}
+                    </Link>
+                  )}
+                </div>
+              )}
+              {isMobileViewport && (
+                <div className="mt-1 border-t border-line pt-1">
+                  <button
+                    type="button"
+                    onClick={() => toggleTheme()}
+                    aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
+                    aria-pressed={theme === "dark"}
+                    className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-caption font-medium text-ink-muted hover:bg-sunken hover:text-ink focus-ring"
+                  >
+                    {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                    Switch to {theme === "dark" ? "light" : "dark"} theme
+                  </button>
+                </div>
+              )}
             </div>
           </details>
         </nav>
 
         {/* Far Right Action Items */}
         <div className="flex shrink-0 flex-nowrap items-center gap-1 md:gap-2">
-          {user && (
+          {!initialising && !isAuthenticated && (
+            <Link
+              to={ROUTES.LOGIN}
+              className={`${isLandingPage ? "btn-primary" : "btn-ghost border border-line"} inline-flex min-h-10 items-center px-3 text-caption font-semibold focus-ring`}
+            >
+              {LABELS.SIGN_IN}
+            </Link>
+          )}
+          {!initialising && isAuthenticated && user && (
+            <>
             <Link
               to={ROUTES.PROFILE}
               aria-label={`Open profile for ${user.displayName || user.email}`}
@@ -236,6 +307,17 @@ export default function Navbar({
                 {user.displayName || "Profile"}
               </span>
             </Link>
+            <button
+              type="button"
+              onClick={() => void handleSignOut()}
+              aria-label={LABELS.SIGN_OUT}
+              title={LABELS.SIGN_OUT}
+              className="btn-ghost inline-flex min-h-10 items-center gap-2 border border-line px-2.5 text-caption font-medium text-ink-muted hover:text-ink focus-ring"
+            >
+              <LogOut className="h-4 w-4" />
+              <span className="hidden lg:inline">{LABELS.SIGN_OUT}</span>
+            </button>
+            </>
           )}
           {/* Landing CTA Button */}
           {isLandingPage ? (
@@ -253,14 +335,16 @@ export default function Navbar({
 
           {zenSlot}
 
-          {/* Theme Placeholder Button */}
+          {/* Theme Toggle */}
           <button
             type="button"
-            aria-disabled="true"
-            title={LABELS.THEME_COMING_SOON}
-            className="btn-ghost p-2 opacity-60 cursor-not-allowed text-ink-muted focus-ring"
+            onClick={toggleTheme}
+            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
+            aria-pressed={theme === "dark"}
+            title={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
+            className="btn-ghost p-2 text-ink-muted focus-ring"
           >
-            <Sun className="w-4 h-4" />
+            {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </button>
 
         </div>

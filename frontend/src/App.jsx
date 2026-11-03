@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import AppShell from "./components/layout/AppShell";
 import LandingPage from "./pages/LandingPage";
 import AlgorithmsPage from "./pages/AlgorithmsPage";
@@ -22,6 +22,7 @@ const ExperimentPage = lazy(() => import("./pages/ExperimentPage"));
 /** RequireAuth wrapper to guard protected routes */
 function RequireAuth({ children }) {
   const { isAuthenticated, initialising } = useAuth();
+  const location = useLocation();
   if (initialising) {
     return (
       <p className="py-8 text-caption text-ink-muted" role="status">
@@ -29,7 +30,7 @@ function RequireAuth({ children }) {
       </p>
     );
   }
-  return isAuthenticated ? children : <Navigate to={ROUTES.LOGIN} replace />;
+  return isAuthenticated ? children : <Navigate to={ROUTES.LOGIN} replace state={{ from: location }} />;
 }
 
 function App() {

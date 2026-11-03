@@ -10,6 +10,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import App from "../App";
 import { AuthProvider } from "../context/AuthContext";
+import { ThemeProvider } from "../context/ThemeContext";
 import { ZenProvider } from "../context/ZenContext";
 import Navbar from "../components/layout/Navbar";
 import ProfilePage from "../pages/ProfilePage";
@@ -33,15 +34,17 @@ const account = {
 function renderProfile() {
   return render(
     <MemoryRouter initialEntries={["/profile"]}>
-      <ZenProvider>
-        <AuthProvider>
-          <Navbar />
-          <Routes>
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/" element={<h1>Home destination</h1>} />
-          </Routes>
-        </AuthProvider>
-      </ZenProvider>
+      <ThemeProvider>
+        <ZenProvider>
+          <AuthProvider>
+            <Navbar />
+            <Routes>
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/" element={<h1>Home destination</h1>} />
+            </Routes>
+          </AuthProvider>
+        </ZenProvider>
+      </ThemeProvider>
     </MemoryRouter>,
   );
 }
@@ -189,11 +192,13 @@ describe("ProfilePage", () => {
     localStorage.clear();
     render(
       <MemoryRouter initialEntries={["/profile"]}>
-        <ZenProvider>
-          <AuthProvider>
-            <App />
-          </AuthProvider>
-        </ZenProvider>
+        <ThemeProvider>
+          <ZenProvider>
+            <AuthProvider>
+              <App />
+            </AuthProvider>
+          </ZenProvider>
+        </ThemeProvider>
       </MemoryRouter>,
     );
     expect(

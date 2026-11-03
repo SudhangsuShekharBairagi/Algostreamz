@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import Alert from '../components/common/Alert'
 import { useAuth } from '../context/AuthContext'
 import { errorMessage, fieldErrors } from '../services/api'
@@ -17,7 +17,8 @@ export default function Login() {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
   const [fields, setFields] = useState(null)
-  const { login, register, requestLoginOtp } = useAuth()
+  const { login, register, requestLoginOtp, isAuthenticated, initialising } = useAuth()
+  const location = useLocation()
   const navigate = useNavigate()
 
   const copy = MODES[mode]
@@ -34,7 +35,7 @@ export default function Login() {
         navigate(ROUTES.VERIFY_EMAIL, { state: { email: form.email, notice: message } })
       } else {
         await login({ email: form.email, password: form.password })
-        navigate(ROUTES.HOME)
+        navigate(location.state?.from?.pathname ?? ROUTES.HOME, { replace: true })
       }
     } catch (err) {
       setError(errorMessage(err))
@@ -60,6 +61,11 @@ export default function Login() {
       setBusy(false)
     }
   }
+
+  if (initialising) {
+    return <p className="py-8 text-caption text-ink-muted" role="status">Checking your session…</p>
+  }
+  if (isAuthenticated) return <Navigate to={ROUTES.HOME} replace />
 
   return (
     <main className="min-h-screen bg-canvas bg-dots text-ink flex items-center justify-center px-4 font-sans">
@@ -151,7 +157,7 @@ function Field({ id, label, hint, error, ...inputProps }) {
         {...inputProps}
       />
       {error ? (
-        <p id={`${id}-error`} className="mt-1 text-caption text-rose-600">
+        <p id={`${id}-error`} className="mt-1 text-caption text-state-swap">
           {error}
         </p>
       ) : (

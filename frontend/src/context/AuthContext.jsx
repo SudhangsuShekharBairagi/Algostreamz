@@ -42,6 +42,16 @@ export function AuthProvider({ children }) {
 
   // Re-establish the session on reload, and drop it the moment the API rejects it.
   useEffect(() => {
+    const onExpired = () => {
+      tokenStore.clear();
+      setUser(null);
+    };
+    window.addEventListener("auth:expired", onExpired);
+
+    return () => window.removeEventListener("auth:expired", onExpired);
+  }, []);
+
+  useEffect(() => {
     if (!tokenStore.get()) {
       setInitialising(false);
       return;
@@ -61,11 +71,8 @@ export function AuthProvider({ children }) {
         if (!cancelled) setInitialising(false);
       });
 
-    const onExpired = () => setUser(null);
-    window.addEventListener("auth:expired", onExpired);
     return () => {
       cancelled = true;
-      window.removeEventListener("auth:expired", onExpired);
     };
   }, []);
 

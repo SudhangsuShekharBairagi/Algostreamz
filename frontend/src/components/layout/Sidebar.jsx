@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {
   BarChart2,
   BarChart3,
@@ -15,8 +15,15 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   X,
+  LogOut,
+  UserRound,
+  Layers,
+  ListOrdered,
+  Link2,
 } from 'lucide-react'
-import { SIDEBAR_CATEGORIES, LABELS } from '../../config/siteLinks'
+import { SIDEBAR_CATEGORIES, LABELS, ROUTES } from '../../config/siteLinks'
+import { useAuth } from '../../context/AuthContext'
+import { useToast } from '../../context/ToastContext'
 
 const ICON_MAP = {
   BarChart2,
@@ -30,12 +37,18 @@ const ICON_MAP = {
   Share2,
   GitCommit,
   Route,
+  Layers,
+  ListOrdered,
+  Link2,
 }
 
 const STORAGE_KEY = 'dsa.sidebar'
 
 export default function Sidebar({ mobileOpen, onCloseMobile, isZen = false }) {
   const location = useLocation()
+  const navigate = useNavigate()
+  const { isAuthenticated, initialising, signOut } = useAuth()
+  const { showToast } = useToast()
   const currentPath = location.pathname
   const closeButtonRef = useRef(null)
 
@@ -59,6 +72,13 @@ export default function Sidebar({ mobileOpen, onCloseMobile, isZen = false }) {
       }
       return nextState
     })
+  }
+
+  const handleSignOut = async () => {
+    await signOut()
+    showToast('Signed out', 'success')
+    onCloseMobile()
+    navigate(ROUTES.HOME)
   }
 
   // Handle Mobile Keyboard Escape & Trap
@@ -173,6 +193,28 @@ export default function Sidebar({ mobileOpen, onCloseMobile, isZen = false }) {
                 })}
               </nav>
             </div>
+          ))}
+        </div>
+
+        <div className="shrink-0 border-t border-line p-3 md:hidden">
+          {!initialising && (isAuthenticated ? (
+            <button
+              type="button"
+              onClick={() => void handleSignOut()}
+              className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-caption font-medium text-ink-muted hover:bg-sunken hover:text-ink focus-ring"
+            >
+              <LogOut className="h-4 w-4" />
+              {LABELS.SIGN_OUT}
+            </button>
+          ) : (
+            <Link
+              to={ROUTES.LOGIN}
+              onClick={onCloseMobile}
+              className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-caption font-medium text-ink-muted hover:bg-sunken hover:text-ink focus-ring"
+            >
+              <UserRound className="h-4 w-4" />
+              {LABELS.SIGN_IN}
+            </Link>
           ))}
         </div>
       </aside>
