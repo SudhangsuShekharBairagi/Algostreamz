@@ -18,6 +18,10 @@ export const authApi = {
 
   verifyLoginOtp: (payload) => api.post('/auth/otp/verify', payload),
 
+  forgotPassword: (email) => api.post('/auth/password/forgot', { email }),
+
+  resetPassword: (payload) => api.post('/auth/password/reset', payload),
+
   me: () => api.get('/auth/me'),
 
   logout: () => api.post('/auth/logout'),

@@ -37,6 +37,15 @@ public interface OtpCodeRepository extends JpaRepository<OtpCode, Long> {
         int invalidateOutstanding(@Param("email") String email, @Param("purpose") OtpPurpose purpose,
                         @Param("now") Instant now);
 
+        /**
+         * Retires every outstanding code for an address, whatever its purpose. Used after a
+         * password reset so a code issued before the reset cannot be replayed.
+         */
+        @Modifying
+        @Query("update OtpCode o set o.consumedAt = :now "
+                        + "where lower(o.email) = lower(:email) and o.consumedAt is null")
+        int invalidateAllOutstanding(@Param("email") String email, @Param("now") Instant now);
+
         @Modifying
         @Query("delete from OtpCode o where o.expiresAt < :cutoff")
         int deleteExpired(@Param("cutoff") Instant cutoff);

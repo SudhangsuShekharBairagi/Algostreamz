@@ -15,6 +15,8 @@ export const ROUTES = {
   DESIGN_SYSTEM: "/_design",
   LOGIN: "/login",
   VERIFY_EMAIL: "/verify-email",
+  FORGOT_PASSWORD: "/forgot-password",
+  RESET_PASSWORD: "/reset-password",
 };
 
 export const SITE_LINKS = {
@@ -124,6 +126,14 @@ export const ROUTE_METADATA = {
     title: `Verify Email — ${SITE_NAME}`,
     description:
       "Enter your 6-digit confirmation code to activate your account.",
+  },
+  [ROUTES.FORGOT_PASSWORD]: {
+    title: `Reset Password — ${SITE_NAME}`,
+    description: "Request a one-time code to reset your account password.",
+  },
+  [ROUTES.RESET_PASSWORD]: {
+    title: `Choose a New Password — ${SITE_NAME}`,
+    description: "Redeem your reset code and choose a new account password.",
   },
 };
 

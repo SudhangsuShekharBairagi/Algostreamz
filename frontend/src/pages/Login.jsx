@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import Alert from '../components/common/Alert'
+import Field from '../components/common/Field'
 import { useAuth } from '../context/AuthContext'
 import { errorMessage, fieldErrors } from '../services/api'
 import { SITE_NAME } from '../config'
@@ -100,6 +101,20 @@ export default function Login() {
             required
           />
 
+          {mode === 'signin' && (
+            <div className="flex justify-end -mt-1">
+              <button
+                type="button"
+                onClick={() =>
+                  navigate(ROUTES.FORGOT_PASSWORD, { state: { email: form.email } })
+                }
+                className="text-caption text-accent hover:text-accent-hover focus-ring rounded px-1"
+              >
+                Forgot password?
+              </button>
+            </div>
+          )}
+
           {error && <Alert tone="error">{error}</Alert>}
 
           <button
@@ -144,25 +159,4 @@ export default function Login() {
   )
 }
 
-function Field({ id, label, hint, error, ...inputProps }) {
-  return (
-    <div>
-      <label htmlFor={id} className="block text-caption font-medium mb-1 text-ink">
-        {label}
-      </label>
-      <input
-        id={id}
-        aria-describedby={error ? `${id}-error` : undefined}
-        className="w-full rounded-md bg-surface border border-line px-3 py-2 text-body text-ink placeholder:text-ink-faint focus-ring"
-        {...inputProps}
-      />
-      {error ? (
-        <p id={`${id}-error`} className="mt-1 text-caption text-state-swap">
-          {error}
-        </p>
-      ) : (
-        hint && <p className="mt-1 text-caption text-ink-faint">{hint}</p>
-      )}
-    </div>
-  )
-}
+

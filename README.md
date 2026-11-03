@@ -64,7 +64,7 @@ Profile fields, password changes, and account deletion:
 **[docs/profile-api.md](docs/profile-api.md)**.
 
 ```bash
-cd backend && ./mvnw test    # 12 integration tests, no external services needed
+cd backend && ./mvnw test    # 26 integration tests, no external services needed
 ```
 
 ## Deployment

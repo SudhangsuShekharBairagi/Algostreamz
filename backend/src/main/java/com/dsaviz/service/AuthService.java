@@ -2,6 +2,7 @@ package com.dsaviz.service;
 
 import com.dsaviz.dto.AuthResponse;
 import com.dsaviz.dto.LoginRequest;
+import com.dsaviz.dto.PasswordResetRequest;
 import com.dsaviz.dto.RegisterRequest;
 import com.dsaviz.dto.UserResponse;
 import com.dsaviz.dto.VerifyEmailRequest;
@@ -141,6 +142,47 @@ public class AuthService {
             throw new ForbiddenException("This account has been disabled.");
         }
         log.info("Sign-in code accepted for account id={}", user.getId());
+
+        return sessionFor(user);
+    }
+
+    /**
+     * Emails a reset code to a verified, enabled account. Always reports success, whether
+     * or not the address belongs to an account, so this cannot be used to enumerate users.
+     */
+    public void requestPasswordReset(String rawEmail, String clientIp) {
+        String email = normalise(rawEmail);
+        userRepository.findByEmailIgnoreCase(email)
+                .filter(User::isEmailVerified)
+                .filter(User::isEnabled)
+                .ifPresentOrElse(
+                        user -> otpCodeService.issueAndSend(user.getEmail(), OtpPurpose.PASSWORD_RESET, clientIp),
+                        () -> log.debug("Password reset requested for an address with no usable account"));
+    }
+
+    /**
+     * Redeems a reset code and replaces the password. Returns a session so the user lands
+     * signed in, matching {@link #verifyEmail}.
+     *
+     * Deliberately NOT {@code @Transactional}: the code's attempt counter must commit even
+     * when verification throws, exactly as in {@link #verifyEmail}.
+     */
+    public AuthResponse resetPassword(PasswordResetRequest request) {
+        String email = normalise(request.email());
+        User user = userRepository.findByEmailIgnoreCase(email)
+                // Unknown and disabled accounts produce the same message as a bad code.
+                .filter(User::isEnabled)
+                .orElseThrow(() -> new BadRequestException(
+                        "No active code for this email. Request a new one."));
+
+        otpCodeService.verify(user.getEmail(), OtpPurpose.PASSWORD_RESET, request.code());
+
+        user.setPasswordHash(passwordEncoder.encode(request.newPassword()));
+        userRepository.save(user);
+
+        // A code issued before the reset must not survive it.
+        otpCodeService.invalidateAllOutstanding(user.getEmail());
+        log.info("Password reset for account id={}", user.getId());
 
         return sessionFor(user);
     }

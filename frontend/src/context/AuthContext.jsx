@@ -102,6 +102,10 @@ export function AuthProvider({ children }) {
         authApi.requestLoginOtp(email).then(({ data }) => data.message),
       verifyLoginOtp: (payload) =>
         authApi.verifyLoginOtp(payload).then(({ data }) => applySession(data)),
+      requestPasswordReset: (email) =>
+        authApi.forgotPassword(email).then(({ data }) => data.message),
+      resetPassword: (payload) =>
+        authApi.resetPassword(payload).then(({ data }) => applySession(data)),
       syncUser,
       signOut,
       refresh: () => authApi.me().then(({ data }) => setUser(data)),

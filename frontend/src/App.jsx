@@ -13,6 +13,8 @@ import ContactPage from "./pages/ContactPage";
 import DesignSystemPage from "./pages/DesignSystemPage";
 import Login from "./pages/Login";
 import VerifyEmail from "./pages/VerifyEmail";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import NotFoundPage from "./pages/NotFoundPage";
 import { useAuth } from "./context/AuthContext";
 import { ROUTES } from "./config/siteLinks";
@@ -39,6 +41,8 @@ function App() {
       {/* Standalone Auth Pages */}
       <Route path={ROUTES.LOGIN} element={<Login />} />
       <Route path={ROUTES.VERIFY_EMAIL} element={<VerifyEmail />} />
+      <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPassword />} />
+      <Route path={ROUTES.RESET_PASSWORD} element={<ResetPassword />} />
 
       {/* Main Application Layout Shell */}
       <Route element={<AppShell />}>

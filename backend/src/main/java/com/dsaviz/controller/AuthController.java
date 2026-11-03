@@ -1,8 +1,10 @@
 package com.dsaviz.controller;
 
 import com.dsaviz.dto.AuthResponse;
+import com.dsaviz.dto.ForgotPasswordRequest;
 import com.dsaviz.dto.LoginRequest;
 import com.dsaviz.dto.MessageResponse;
+import com.dsaviz.dto.PasswordResetRequest;
 import com.dsaviz.dto.RegisterRequest;
 import com.dsaviz.dto.ResendOtpRequest;
 import com.dsaviz.dto.UserResponse;
@@ -36,6 +38,10 @@ public class AuthController {
     /** Deliberately identical for "unknown", "already verified" and "too soon". */
     private static final String GENERIC_EMAIL_SENT =
             "If that address needs a code, one is on its way.";
+
+    /** Same anti-enumeration guarantee as {@link #GENERIC_EMAIL_SENT}. */
+    private static final String GENERIC_RESET_SENT =
+            "If that address has an account, a reset code is on its way.";
 
     private final AuthService authService;
 
@@ -79,6 +85,18 @@ public class AuthController {
     @PostMapping("/otp/verify")
     public ResponseEntity<AuthResponse> verifyLoginOtp(@Valid @RequestBody VerifyEmailRequest request) {
         return ResponseEntity.ok(authService.verifyLoginOtp(request));
+    }
+
+    @PostMapping("/password/forgot")
+    public ResponseEntity<MessageResponse> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request,
+                                                          HttpServletRequest servletRequest) {
+        authService.requestPasswordReset(request.email(), ClientIpResolver.resolve(servletRequest));
+        return ResponseEntity.accepted().body(new MessageResponse(GENERIC_RESET_SENT));
+    }
+
+    @PostMapping("/password/reset")
+    public ResponseEntity<AuthResponse> resetPassword(@Valid @RequestBody PasswordResetRequest request) {
+        return ResponseEntity.ok(authService.resetPassword(request));
     }
 
     @GetMapping("/me")

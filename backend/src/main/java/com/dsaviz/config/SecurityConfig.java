@@ -60,7 +60,9 @@ public class SecurityConfig {
                                 "/api/auth/verify-email",
                                 "/api/auth/resend-verification",
                                 "/api/auth/otp/request",
-                                "/api/auth/otp/verify")
+                                "/api/auth/otp/verify",
+                                "/api/auth/password/forgot",
+                                "/api/auth/password/reset")
                         .permitAll()
                         .requestMatchers("/api/metadata/**").permitAll()
                         .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()

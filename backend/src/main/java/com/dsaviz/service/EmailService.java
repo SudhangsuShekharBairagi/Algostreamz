@@ -1,6 +1,7 @@
 package com.dsaviz.service;
 
 import com.dsaviz.config.MailProperties;
+import com.dsaviz.entity.OtpPurpose;
 import com.dsaviz.exception.MailDeliveryException;
 import jakarta.annotation.PostConstruct;
 import jakarta.mail.internet.MimeMessage;
@@ -42,45 +43,75 @@ public class EmailService {
         }
     }
 
-    public void sendOtpEmail(String toEmail, String code, int ttlMinutes, boolean forLogin) {
-        String subject = forLogin
-                ? properties.getAppName() + " login code"
-                : "Verify your " + properties.getAppName() + " email address";
-
+    public void sendOtpEmail(String toEmail, String code, int ttlMinutes, OtpPurpose purpose) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper =
                     new MimeMessageHelper(message, false, UTF_8);
             helper.setFrom(properties.getFromName() + " <" + properties.getFromEmail() + ">");
             helper.setTo(toEmail);
-            helper.setSubject(subject);
-            helper.setText(plainTextBody(code, ttlMinutes, forLogin), false);
-            helper.setText(htmlBody(code, ttlMinutes, forLogin), true);
+            helper.setSubject(subjectFor(purpose));
+            helper.setText(plainTextBody(code, ttlMinutes, purpose), false);
+            helper.setText(htmlBody(code, ttlMinutes, purpose), true);
 
             mailSender.send(message);
-            log.info("Sent {} OTP to {}@{}", forLogin ? "login" : "verification",
-                    mask(toEmail), domainOf(toEmail));
+            log.info("Sent {} OTP to {}", labelFor(purpose), mask(toEmail));
         } catch (MailException | jakarta.mail.MessagingException ex) {
             log.error("Failed to send OTP email to {}", mask(toEmail), ex);
             throw new MailDeliveryException("Could not send the email. Please try again shortly.", ex);
         }
     }
 
-    private String plainTextBody(String code, int ttlMinutes, boolean forLogin) {
-        String action = forLogin ? "sign in to your account" : "finish creating your account";
+    private String subjectFor(OtpPurpose purpose) {
+        return switch (purpose) {
+            case LOGIN -> properties.getAppName() + " login code";
+            case EMAIL_VERIFICATION -> "Verify your " + properties.getAppName() + " email address";
+            case PASSWORD_RESET -> "Reset your " + properties.getAppName() + " password";
+        };
+    }
+
+    private static String labelFor(OtpPurpose purpose) {
+        return switch (purpose) {
+            case LOGIN -> "login";
+            case EMAIL_VERIFICATION -> "verification";
+            case PASSWORD_RESET -> "password reset";
+        };
+    }
+
+    private static String actionFor(OtpPurpose purpose) {
+        return switch (purpose) {
+            case LOGIN -> "sign in to your account";
+            case EMAIL_VERIFICATION -> "finish creating your account";
+            case PASSWORD_RESET -> "choose a new password";
+        };
+    }
+
+    private static String headingFor(OtpPurpose purpose) {
+        return switch (purpose) {
+            case LOGIN -> "Your sign-in code";
+            case EMAIL_VERIFICATION -> "Verify your email";
+            case PASSWORD_RESET -> "Reset your password";
+        };
+    }
+
+    private static String introFor(OtpPurpose purpose) {
+        return switch (purpose) {
+            case LOGIN -> "Enter this code on the sign-in screen to finish.";
+            case EMAIL_VERIFICATION -> "Enter this code to finish setting up your account.";
+            case PASSWORD_RESET -> "Enter this code to choose a new password.";
+        };
+    }
+
+    private String plainTextBody(String code, int ttlMinutes, OtpPurpose purpose) {
         return "Your " + properties.getAppName() + " verification code is:\n\n"
                 + "    " + code + "\n\n"
-                + "Use this code to " + action + ". "
+                + "Use this code to " + actionFor(purpose) + ". "
                 + "The code expires in " + ttlMinutes + " minutes.\n\n"
                 + "If you did not request this code you can safely ignore this email - "
                 + "it will stop working on its own.\n";
     }
 
-    private String htmlBody(String code, int ttlMinutes, boolean forLogin) {
-        String heading = forLogin ? "Your sign-in code" : "Verify your email";
-        String intro = forLogin
-                ? "Enter this code on the sign-in screen to finish."
-                : "Enter this code to finish setting up your account.";
+    private String htmlBody(String code, int ttlMinutes, OtpPurpose purpose) {
         String app = escapeHtml(properties.getAppName());
 
         return """
@@ -100,7 +131,7 @@ public class EmailService {
                   </table>
                 </body>
                 </html>
-                """.formatted(app, heading, escapeHtml(code), intro, ttlMinutes);
+                """.formatted(app, headingFor(purpose), escapeHtml(code), introFor(purpose), ttlMinutes);
     }
 
     /** Logs the local part only partially, to keep addresses out of logs. */
@@ -110,11 +141,6 @@ public class EmailService {
             return "***" + (at >= 0 ? email.substring(at) : "");
         }
         return email.charAt(0) + "***" + email.substring(at);
-    }
-
-    private static String domainOf(String email) {
-        int at = email.indexOf('@');
-        return at < 0 ? "?" : email.substring(at + 1);
     }
 
     private static String escapeHtml(String raw) {

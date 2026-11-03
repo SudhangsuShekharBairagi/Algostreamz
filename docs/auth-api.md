@@ -28,11 +28,16 @@ Already verified:
      ├─ login {password}     ──> 200 + JWT
      └─ otp/request ──> otp/verify {code} ──> 200 + JWT    (passwordless alternative)
 
+Forgotten password:
+     ├─ password/forgot {email} ──> 202      reset code emailed
+     └─ password/reset {email, code, newPassword} ──> 200 + JWT
+
 Any endpoint ──> Authorization: Bearer <jwt>
 ```
 
-There are two OTP purposes, stored separately and never interchangeable:
-`EMAIL_VERIFICATION` (gates first sign-in) and `LOGIN` (passwordless sign-in).
+There are three OTP purposes, stored separately and never interchangeable:
+`EMAIL_VERIFICATION` (gates first sign-in), `LOGIN` (passwordless sign-in) and
+`PASSWORD_RESET` (proves control of the address before a new password is set).
 
 ---
 
@@ -48,6 +53,8 @@ All paths are relative to `VITE_API_BASE_URL` (default `/api`).
 | `POST` | `/auth/login` | – | Email + password sign-in |
 | `POST` | `/auth/otp/request` | – | Email a sign-in code |
 | `POST` | `/auth/otp/verify` | – | Redeem a sign-in code, receive a session |
+| `POST` | `/auth/password/forgot` | – | Email a password-reset code |
+| `POST` | `/auth/password/reset` | – | Redeem the reset code, set a new password, receive a session |
 | `GET` | `/auth/me` | Bearer | Current user |
 | `POST` | `/auth/logout` | Bearer | Sign out (client discards the token) |
 
@@ -71,6 +78,12 @@ All paths are relative to `VITE_API_BASE_URL` (default `/api`).
 
 // POST /auth/otp/verify        code: exactly 6 digits
 { "email": "you@example.com", "code": "830415" }
+
+// POST /auth/password/forgot
+{ "email": "you@example.com" }
+
+// POST /auth/password/reset    code: exactly 6 digits, password: 8-72 chars
+{ "email": "you@example.com", "code": "205174", "newPassword": "a-brand-new-password" }
 ```
 
 Emails are matched case-insensitively and stored lower-cased, so `Ada@Example.com` and
@@ -93,7 +106,7 @@ Emails are matched case-insensitively and stored lower-cased, so `Ada@Example.co
 }
 ```
 
-`202 Accepted` responses (`register`, `resend-verification`, `otp/request`):
+`202 Accepted` responses (`register`, `resend-verification`, `otp/request`, `password/forgot`):
 
 ```jsonc
 { "message": "If that address needs a code, one is on its way." }
@@ -230,7 +243,7 @@ curl -X POST http://localhost:8080/api/auth/verify-email \
   -d '{"email":"you@example.com","code":"123456"}'
 ```
 
-`./mvnw test` runs 12 integration tests against H2 with a mocked mail sender — no Postgres
+`./mvnw test` runs 26 integration tests against H2 with a mocked mail sender — no Postgres
 or SMTP credentials needed, so it works in CI as-is.
 
 ---
@@ -296,9 +309,9 @@ guesses the code is consumed and the legitimate user has to request a new one.
 **Issuing a new code burns the old one.** The previous code is marked consumed *before* the
 new one is emailed, so only the newest email can ever be redeemed.
 
-**Anti-enumeration.** `resend-verification` and `otp/request` return `202` with an identical
-message whether the address exists, is already verified, or has never been seen — otherwise
-those endpoints become a way to test which emails are registered. `/login` returns a
+**Anti-enumeration.** `resend-verification`, `otp/request` and `password/forgot` return `202`
+with an identical message whether the address exists, is already verified, or has never been
+seen — otherwise those endpoints become a way to test which emails are registered. `/login` returns a
 byte-identical body for an unknown email and a wrong password, and hashes a decoy bcrypt
 value in the unknown-email case so response timing does not leak it either. There is a test
 asserting exactly this.
@@ -323,8 +336,15 @@ tokens exist to protect, so disabling the check is correct here rather than a sh
   becomes a session-theft bug. It is isolated in `frontend/src/services/tokenStore.js`, so
   moving to httpOnly cookies is a change to one file.
 - **`spring.jpa.hibernate.ddl-auto=update`** is fine for a prototype but has no migration
-  history and no rollback. Adopt Flyway before the schema stops changing daily.
+  history and no rollback. Adopt Flyway before the schema stops changing daily. One sharp
+  edge already bit us: Hibernate emits a `check (purpose in (...))` constraint for the
+  `otp_codes.purpose` enum but never widens an existing one, so adding `PASSWORD_RESET`
+  made inserts fail with a misleading `409 That record already exists`.
+  `OtpPurposeConstraintMigration` rebuilds that constraint from the current enum on every
+  boot; a real migration tool should take this over.
 - **Rate limits are per-instance.** They are read from Postgres, so they hold across
   instances, but they are advisory rather than a hard distributed limit.
-- **There is no password reset yet.** Same shape as the login OTP: request a
-  `PASSWORD_RESET` purpose, verify the code, then set the new password.
+- **A password reset does not revoke existing sessions.** Tokens are stateless, so any JWT
+  issued before the reset stays valid until it expires. Revoking them needs the same `jti`
+  denylist as logout. The reset does, however, retire every outstanding OTP so a previously
+  emailed code cannot be replayed.

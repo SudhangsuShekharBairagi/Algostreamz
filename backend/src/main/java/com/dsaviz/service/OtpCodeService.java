@@ -76,7 +76,7 @@ public class OtpCodeService {
         code.setRequestedByIp(clientIp);
         otpCodeRepository.save(code);
 
-        emailService.sendOtpEmail(normalised, plaintext, properties.getTtlMinutes(), purpose == OtpPurpose.LOGIN);
+        emailService.sendOtpEmail(normalised, plaintext, properties.getTtlMinutes(), purpose);
     }
 
     /**
@@ -141,6 +141,15 @@ public class OtpCodeService {
                     throw new TooManyRequestsException("Please wait "
                             + properties.getResendCooldownSeconds() + " seconds before requesting another code.");
                 });
+    }
+
+    /**
+     * Retires every outstanding code for an address, regardless of purpose. Called after a
+     * password change so a code issued before the reset cannot be replayed.
+     */
+    @Transactional
+    public void invalidateAllOutstanding(String email) {
+        otpCodeRepository.invalidateAllOutstanding(email.trim().toLowerCase(), Instant.now());
     }
 
     /** Keeps the table from growing without bound on a long-lived deployment. */
