@@ -1,5 +1,3 @@
-import { useState } from 'react'
-
 /**
  * Zen Mode Caption Component.
  * Renders cross-fading beginner/technical step explanation without layout shifts.

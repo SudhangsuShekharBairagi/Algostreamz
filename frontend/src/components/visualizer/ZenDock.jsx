@@ -119,12 +119,12 @@ export default function ZenDock({
               onClick={onTogglePlay}
               title={isPlaying ? 'Pause (Space)' : 'Play (Space)'}
               aria-label={isPlaying ? 'Pause algorithm visualization' : 'Play algorithm visualization'}
-              className="w-11 h-11 rounded-full bg-accent hover:bg-accent-hover text-white flex items-center justify-center focus-ring transition-transform duration-fast active:scale-95 shadow-e2"
+              className="w-11 h-11 rounded-full bg-accent hover:bg-accent-hover text-on-accent flex items-center justify-center focus-ring transition-transform duration-fast active:scale-95 shadow-e2"
             >
               {isPlaying ? (
-                <Pause className="w-5 h-5 fill-white" />
+                <Pause className="w-5 h-5 fill-on-accent" />
               ) : (
-                <Play className="w-5 h-5 fill-white ml-0.5" />
+                <Play className="w-5 h-5 fill-on-accent ml-0.5" />
               )}
             </button>
 

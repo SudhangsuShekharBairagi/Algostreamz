@@ -142,7 +142,7 @@ export default function HowItWorksSection() {
                     <span
                       className={`font-mono text-xl font-bold tabular-nums w-8 h-8 rounded-full flex items-center justify-center ${
                         isActive
-                          ? 'bg-accent text-white shadow-e1'
+                          ? 'bg-accent text-on-accent shadow-e1'
                           : 'bg-sunken text-ink-muted border border-line'
                       }`}
                     >

@@ -1,3 +1,5 @@
+/* global self, caches, URL, fetch, Response */
+
 const SHELL_CACHE = 'algostreamz-shell-v1'
 const ASSET_CACHE = 'algostreamz-assets-v1'
 const APP_SHELL = [

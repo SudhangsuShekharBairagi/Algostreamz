@@ -5,7 +5,13 @@ import { benchmarkAlgorithms, BENCHMARK_SIZES } from '../engine/benchmarks'
 
 const SORTING_ALGORITHMS = ALGORITHMS.filter((algorithm) => algorithm.category === 'Sorting')
 const DEFAULT_SELECTED = ['bubble-sort', 'merge-sort', 'quick-sort']
-const COLORS = ['#6d28d9', '#0f766e', '#c2410c', '#2563eb', '#be123c']
+const COLORS = [
+  'rgb(var(--accent))',
+  'rgb(var(--state-sorted))',
+  'rgb(var(--state-compare))',
+  'rgb(var(--state-pivot))',
+  'rgb(var(--state-swap))',
+]
 
 export default function ExperimentPage() {
   const [selectedIds, setSelectedIds] = useState(DEFAULT_SELECTED)
@@ -66,15 +72,19 @@ export default function ExperimentPage() {
             <div className="h-[340px] w-full" role="img" aria-label="Line chart of measured and theoretical operations by input size">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData} margin={{ top: 10, right: 24, left: 8, bottom: 8 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#d6d3d1" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgb(var(--line))" />
                   <XAxis dataKey="size" type="number" scale="linear" domain={[10, 500]}
-                    ticks={BENCHMARK_SIZES} tick={{ fill: '#57534e', fontSize: 12 }}
-                    label={{ value: 'Input size (n)', position: 'insideBottom', offset: -4, fill: '#57534e' }} />
-                  <YAxis tick={{ fill: '#57534e', fontSize: 12 }} width={72}
-                    label={{ value: 'Operations', angle: -90, position: 'insideLeft', fill: '#57534e' }} />
+                    ticks={BENCHMARK_SIZES} tick={{ fill: 'rgb(var(--ink-muted))', fontSize: 12 }}
+                    label={{ value: 'Input size (n)', position: 'insideBottom', offset: -4, fill: 'rgb(var(--ink-muted))' }} />
+                  <YAxis tick={{ fill: 'rgb(var(--ink-muted))', fontSize: 12 }} width={72}
+                    label={{ value: 'Operations', angle: -90, position: 'insideLeft', fill: 'rgb(var(--ink-muted))' }} />
                   <Tooltip formatter={(value, name) => [Number(value).toLocaleString(), name]}
-                    labelFormatter={(size) => `Input size: ${size}`} />
-                  <Legend verticalAlign="top" height={52} />
+                    labelFormatter={(size) => `Input size: ${size}`}
+                    contentStyle={{ backgroundColor: 'rgb(var(--surface))', borderColor: 'rgb(var(--line))', color: 'rgb(var(--ink))' }}
+                    labelStyle={{ color: 'rgb(var(--ink))' }}
+                    itemStyle={{ color: 'rgb(var(--ink-muted))' }}
+                    cursor={{ fill: 'rgb(var(--sunken))' }} />
+                  <Legend verticalAlign="top" height={52} wrapperStyle={{ color: 'rgb(var(--ink-muted))' }} />
                   {results.map(({ algorithm }, index) => (
                     <Line key={`${algorithm.id}-measured`} type="monotone"
                       dataKey={`${algorithm.id}-measured`} name={`${algorithm.name} · measured`}

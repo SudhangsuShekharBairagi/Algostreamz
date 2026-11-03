@@ -36,7 +36,7 @@ export default function SortingCanvas({
         const state = highlightedIndices[idx] || 'default'
 
         // Determine bar background, rings, and icons based on algorithm state
-        let barBgClass = 'bg-[#6366F1] text-white shadow-sm'
+        let barBgClass = 'bg-accent text-on-accent shadow-sm'
         let showSwapIcon = false
         let showCheckIcon = false
         let showPivotBadge = false
@@ -44,29 +44,29 @@ export default function SortingCanvas({
         switch (state) {
           case 'comparing':
             barBgClass =
-              'bg-[#F59E0B] text-white ring-4 ring-[#F59E0B]/30 motion-safe:scale-[1.03] shadow-e2 border border-amber-300'
+              'bg-state-compare text-state-compare-text ring-4 ring-state-compare-ring/30 motion-safe:scale-[1.03] shadow-e2 border border-state-compare-ring'
             break
           case 'swapping':
             barBgClass =
-              'bg-[#EF4444] text-white ring-4 ring-rose-500/30 motion-safe:scale-[1.05] shadow-e3 border border-rose-400'
+              'bg-state-swap text-state-swap-text ring-4 ring-state-swap-ring/30 motion-safe:scale-[1.05] shadow-e3 border border-state-swap-ring'
             showSwapIcon = true
             break
           case 'sorted':
           case 'match':
             barBgClass =
-              'bg-[#10B981] text-white ring-2 ring-emerald-400/40 shadow-e1 border border-emerald-400'
+              'bg-state-sorted text-state-sorted-text ring-2 ring-state-sorted-ring/40 shadow-e1 border border-state-sorted-ring'
             showCheckIcon = true
             break
           case 'pivot':
             barBgClass =
-              'bg-[#8B5CF6] text-white ring-4 ring-purple-500/30 motion-safe:scale-[1.02] shadow-e2 border border-purple-300'
+              'bg-state-pivot text-state-pivot-text ring-4 ring-state-pivot-ring/30 motion-safe:scale-[1.02] shadow-e2 border border-state-pivot-ring'
             showPivotBadge = true
             break
           case 'eliminated':
             barBgClass = 'bg-sunken text-ink-faint opacity-25 scale-95 border border-line/40'
             break
           default:
-            barBgClass = 'bg-[#6366F1] text-white shadow-sm hover:bg-[#4F46E5]'
+            barBgClass = 'bg-accent text-on-accent shadow-sm hover:bg-accent-hover'
         }
 
         return (
@@ -77,10 +77,10 @@ export default function SortingCanvas({
             {/* Top Value Label & Indicators */}
             <div className="mb-2 flex flex-col items-center justify-end min-h-[32px] gap-0.5">
               {showSwapIcon && (
-                <ArrowLeftRight className="w-3.5 h-3.5 text-[#EF4444] animate-bounce" />
+                <ArrowLeftRight className="w-3.5 h-3.5 text-state-swap motion-reduce:animate-none" />
               )}
               {showPivotBadge && (
-                <span className="font-mono text-[9px] uppercase font-bold tracking-wider px-1 rounded bg-[#8B5CF6]/20 text-[#8B5CF6]">
+                <span className="font-mono text-[9px] uppercase font-bold tracking-wider px-1 rounded bg-state-pivot/20 text-state-pivot">
                   pivot
                 </span>
               )}
@@ -96,7 +96,7 @@ export default function SortingCanvas({
                 style={{ height: `${heightPercent}%` }}
               >
                 {showCheckIcon && (
-                  <Check className="w-4 h-4 text-white/90 shrink-0" />
+                  <Check className="w-4 h-4 text-state-sorted-text shrink-0" />
                 )}
               </div>
             </div>

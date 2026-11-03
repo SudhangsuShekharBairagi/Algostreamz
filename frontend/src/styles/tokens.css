@@ -16,6 +16,23 @@
   --accent-hover: 67 56 202;    /* #4338CA */
   --accent-strong: 55 48 163;   /* #3730A3 */
   --accent-soft: 238 242 255;   /* #EEF2FF */
+  --on-accent: 255 255 255;
+
+  --node-bg: 255 255 255;
+  --node-border: 203 213 225;
+  --node-text: 15 23 42;
+  --edge: 203 213 225;
+  --edge-active: 79 70 229;
+  --code-bg: 241 245 249;
+  --code-line-active: 238 242 255;
+  --console-text: 51 65 85;
+  --control-bg: 241 245 249;
+  --control-hover: 226 232 240;
+  --control-disabled: 203 213 225;
+
+  --shadow-e1: 0 1px 2px rgb(15 23 42 / .04);
+  --shadow-e2: 0 4px 12px -2px rgb(15 23 42 / .08);
+  --shadow-e3: 0 16px 40px -12px rgb(15 23 42 / .18);
 
   /* Visualizer State Colors */
   --state-compare: 251 191 36;       /* #FBBF24 */
@@ -27,7 +44,7 @@
   --state-swap-ring: 254 205 211;   /* #FECDD3 */
 
   --state-sorted: 5 150 105;        /* #059669 */
-  --state-sorted-text: 255 255 255;/* #FFFFFF */
+  --state-sorted-text: 0 20 13;    /* #00140D */
   --state-sorted-ring: 167 243 208; /* #A7F3D0 */
 
   --state-pivot: 124 58 237;        /* #7C3AED */
@@ -40,8 +57,6 @@
   --duration-base: 200ms;
   --duration-slow: 320ms;
 }
-
-/* Future dark mode slot: override variables here if theme switching is enabled */
 
 [data-theme='dark'] {
   color-scheme: dark;
@@ -64,8 +79,9 @@
   /* Brand / Interactive Accent */
   --accent: 129 140 248;          /* #818CF8 — Indigo accent */
   --accent-hover: 165 180 252;    /* #A5B4FC — Hover accent */
-  --accent-strong: 99 102 241;    /* #6366F1 — Strong accent */
+  --accent-strong: 165 180 252;   /* #A5B4FC — Strong accent */
   --accent-soft: 30 41 75;        /* #1E294B — Accent backgrounds */
+  --on-accent: 15 23 42;
 
   /* =========================================
      ALGORITHM VISUALIZATION STATES
@@ -114,6 +130,10 @@
   --control-bg: 30 41 59;             /* #1E293B */
   --control-hover: 51 65 85;          /* #334155 */
   --control-disabled: 71 85 105;      /* #475569 */
+
+  --shadow-e1: 0 1px 3px rgb(0 0 0 / .35);
+  --shadow-e2: 0 4px 14px -2px rgb(0 0 0 / .48);
+  --shadow-e3: 0 16px 40px -12px rgb(0 0 0 / .62);
 
   /* Motion */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);

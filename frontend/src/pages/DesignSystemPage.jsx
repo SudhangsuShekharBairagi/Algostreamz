@@ -42,8 +42,8 @@ export default function DesignSystemPage() {
       token: 'bg-state-compare',
       ringToken: 'ring-state-compare-ring',
       hex: '#FBBF24',
-      textColor: 'text-amber-950',
-      badgeBg: 'bg-amber-100 text-amber-950 border-amber-300',
+      textColor: 'text-state-compare-text',
+      badgeBg: 'bg-state-compare text-state-compare-text border-state-compare-ring',
       icon: Search,
       signalDescription: 'Yellow background tint + Amber ring + Search icon indicator',
     },
@@ -53,8 +53,8 @@ export default function DesignSystemPage() {
       token: 'bg-state-swap',
       ringToken: 'ring-state-swap-ring',
       hex: '#E11D48',
-      textColor: 'text-white',
-      badgeBg: 'bg-rose-100 text-rose-900 border-rose-300',
+      textColor: 'text-state-swap-text',
+      badgeBg: 'bg-state-swap text-state-swap-text border-state-swap-ring',
       icon: ArrowLeftRight,
       signalDescription: 'Rose red background + Crimson ring + Swap Arrow icon indicator',
     },
@@ -64,8 +64,8 @@ export default function DesignSystemPage() {
       token: 'bg-state-sorted',
       ringToken: 'ring-state-sorted-ring',
       hex: '#059669',
-      textColor: 'text-white',
-      badgeBg: 'bg-emerald-100 text-emerald-900 border-emerald-300',
+      textColor: 'text-state-sorted-text',
+      badgeBg: 'bg-state-sorted text-state-sorted-text border-state-sorted-ring',
       icon: Check,
       signalDescription: 'Emerald green background + Mint ring + Checkmark icon indicator',
     },
@@ -75,8 +75,8 @@ export default function DesignSystemPage() {
       token: 'bg-state-pivot',
       ringToken: 'ring-state-pivot-ring',
       hex: '#7C3AED',
-      textColor: 'text-white',
-      badgeBg: 'bg-purple-100 text-purple-900 border-purple-300',
+      textColor: 'text-state-pivot-text',
+      badgeBg: 'bg-state-pivot text-state-pivot-text border-state-pivot-ring',
       icon: Sparkles,
       signalDescription: 'Violet purple background + Lavender ring + "PIVOT" text label',
     },
@@ -108,7 +108,7 @@ export default function DesignSystemPage() {
         {/* Title / Intro */}
         <section className="space-y-4 max-w-[68ch]">
           <span className="chip text-accent font-semibold tracking-wide uppercase text-micro">
-            Editorial Light Design System
+            Adaptive Light &amp; Dark Design System
           </span>
           <h1 className="text-display-xl font-display font-semibold text-ink tracking-tight">
             Design Tokens & Component Primitives
@@ -227,8 +227,11 @@ export default function DesignSystemPage() {
         <section className="space-y-6">
           <div className="flex items-center gap-2 border-b border-line pb-3">
             <Palette className="w-5 h-5 text-accent" />
-            <h2 className="text-h2 font-display">2. Color Tokens (Light Editorial Theme)</h2>
+            <h2 className="text-h2 font-display">2. Color Tokens</h2>
           </div>
+          <p className="text-caption text-ink-muted">
+            Swatches preview the active theme; hex values and contrast ratios are light-theme references.
+          </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {colorSwatches.map((swatch) => (
@@ -236,10 +239,10 @@ export default function DesignSystemPage() {
                 <div>
                   <div
                     className="h-14 w-full rounded-md border border-line mb-3 shadow-inner flex items-center justify-center font-mono text-xs"
-                    style={{ backgroundColor: swatch.hex }}
+                    style={{ backgroundColor: `rgb(var(${swatch.variable}))` }}
                   >
                     <span className="px-2 py-1 bg-surface/80 rounded border border-line text-ink font-semibold">
-                      {swatch.hex}
+                      {swatch.hex} (light)
                     </span>
                   </div>
                   <h3 className="text-caption font-semibold font-mono text-ink">{swatch.name}</h3>
@@ -247,7 +250,7 @@ export default function DesignSystemPage() {
                 </div>
                 <div className="pt-2 border-t border-line flex justify-between items-center text-micro">
                   <span className="font-mono text-ink-muted">{swatch.variable}</span>
-                  <span className="font-semibold text-emerald-700">{swatch.contrast}</span>
+                  <span className="font-semibold text-ink">Light {swatch.contrast}</span>
                 </div>
               </div>
             ))}
@@ -419,25 +422,25 @@ export default function DesignSystemPage() {
           </div>
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 text-caption text-ink-muted">
             <li className="flex items-start gap-2">
-              <Check className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
+              <Check className="w-4 h-4 text-state-sorted mt-0.5 shrink-0" />
               <span>
                 <strong>Text Contrast:</strong> Body text contrast exceeds 4.5:1 against light canvas. Lowest text token is <code>text-ink-faint</code> (4.6:1).
               </span>
             </li>
             <li className="flex items-start gap-2">
-              <Check className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
+              <Check className="w-4 h-4 text-state-sorted mt-0.5 shrink-0" />
               <span>
                 <strong>Multi-signal States:</strong> Color is never isolated; every state pairs with an icon, border ring, and explicit label.
               </span>
             </li>
             <li className="flex items-start gap-2">
-              <Check className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
+              <Check className="w-4 h-4 text-state-sorted mt-0.5 shrink-0" />
               <span>
                 <strong>Focus Rings:</strong> All interactive elements inherit the <code>.focus-ring</code> utility with a 2px offset for visible keyboard navigation.
               </span>
             </li>
             <li className="flex items-start gap-2">
-              <Check className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
+              <Check className="w-4 h-4 text-state-sorted mt-0.5 shrink-0" />
               <span>
                 <strong>Zero Jitter:</strong> Dynamic counters apply <code>font-mono tabular-nums</code> to guarantee zero layout shifts during animation steps.
               </span>

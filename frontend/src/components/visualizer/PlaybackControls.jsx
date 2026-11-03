@@ -103,12 +103,12 @@ export default function PlaybackControls({
         >
           {isPlaying ? (
             <>
-              <Pause className="w-4 h-4 fill-white" />
+              <Pause className="w-4 h-4 fill-on-accent" />
               <span className="sr-only md:not-sr-only text-xs font-medium">Pause</span>
             </>
           ) : (
             <>
-              <Play className="w-4 h-4 fill-white ml-0.5" />
+              <Play className="w-4 h-4 fill-on-accent ml-0.5" />
               <span className="sr-only md:not-sr-only text-xs font-medium">
                 {isAtEnd ? 'Replay' : 'Play'}
               </span>

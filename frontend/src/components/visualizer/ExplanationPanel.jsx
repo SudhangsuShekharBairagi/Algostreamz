@@ -56,34 +56,34 @@ export default function ExplanationPanel({
       case 'compare':
         return {
           label: 'COMPARING',
-          style: 'bg-state-compare/15 text-[#451A03] ring-1 ring-state-compare/40',
+          style: 'bg-state-compare/15 text-ink ring-1 ring-state-compare/40',
           Icon: Sparkles,
         }
       case 'swap':
         return {
           label: 'SWAPPING',
-          style: 'bg-state-swap/15 text-state-swap ring-1 ring-state-swap/40',
+          style: 'bg-state-swap/15 text-ink ring-1 ring-state-swap/40',
           Icon: ArrowLeftRight,
         }
       case 'select':
       case 'pivot':
         return {
           label: 'PIVOT SELECTION',
-          style: 'bg-state-pivot/15 text-state-pivot ring-1 ring-state-pivot/40',
+          style: 'bg-state-pivot/15 text-ink ring-1 ring-state-pivot/40',
           Icon: Target,
         }
       case 'sorted':
       case 'mark-sorted':
         return {
           label: 'SORTED',
-          style: 'bg-state-sorted/15 text-state-sorted ring-1 ring-state-sorted/40',
+          style: 'bg-state-sorted/15 text-ink ring-1 ring-state-sorted/40',
           Icon: Check,
         }
       case 'eliminate-left':
       case 'eliminate-right':
         return {
           label: 'RANGE ELIMINATION',
-          style: 'bg-amber-500/15 text-amber-800 ring-1 ring-amber-500/40',
+          style: 'bg-state-compare/15 text-ink ring-1 ring-state-compare/40',
           Icon: MinusCircle,
         }
       case 'pointer-move':

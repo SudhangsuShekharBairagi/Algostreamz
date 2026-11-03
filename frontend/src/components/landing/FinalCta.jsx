@@ -14,12 +14,12 @@ export default function FinalCta() {
 
   return (
     <section id="final-cta" aria-labelledby="cta-heading" className="scroll-mt-24 font-sans">
-      <div className="bg-gradient-to-r from-accent to-accent-strong rounded-lg p-8 md:p-12 text-white text-center space-y-6 max-w-[800px] mx-auto shadow-e3">
-        <h2 id="cta-heading" className="text-display-xl font-display font-semibold text-white tracking-tight">
+      <div className="bg-gradient-to-r from-accent to-accent-strong rounded-lg p-8 md:p-12 text-on-accent text-center space-y-6 max-w-[800px] mx-auto shadow-e3">
+        <h2 id="cta-heading" className="text-display-xl font-display font-semibold text-on-accent tracking-tight">
           Ready to watch an algorithm think?
         </h2>
 
-        <p className="text-body text-white/90 text-pretty max-w-[56ch] mx-auto">
+        <p className="text-body text-on-accent/90 text-pretty max-w-[56ch] mx-auto">
           Explore interactive step-by-step visualizations, synchronized pseudocode, and distraction-free Zen mode.
         </p>
 
@@ -37,9 +37,9 @@ export default function FinalCta() {
           <a
             href="#faq"
             onClick={handleScrollToFaq}
-            className="btn-ghost text-white border border-white/30 hover:bg-white/10 font-semibold px-5 py-2.5 rounded-md flex items-center gap-2 focus-ring cursor-pointer"
+            className="btn-ghost text-on-accent border border-on-accent/30 hover:bg-on-accent/10 font-semibold px-5 py-2.5 rounded-md flex items-center gap-2 focus-ring cursor-pointer"
           >
-            <HelpCircle className="w-4 h-4 text-white" />
+            <HelpCircle className="w-4 h-4 text-on-accent" />
             <span>Read the FAQ</span>
           </a>
         </div>

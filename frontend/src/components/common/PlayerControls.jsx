@@ -30,7 +30,7 @@ export default function PlayerControls({ onNext, onPrev, onReset, playing, onTog
         aria-label={playing ? 'Pause algorithm visualization' : 'Play algorithm visualization'}
         className="btn-primary p-2 flex items-center justify-center focus-ring"
       >
-        {playing ? <Pause className="w-4 h-4 fill-white" /> : <Play className="w-4 h-4 fill-white" />}
+        {playing ? <Pause className="w-4 h-4 fill-on-accent" /> : <Play className="w-4 h-4 fill-on-accent" />}
       </button>
 
       <button

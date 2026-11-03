@@ -518,7 +518,7 @@ export function generateBstDeleteSteps(initialRoot, valueToDelete) {
     )
   )
 
-  function deleteNodeRec(node, val, parent = null) {
+  function deleteNodeRec(node, val) {
     if (!node) {
       steps.push(
         makeBstStep(
@@ -557,7 +557,7 @@ export function generateBstDeleteSteps(initialRoot, valueToDelete) {
           stats
         )
       )
-      node.left = deleteNodeRec(node.left, val, node)
+      node.left = deleteNodeRec(node.left, val)
       return node
     } else if (val > node.value) {
       steps.push(
@@ -575,7 +575,7 @@ export function generateBstDeleteSteps(initialRoot, valueToDelete) {
           stats
         )
       )
-      node.right = deleteNodeRec(node.right, val, node)
+      node.right = deleteNodeRec(node.right, val)
       return node
     } else {
       // Node found
@@ -691,7 +691,7 @@ export function generateBstDeleteSteps(initialRoot, valueToDelete) {
         )
       )
 
-      node.right = deleteNodeRec(node.right, succ.value, node)
+      node.right = deleteNodeRec(node.right, succ.value)
       return node
     }
   }

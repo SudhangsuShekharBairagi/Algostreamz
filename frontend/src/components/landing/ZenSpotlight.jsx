@@ -44,7 +44,7 @@ export default function ZenSpotlight() {
             to={`${ROUTES.DEFAULT_VISUALIZER}?zen=1`}
             className="btn-primary flex items-center gap-2 text-caption font-semibold focus-ring shadow-e1 group"
           >
-            <Maximize2 className="w-4 h-4 text-white" />
+            <Maximize2 className="w-4 h-4 text-on-accent" />
             <span>Try Zen mode</span>
           </Link>
 

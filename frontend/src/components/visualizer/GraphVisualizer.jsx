@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import {
   Plus,
   Play,
@@ -98,6 +98,15 @@ export default function GraphVisualizer({ algorithm, variant: propVariant }) {
     }
   }, [nodes, startNodeId, targetNodeId])
 
+  useEffect(() => {
+    if (!edgeModalOpen) return
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') setEdgeModalOpen(false)
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [edgeModalOpen])
+
   // Generate steps from engine
   const steps = useMemo(() => {
     if (!nodes.length) return []
@@ -128,14 +137,10 @@ export default function GraphVisualizer({ algorithm, variant: propVariant }) {
   useEffect(() => {
     const activeId = algorithm?.id || algoType
     if (!activeId || !steps.length || !isAtEnd) return
-    let cancelled = false
     progressApi.completeVisualizer(activeId).then(
       () => {},
       () => {}
     )
-    return () => {
-      cancelled = true
-    }
   }, [algorithm?.id, algoType, isAtEnd, steps.length])
 
   // Step state snapshots
@@ -423,7 +428,7 @@ export default function GraphVisualizer({ algorithm, variant: propVariant }) {
         <button
           type="button"
           onClick={() => setCanvasMode('select')}
-          aria-selected={canvasMode === 'select'}
+          aria-pressed={canvasMode === 'select'}
           title="Drag Nodes Mode"
           className={`btn-ghost h-8 px-2.5 text-xs font-semibold flex items-center gap-1 focus-ring ${
             canvasMode === 'select' ? 'bg-sunken border border-line-strong text-ink' : ''
@@ -436,7 +441,7 @@ export default function GraphVisualizer({ algorithm, variant: propVariant }) {
         <button
           type="button"
           onClick={() => setCanvasMode('add-node')}
-          aria-selected={canvasMode === 'add-node'}
+          aria-pressed={canvasMode === 'add-node'}
           title="Click canvas to spawn Node"
           className={`btn-ghost h-8 px-2.5 text-xs font-semibold flex items-center gap-1 focus-ring ${
             canvasMode === 'add-node' ? 'bg-accent-soft text-accent border border-accent/40' : ''
@@ -449,7 +454,7 @@ export default function GraphVisualizer({ algorithm, variant: propVariant }) {
         <button
           type="button"
           onClick={() => setCanvasMode('add-edge')}
-          aria-selected={canvasMode === 'add-edge'}
+          aria-pressed={canvasMode === 'add-edge'}
           title="Click 2 nodes to connect Edge"
           className={`btn-ghost h-8 px-2.5 text-xs font-semibold flex items-center gap-1 focus-ring ${
             canvasMode === 'add-edge' ? 'bg-accent-soft text-accent border border-accent/40' : ''
@@ -462,7 +467,7 @@ export default function GraphVisualizer({ algorithm, variant: propVariant }) {
         <button
           type="button"
           onClick={() => setCanvasMode('delete')}
-          aria-selected={canvasMode === 'delete'}
+          aria-pressed={canvasMode === 'delete'}
           title="Click Node to delete"
           className={`btn-ghost h-8 px-2.5 text-xs font-semibold flex items-center gap-1 focus-ring ${
             canvasMode === 'delete' ? 'bg-state-swap/10 text-state-swap border border-state-swap/40' : ''
@@ -594,12 +599,12 @@ export default function GraphVisualizer({ algorithm, variant: propVariant }) {
           type="button"
           onClick={togglePlay}
           title={isPlaying ? 'Pause' : 'Play'}
-          className="w-7 h-7 rounded-full bg-accent hover:bg-accent-hover text-white flex items-center justify-center focus-ring shadow-e1 transition-transform active:scale-95"
+          className="w-7 h-7 rounded-full bg-accent hover:bg-accent-hover text-on-accent flex items-center justify-center focus-ring shadow-e1 transition-transform active:scale-95"
         >
           {isPlaying ? (
-            <Pause className="w-3.5 h-3.5 fill-white" />
+            <Pause className="w-3.5 h-3.5 fill-on-accent" />
           ) : (
-            <Play className="w-3.5 h-3.5 fill-white ml-0.5" />
+            <Play className="w-3.5 h-3.5 fill-on-accent ml-0.5" />
           )}
         </button>
 
@@ -671,7 +676,7 @@ export default function GraphVisualizer({ algorithm, variant: propVariant }) {
             const isEdgeActive = activeEdgeId === edge.id
             const edgeState = edgeStates[edge.id] || 'default'
 
-            let strokeClass = 'stroke-line-strong'
+            let strokeClass = 'stroke-edge'
             let strokeWidth = '2'
             let markerEnd = undefined
 
@@ -730,13 +735,13 @@ export default function GraphVisualizer({ algorithm, variant: propVariant }) {
             const isSourceSelected = edgeSource === node.id
             const state = nodeStates[node.id] || 'default'
 
-            let nodeCircleClass = 'fill-surface stroke-line-strong'
-            let nodeTextClass = 'fill-ink'
+            let nodeCircleClass = 'fill-node-bg stroke-node-border'
+            let nodeTextClass = 'fill-node-text'
 
             switch (state) {
               case 'comparing':
                 nodeCircleClass = 'fill-state-compare stroke-state-compare-ring'
-                nodeTextClass = 'fill-[#451A03]'
+                nodeTextClass = 'fill-state-compare-text'
                 break
               case 'active':
                 nodeCircleClass = 'fill-accent-soft stroke-accent'
@@ -745,7 +750,7 @@ export default function GraphVisualizer({ algorithm, variant: propVariant }) {
               case 'found':
               case 'sorted':
                 nodeCircleClass = 'fill-state-sorted stroke-state-sorted-ring'
-                nodeTextClass = 'fill-white'
+                nodeTextClass = 'fill-state-sorted-text'
                 break
               default:
                 if (isActive) {
@@ -972,9 +977,7 @@ export default function GraphVisualizer({ algorithm, variant: propVariant }) {
           role="dialog"
           aria-modal="true"
           aria-labelledby="edge-weight-modal-title"
-          onKeyDown={(e) => {
-            if (e.key === 'Escape') setEdgeModalOpen(false)
-          }}
+          tabIndex={-1}
         >
           <form
             onSubmit={handleConfirmEdgeWeight}

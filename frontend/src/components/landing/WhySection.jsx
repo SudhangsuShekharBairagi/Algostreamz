@@ -91,7 +91,7 @@ export default function WhySection() {
                 <th scope="col" className="p-4 bg-accent-soft/70 border-l border-r border-accent/20 text-accent-strong w-5/12 font-bold">
                   <div className="flex items-center justify-between">
                     <span>{SITE_NAME}</span>
-                    <span className="chip bg-accent text-white border-none text-[11px] font-mono uppercase">
+                    <span className="chip bg-accent text-on-accent border-none text-[11px] font-mono uppercase">
                       Highlighted
                     </span>
                   </div>
@@ -112,7 +112,7 @@ export default function WhySection() {
                   </td>
                   <td className="p-4 bg-accent-soft/30 border-l border-r border-accent/10 font-medium text-ink">
                     <div className="flex items-start gap-2">
-                      <div className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 mt-0.5">
+                      <div className="w-4 h-4 rounded-full bg-state-sorted/10 text-ink flex items-center justify-center shrink-0 mt-0.5">
                         <Check className="w-3 h-3 stroke-[2.5]" aria-hidden="true" />
                       </div>
                       <span className="text-ink font-semibold">{row.algostreamz}</span>
@@ -147,7 +147,7 @@ export default function WhySection() {
                     {SITE_NAME}
                   </span>
                   <div className="flex items-center gap-2 text-ink font-semibold">
-                    <Check className="w-3.5 h-3.5 text-emerald-700 shrink-0 stroke-[2.5]" />
+                    <Check className="w-3.5 h-3.5 text-state-sorted shrink-0 stroke-[2.5]" />
                     <span>{row.algostreamz}</span>
                   </div>
                 </div>
@@ -196,7 +196,7 @@ export default function WhySection() {
           to={ROUTES.DEFAULT_VISUALIZER}
           className="btn-primary inline-flex items-center gap-2 text-body font-semibold focus-ring shadow-e1 group"
         >
-          <Play className="w-4 h-4 fill-white" />
+          <Play className="w-4 h-4 fill-on-accent" />
           <span>See the difference live</span>
           <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
         </Link>

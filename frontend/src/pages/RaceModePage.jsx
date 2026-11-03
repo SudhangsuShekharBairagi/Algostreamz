@@ -258,7 +258,7 @@ export default function RaceModePage() {
           <p className="text-caption text-ink-muted">
             Live comparisons <strong aria-label="Live total comparisons" className="font-mono text-h3 text-accent tabular-nums" aria-live="polite">{totalComparisons}</strong>
           </p>
-          {isAtEnd && <span className="chip border-emerald-300 bg-emerald-50 text-emerald-800 text-caption font-semibold">Race finished</span>}
+          {isAtEnd && <span className="chip border-state-sorted/40 bg-state-sorted/10 text-ink text-caption font-semibold">Race finished</span>}
         </div>
       </section>
 

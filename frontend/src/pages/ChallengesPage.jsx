@@ -166,9 +166,9 @@ export default function ChallengesPage() {
             const chosen = answerId === option.id
             const isAnswer = question.answerId === option.id
             const tone = answerId && isAnswer
-              ? 'border-state-sorted bg-emerald-50 text-ink'
+              ? 'border-state-sorted/40 bg-state-sorted/10 text-ink'
               : answerId && chosen
-                ? 'border-state-swap bg-rose-50 text-ink'
+                ? 'border-state-swap/40 bg-state-swap/10 text-ink'
                 : 'border-line bg-surface text-ink hover:border-accent/60'
             return (
               <button
@@ -187,7 +187,7 @@ export default function ChallengesPage() {
 
         {answerId && (
           <div
-            className={`rounded-md border p-4 ${isCorrect ? 'border-state-sorted bg-emerald-50' : 'border-state-swap bg-rose-50'}`}
+            className={`rounded-md border p-4 ${isCorrect ? 'border-state-sorted/40 bg-state-sorted/10' : 'border-state-swap/40 bg-state-swap/10'}`}
             role="status"
             aria-live="polite"
           >

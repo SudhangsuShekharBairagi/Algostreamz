@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
 import GraphVisualizer from '../components/visualizer/GraphVisualizer'
@@ -95,7 +95,7 @@ describe('GraphVisualizer Component', () => {
     const canvas = screen.getByRole('img', { name: /Graph Canvas Stage/i })
     fireEvent.click(canvas, { clientX: 200, clientY: 200 })
 
-    expect(screen.getByText('G')).toBeTruthy()
+    expect(within(canvas).getByText('G')).toBeTruthy()
   })
 
   it('toggles distance table peek overlay on S key in Zen mode', () => {

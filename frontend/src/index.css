@@ -48,12 +48,12 @@
     background-color: rgb(var(--surface));
     border: 1px solid rgb(var(--line));
     border-radius: 16px;
-    box-shadow: 0 1px 2px rgb(15 23 42 / 0.04);
+    box-shadow: var(--shadow-e1);
     transition: box-shadow 200ms var(--ease-out);
   }
 
   .card:hover {
-    box-shadow: 0 4px 12px -2px rgb(15 23 42 / 0.08);
+    box-shadow: var(--shadow-e2);
   }
 
   .chip {
@@ -71,7 +71,7 @@
 
   .btn-primary {
     background-color: rgb(var(--accent));
-    color: #ffffff;
+    color: rgb(var(--on-accent));
     border-radius: 8px;
     padding: 0.5rem 1rem;
     font-weight: 500;

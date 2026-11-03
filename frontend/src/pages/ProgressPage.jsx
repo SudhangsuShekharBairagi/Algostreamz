@@ -63,8 +63,8 @@ export default function ProgressPage() {
             <h2 className="text-h3 font-semibold text-ink">Account Status</h2>
             <p className="text-caption text-ink-muted">{user?.email || 'Logged in student'}</p>
           </div>
-          <span className="chip border-emerald-300 bg-emerald-50 text-emerald-800 font-semibold text-caption">
-            <CheckCircle2 className="w-3.5 h-3.5" />
+          <span className={`chip font-semibold text-caption ${user?.emailVerified ? 'border-state-sorted/40 bg-state-sorted/10' : 'border-state-swap/40 bg-state-swap/10'} text-ink`}>
+            <CheckCircle2 className={`w-3.5 h-3.5 ${user?.emailVerified ? 'text-state-sorted' : 'text-state-swap'}`} />
             {user?.emailVerified ? 'Verified Account' : 'Email Not Verified'}
           </span>
         </div>
@@ -103,7 +103,7 @@ export default function ProgressPage() {
               </div>
               <div className="p-4 bg-sunken rounded-md space-y-1">
                 <span className="text-micro font-bold uppercase text-ink-faint">Visualizer Mastery</span>
-                <span className="block font-mono text-h2 font-bold text-emerald-700 tabular-nums">
+                <span className="block font-mono text-h2 font-bold text-ink tabular-nums">
                   {masteryPercent}%
                 </span>
               </div>

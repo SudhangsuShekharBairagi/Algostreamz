@@ -23,7 +23,7 @@ describe('ErrorBoundary', () => {
 
     expect(screen.getByRole('alert').textContent).toContain('unexpected error')
     expect(screen.getByRole('button', { name: 'Try again' })).toBeTruthy()
-    expect(screen.getByRole('link', { name: 'Go home' })).toBeTruthy()
+    expect(screen.getByRole('link', { name: 'Back to Explore' })).toBeTruthy()
     error.mockRestore()
   })
 })

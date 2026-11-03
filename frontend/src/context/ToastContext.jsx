@@ -71,11 +71,11 @@ function ToastItem({ toast, onDismiss }) {
   let borderStyle = 'border-line bg-surface text-ink'
 
   if (type === 'success') {
-    icon = <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-    borderStyle = 'border-emerald-200 bg-surface text-ink shadow-e2'
+    icon = <CheckCircle2 className="w-4 h-4 text-state-sorted shrink-0" />
+    borderStyle = 'border-state-sorted/40 bg-surface text-ink shadow-e2'
   } else if (type === 'warning' || type === 'error') {
-    icon = <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
-    borderStyle = 'border-amber-200 bg-surface text-ink shadow-e2'
+    icon = <AlertCircle className="w-4 h-4 text-state-swap shrink-0" />
+    borderStyle = 'border-state-swap/40 bg-surface text-ink shadow-e2'
   }
 
   return (

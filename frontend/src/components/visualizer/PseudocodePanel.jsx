@@ -86,7 +86,7 @@ export default function PseudocodePanel({
   const pseudocodeContent = (
     <div
       ref={scrollContainerRef}
-      className="font-mono text-[13px] leading-[1.7] bg-sunken/60 p-3 rounded-lg border border-line/50 max-h-[320px] overflow-y-auto overflow-x-auto select-text"
+      className="font-mono text-[13px] leading-[1.7] bg-code-bg p-3 rounded-lg border border-line/50 max-h-[320px] overflow-y-auto overflow-x-auto select-text"
     >
       {pseudocode.map((item) => {
         const { line, indent = 0, text } = item
@@ -120,7 +120,7 @@ export default function PseudocodePanel({
   )
 
   const sourceContent = (
-    <pre className="max-h-[320px] overflow-auto p-3 font-mono text-xs leading-[1.7] select-text">
+    <pre className="max-h-[320px] overflow-auto rounded-lg border border-line/50 bg-code-bg p-3 font-mono text-xs leading-[1.7] text-console-text select-text">
       <code>
         {codeLines.map((text, index) => {
           const line = index + 1
@@ -130,7 +130,7 @@ export default function PseudocodePanel({
               key={`${language}-code-line-${line}`}
               aria-current={isActive ? 'step' : undefined}
               className={`block whitespace-pre px-2 rounded ${
-                isActive ? 'bg-accent-soft text-ink font-medium' : 'text-ink-muted'
+                isActive ? 'bg-code-line-active text-ink font-medium' : 'text-console-text'
               }`}
             >
               <span className="mr-3 inline-block w-6 select-none text-right text-ink-faint">{line}</span>

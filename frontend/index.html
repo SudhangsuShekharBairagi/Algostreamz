@@ -5,7 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="manifest" href="/manifest.webmanifest" />
-    <meta name="theme-color" content="#4f46e5" />
+    <meta name="theme-color" content="#F8FAFC" />
+    <script>
+      (() => {
+        let preference = 'system'
+        try {
+          const stored = localStorage.getItem('algostreamz.theme')
+          if (stored === 'light' || stored === 'dark' || stored === 'system') preference = stored
+        } catch {
+          // Use the system preference when storage is unavailable.
+        }
+        const theme = preference === 'system'
+          ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+          : preference
+        document.documentElement.setAttribute('data-theme', theme)
+        document.querySelector('meta[name="theme-color"]')
+          ?.setAttribute('content', theme === 'dark' ? '#0B0F19' : '#F8FAFC')
+      })()
+    </script>
     <title>Algostreamz — Watch algorithms think, one step at a time.</title>
     <meta name="description" content="Algostreamz turns sorting, searching, trees and graphs into step-by-step visual stories with plain-English explanations and Zen mode for deep focus." />
     <link rel="canonical" href="https://algostreamz.com/" />

@@ -16,6 +16,15 @@ export default function CustomArrayModal({
   isZen = false,
 }) {
   const { showToast } = useToast()
+
+  useEffect(() => {
+    if (!open) return
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [open, onClose])
   const [arrayInput, setArrayInput] = useState('')
   const [targetInput, setTargetInput] = useState('')
   const inputRef = useRef(null)
@@ -71,9 +80,6 @@ export default function CustomArrayModal({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      onKeyDown={(e) => {
-        if (e.key === 'Escape') onClose()
-      }}
     >
       {/* Scrim */}
       <button
@@ -90,6 +96,7 @@ export default function CustomArrayModal({
         role="dialog"
         aria-labelledby="custom-input-title"
         aria-modal="true"
+        tabIndex={-1}
       >
         <div className="flex items-center justify-between border-b border-line pb-3">
           <div className="flex items-center gap-2">

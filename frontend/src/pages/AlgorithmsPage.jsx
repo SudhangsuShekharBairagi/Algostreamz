@@ -250,8 +250,8 @@ export default function AlgorithmsPage() {
 
                 <div className="flex flex-wrap items-center gap-1.5 pt-1">
                   {algo.properties?.stable && (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-emerald-200 bg-emerald-50/60 text-emerald-800 text-[11px] font-medium">
-                      <Check className="w-3 h-3 text-emerald-600 stroke-[2.5]" />
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-state-sorted/40 bg-state-sorted/10 text-ink text-[11px] font-medium">
+                      <Check className="w-3 h-3 text-state-sorted stroke-[2.5]" />
                       Stable
                     </span>
                   )}
@@ -297,10 +297,10 @@ function getComplexityStyle(notation) {
   const clean = notation.toLowerCase().replace(/\s+/g, '')
 
   if (clean.includes('o(1)') || clean.includes('o(logn)')) {
-    return 'bg-emerald-50 text-emerald-700 border-emerald-200'
+    return 'bg-state-sorted/10 text-ink border-state-sorted/40'
   }
   if (clean.includes('o(nlogn)') || clean.includes('o(n)') || clean.includes('o(v+e)')) {
-    return 'bg-sky-50 text-sky-700 border-sky-200'
+    return 'bg-accent-soft text-accent-strong border-accent/20'
   }
-  return 'bg-amber-50 text-amber-800 border-amber-200'
+  return 'bg-state-compare/10 text-ink border-state-compare/40'
 }

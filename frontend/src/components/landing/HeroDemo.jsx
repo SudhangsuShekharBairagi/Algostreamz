@@ -241,7 +241,7 @@ export default function HeroDemo() {
               key={item.line}
               className={`px-2 py-0.5 rounded transition-colors ${
                 isActive
-                  ? 'bg-accent text-white font-semibold shadow-e1'
+                  ? 'bg-accent text-on-accent font-semibold shadow-e1'
                   : 'text-ink-muted'
               }`}
             >

@@ -247,10 +247,10 @@ function getWorstComplexityStyle(notation) {
   const clean = notation.toLowerCase().replace(/\s+/g, '')
 
   if (clean.includes('o(1)') || clean.includes('o(logn)')) {
-    return 'bg-emerald-50 text-emerald-700 border-emerald-200'
+    return 'bg-state-sorted/10 text-ink border-state-sorted/40'
   }
   if (clean.includes('o(nlogn)') || clean.includes('o(n)') || clean.includes('o(v+e)')) {
-    return 'bg-sky-50 text-sky-700 border-sky-200'
+    return 'bg-accent-soft text-accent-strong border-accent/20'
   }
-  return 'bg-amber-50 text-amber-800 border-amber-200'
+  return 'bg-state-compare/10 text-ink border-state-compare/40'
 }

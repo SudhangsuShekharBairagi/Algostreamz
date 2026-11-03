@@ -118,7 +118,7 @@ export default function ContactForm({ className = '' }) {
   if (status === 'success') {
     return (
       <div className={`card p-8 bg-surface border border-line text-center space-y-6 shadow-e2 ${className}`}>
-        <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto">
+        <div className="w-14 h-14 rounded-full bg-state-sorted/10 text-ink flex items-center justify-center mx-auto">
           <CheckCircle2 className="w-8 h-8 stroke-[2.5]" />
         </div>
         <div className="space-y-2">
@@ -172,7 +172,7 @@ export default function ContactForm({ className = '' }) {
         {/* Name Input */}
         <div>
           <label htmlFor="contact-name" className="block text-caption font-medium mb-1.5 text-ink">
-            Name <span className="text-rose-600">*</span>
+            Name <span className="text-state-swap">*</span>
           </label>
           <input
             ref={nameRef}
@@ -186,11 +186,11 @@ export default function ContactForm({ className = '' }) {
             aria-describedby={touched.name && errors.name ? 'contact-name-error' : undefined}
             placeholder="Ada Lovelace"
             className={`w-full h-11 rounded-md bg-surface border px-3.5 text-body text-ink placeholder:text-ink-faint focus-ring ${
-              touched.name && errors.name ? 'border-rose-500 bg-rose-50/20' : 'border-line'
+              touched.name && errors.name ? 'border-state-swap bg-state-swap/5' : 'border-line'
             }`}
           />
           {touched.name && errors.name && (
-            <p id="contact-name-error" className="mt-1 text-caption text-rose-600 font-medium">
+            <p id="contact-name-error" className="mt-1 text-caption text-state-swap font-medium">
               {errors.name}
             </p>
           )}
@@ -199,7 +199,7 @@ export default function ContactForm({ className = '' }) {
         {/* Email Input */}
         <div>
           <label htmlFor="contact-email" className="block text-caption font-medium mb-1.5 text-ink">
-            Email Address <span className="text-rose-600">*</span>
+            Email Address <span className="text-state-swap">*</span>
           </label>
           <input
             ref={emailRef}
@@ -213,11 +213,11 @@ export default function ContactForm({ className = '' }) {
             aria-describedby={touched.email && errors.email ? 'contact-email-error' : undefined}
             placeholder="ada@example.com"
             className={`w-full h-11 rounded-md bg-surface border px-3.5 text-body text-ink placeholder:text-ink-faint focus-ring ${
-              touched.email && errors.email ? 'border-rose-500 bg-rose-50/20' : 'border-line'
+              touched.email && errors.email ? 'border-state-swap bg-state-swap/5' : 'border-line'
             }`}
           />
           {touched.email && errors.email && (
-            <p id="contact-email-error" className="mt-1 text-caption text-rose-600 font-medium">
+            <p id="contact-email-error" className="mt-1 text-caption text-state-swap font-medium">
               {errors.email}
             </p>
           )}
@@ -226,7 +226,7 @@ export default function ContactForm({ className = '' }) {
         {/* Topic Select */}
         <div>
           <label htmlFor="contact-topic" className="block text-caption font-medium mb-1.5 text-ink">
-            Topic <span className="text-rose-600">*</span>
+            Topic <span className="text-state-swap">*</span>
           </label>
           <select
             id="contact-topic"
@@ -246,14 +246,14 @@ export default function ContactForm({ className = '' }) {
         <div>
           <div className="flex items-center justify-between mb-1.5">
             <label htmlFor="contact-message" className="block text-caption font-medium text-ink">
-              Message <span className="text-rose-600">*</span>
+              Message <span className="text-state-swap">*</span>
             </label>
             <span
               className={`font-mono text-micro tabular-nums font-semibold ${
                 messageLength > 1000
-                  ? 'text-rose-600'
+                  ? 'text-state-swap'
                   : messageLength >= 10
-                  ? 'text-emerald-700'
+                  ? 'text-ink'
                   : 'text-ink-faint'
               }`}
             >
@@ -274,11 +274,11 @@ export default function ContactForm({ className = '' }) {
             aria-describedby={touched.message && errors.message ? 'contact-message-error' : undefined}
             placeholder="Tell us about a feature request, bug report, or general feedback..."
             className={`w-full rounded-md bg-surface border px-3.5 py-2.5 text-body text-ink placeholder:text-ink-faint focus-ring ${
-              touched.message && errors.message ? 'border-rose-500 bg-rose-50/20' : 'border-line'
+              touched.message && errors.message ? 'border-state-swap bg-state-swap/5' : 'border-line'
             }`}
           />
           {touched.message && errors.message ? (
-            <p id="contact-message-error" className="mt-1 text-caption text-rose-600 font-medium">
+            <p id="contact-message-error" className="mt-1 text-caption text-state-swap font-medium">
               {errors.message}
             </p>
           ) : (

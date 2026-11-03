@@ -722,7 +722,7 @@ export default function ProfilePage() {
                 <button
                   type="submit"
                   disabled={deleting}
-                  className="btn-ghost min-h-10 border border-state-swap bg-state-swap px-3 text-caption font-semibold text-white focus-ring disabled:opacity-50"
+                  className="btn-ghost min-h-10 border border-state-swap bg-state-swap px-3 text-caption font-semibold text-state-swap-text focus-ring disabled:opacity-50"
                 >
                   {deleting ? "Deleting..." : "Delete permanently"}
                 </button>
